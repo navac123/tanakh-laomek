@@ -792,6 +792,38 @@ initDark();
 
 // Search
 function toggleSearch(){S.searchOpen=!S.searchOpen;if(!S.searchOpen)S.searchQuery='';R();if(S.searchOpen)requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el)el.focus()})}
+
+// Speech-to-text dictation
+let dictationActive=false,recognition=null;
+function toggleDictation(){
+  if(!('webkitSpeechRecognition' in window)&&!('SpeechRecognition' in window)){toast('הדפדפן לא תומך בדיקטציה. השתמשו ב-Chrome.');return;}
+  if(dictationActive){stopDictation();return;}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  recognition=new SR();
+  recognition.lang='he-IL';recognition.continuous=true;recognition.interimResults=true;
+  recognition.onstart=()=>{dictationActive=true;const btn=document.getElementById('micBtn');if(btn){btn.style.background='rgba(139,74,94,.2)';btn.style.borderColor='#8B4A5E';btn.style.color='#8B4A5E';}toast('מקשיב... דברו עכשיו');};
+  recognition.onresult=(e)=>{
+    let final='';
+    for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;}
+    if(final){
+      const active=document.activeElement;
+      if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA')){
+        const start=active.selectionStart,end=active.selectionEnd;
+        active.value=active.value.slice(0,start)+final+active.value.slice(end);
+        active.selectionStart=active.selectionEnd=start+final.length;
+        active.dispatchEvent(new Event('input',{bubbles:true}));
+      }else{toast('לחצו על שדה טקסט ואז דברו');}
+    }
+  };
+  recognition.onerror=(e)=>{if(e.error!=='no-speech')toast('שגיאה: '+e.error);stopDictation();};
+  recognition.onend=()=>{if(dictationActive){try{recognition.start()}catch(e){stopDictation()}}};
+  recognition.start();
+}
+function stopDictation(){
+  dictationActive=false;if(recognition){try{recognition.stop()}catch(e){}}recognition=null;
+  const btn=document.getElementById('micBtn');if(btn){btn.style.background='';btn.style.borderColor='';btn.style.color='';}
+  toast('דיקטציה הופסקה');
+}
 function countSearchMatches(){
   if(!S.searchQuery)return 0;
   const q=stripDiacritics(S.searchQuery);
@@ -1414,6 +1446,9 @@ function topBar(){
         <input type="text" class="search-input ${S.searchOpen?'open':''}" id="searchInput" placeholder="חיפוש..." value="${S.searchQuery}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
         ${S.searchQuery?`<span class="search-count">${countSearchMatches()} תוצאות</span>`:''}
       </div>
+      <div id="micBtn" style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleDictation()" title="דיקטציה קולית">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+      </div>
       <div class="nb-toggle ${S.showNotebook?'open':''}" onclick="toggleNotebook()" title="מחברת מחשבות">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         מחברת
@@ -1820,6 +1855,7 @@ function sCanv(){
           <option value="straight" ${(cn.style||'straight')==='straight'?'selected':''}>ישר</option>
           <option value="curved" ${cn.style==='curved'?'selected':''}>מעוקל</option>
           <option value="elbow" ${cn.style==='elbow'?'selected':''}>מרפק</option>
+          <option value="custom" ${cn.style==='custom'?'selected':''}>חופשי</option>
         </select>
         <span style="color:${cv('#ef4444','#8B4A5E')};cursor:pointer;font-size:10px" onclick="delConn(${ci})">✕</span>
       </div>`}).join(''):`<div style="font-size:11px;color:${tcm()};text-align:center;padding:8px">אין קישורים עדיין</div>`}
@@ -2157,7 +2193,7 @@ function mCanv(){
   return `${cvToolbar()}<div class="canvas${cmClass}" id="cv" style="min-height:600px;position:relative;overflow:auto">
     <div id="cvInner" style="transform:scale(${zScale});transform-origin:top right;position:relative;min-height:${600/zScale}px;min-width:100%">
     <svg class="cv-svg" id="cvSvg">${svgHtml}</svg>
-    ${nodesHtml}${arrowLabelsHtml}${renderShapes()}${renderStickies()}${renderLabels()}
+    ${nodesHtml}${arrowLabelsHtml}${buildArrowMidpoints()}${renderShapes()}${renderStickies()}${renderLabels()}
     </div>${renderZoom()}${renderMinimap()}</div>`;
 }
 
@@ -2216,6 +2252,13 @@ function arrowPath(ep,style){
   // straight (default)
   return `M${fx},${fy} L${tx},${ty}`;
 }
+function arrowPathCustom(ep,cn){
+  const {fx,fy,tx,ty}=ep;
+  if(cn.midX!==undefined&&cn.midY!==undefined){
+    return `M${fx},${fy} Q${cn.midX},${cn.midY} ${tx},${ty}`;
+  }
+  return `M${fx},${fy} L${tx},${ty}`;
+}
 // backward compat
 function curvedPath(ep){return arrowPath(ep,'straight')}
 
@@ -2225,12 +2268,43 @@ function buildArrowsSvg(){
     if(fi<0||ti<0)return '';
     const fr=ndRect(fi),tr=ndRect(ti);
     const ep=edgePts(fr,tr);
-    const d=arrowPath(ep,cn.style||'straight');
+    const d=cn.style==='custom'?arrowPathCustom(ep,cn):arrowPath(ep,cn.style||'straight');
     return `<path d="${d}" fill="none" stroke="${cv('#8B4A5E','#8B4A5E')}" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowhead)" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
   }).join('');
   return connLines;
 }
 
+function buildArrowMidpoints(){
+  if(!S.conns.length)return '';
+  return S.conns.map((cn,ci)=>{
+    const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
+    if(fi<0||ti<0)return '';
+    const fr=ndRect(fi),tr=ndRect(ti);
+    const ep=edgePts(fr,tr);
+    const mx=cn.midX!==undefined?cn.midX:(ep.fx+ep.tx)/2;
+    const my=cn.midY!==undefined?cn.midY:(ep.fy+ep.ty)/2;
+    return `<div style="position:absolute;left:${mx-6}px;top:${my-6}px;width:12px;height:12px;border-radius:50%;background:${cv('#8B4A5E','#C48B9F')};border:2px solid ${bgc()};cursor:move;z-index:15;opacity:.6;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.transform='scale(1.3)'" onmouseout="this.style.opacity=.6;this.style.transform=''" onmousedown="startMidDrag(event,${ci})" title="גרור לשינוי מסלול"></div>`;
+  }).join('');
+}
+let midDg=null;
+function startMidDrag(e,ci){
+  e.preventDefault();e.stopPropagation();
+  const cn=S.conns[ci];const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
+  const fr=ndRect(fi),tr=ndRect(ti);const ep=edgePts(fr,tr);
+  const mx=cn.midX!==undefined?cn.midX:(ep.fx+ep.tx)/2;
+  const my=cn.midY!==undefined?cn.midY:(ep.fy+ep.ty)/2;
+  midDg={ci,sx:e.clientX,sy:e.clientY,ox:mx,oy:my};
+  document.onmousemove=midDragMove;document.onmouseup=midDragEnd;
+}
+function midDragMove(e){
+  if(!midDg)return;
+  const z=S.cvZoom/100;
+  S.conns[midDg.ci].midX=midDg.ox+(e.clientX-midDg.sx)/z;
+  S.conns[midDg.ci].midY=midDg.oy+(e.clientY-midDg.sy)/z;
+  S.conns[midDg.ci].style='custom';
+  updateArrows();
+}
+function midDragEnd(){midDg=null;document.onmousemove=document.onmouseup=null;R();}
 function buildArrowLabels(){
   if(!S.conns.length)return '';
   return S.conns.map((cn,ci)=>{
