@@ -639,20 +639,20 @@ psalms19:{title:'תהלים י״ט (דמו)',verses:[
 ]}};
 
 const C=[
-{n:'בורגנדי',c:'#8B4A5E',b:'#F0DDE3'},
-{n:'ורוד מושתק',c:'#C48B9F',b:'#F5E5EC'},
-{n:'זהב',c:'#9A7A3A',b:'#F5EDD5'},
-{n:'חום חם',c:'#8A6A4A',b:'#F0E5D8'},
-{n:'מרווה',c:'#5A7A50',b:'#E0EDDA'},
-{n:'ירוק עדין',c:'#6A9A6A',b:'#E5F0E5'},
-{n:'כחול אפור',c:'#5A7A8A',b:'#DDE8EE'},
-{n:'תכלת עמוק',c:'#4A6A8A',b:'#D8E5EE'},
-{n:'סגול עדין',c:'#7A5A7A',b:'#EAE0EA'},
-{n:'לילך',c:'#8A6A8A',b:'#EDE5ED'},
-{n:'חלודה',c:'#9A5A3A',b:'#F0DDD5'},
-{n:'אדמה',c:'#7A5A4A',b:'#ECE0D8'},
-{n:'ים',c:'#3A7A7A',b:'#D5EAEA'},
-{n:'ברונזה',c:'#7A6A3A',b:'#EDE5D5'},
+{n:'בורגנדי כהה',c:'#6A2A3E',b:'#EACDD8'},
+{n:'ורוד',c:'#C4789A',b:'#F8E8F0'},
+{n:'כתום חם',c:'#B8652A',b:'#F5DCC8'},
+{n:'זהב כהה',c:'#7A6020',b:'#F0E8C8'},
+{n:'ירוק כהה',c:'#2A6A3A',b:'#D0E8D5'},
+{n:'מרווה בהיר',c:'#78A870',b:'#E8F5E5'},
+{n:'כחול כהה',c:'#2A4A7A',b:'#D0D8F0'},
+{n:'תכלת',c:'#4A90B0',b:'#D8EEF8'},
+{n:'סגול כהה',c:'#5A2A6A',b:'#E0D0EA'},
+{n:'לילך בהיר',c:'#A070B0',b:'#F0E8F5'},
+{n:'חלודה כהה',c:'#8A3A1A',b:'#F0D0C0'},
+{n:'חום בהיר',c:'#A08060',b:'#F0E8DD'},
+{n:'ים כהה',c:'#1A5A6A',b:'#C8E5EA'},
+{n:'ברונזה בהיר',c:'#B09850',b:'#F5F0D8'},
 ];
 
 const STYLES=[
@@ -1529,7 +1529,12 @@ function sDisc(){
   const totalMarks=Object.keys(S.marks).length;
   let html=`<div class="sb-title">גילוי וסימון</div>`;
   html+=`<div style="background:${cv('rgba(139,74,94,.08)','rgba(139,74,94,.12)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(139,74,94,.25)','rgba(139,74,94,.2)')};font-size:12px;line-height:1.6">
-    <b>🖍️ איך מתחילים?</b> בחר צבע למטה → לחץ על מילים בטקסט → זהו!
+    <b>איך מתחילים?</b> בחר צבע למטה → לחץ על מילים בטקסט → זהו!<br>
+    <span style="font-size:11px;opacity:.8;line-height:1.5;display:block;margin-top:6px;border-top:1px solid ${brd()};padding-top:6px">
+    <b>כללי סימון:</b><br>
+    • מילים זהות → סגנון <b>מסגרת מלאה</b> (גוון שונה לכל מילה)<br>
+    • שדות סמנטיים → סגנון <b>הדגשה + צבע</b> (בולד)<br>
+    • שם ה׳ → סימון קבוע אחד (תת-קבוצות לשמות שונים)</span>
   </div>`;
   html+=`<div class="info-box" onclick="S.showDiscInfo=!S.showDiscInfo;R()">
     <b>למה גילוי?</b> ${S.showDiscInfo?'▲':'▼'}
