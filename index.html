@@ -1362,15 +1362,15 @@ function loadDemo(){
       {x:180,y:940,w:160}    // 7 child 5c
     ];
     S.conns=[
-      {id:'cn1',from:'pkg1',to:'pkg2',label:'',emoji:''},
-      {id:'cn2',from:'pkg1',to:'pkg3',label:'',emoji:''},
-      {id:'cn3',from:'pkg2',to:'pkg3',label:'הקבלה: טבע ↔ תורה',emoji:''},
-      {id:'cn4',from:'pkg2',to:'pkg4',label:'',emoji:''},
-      {id:'cn5',from:'pkg3',to:'pkg4',label:'מעבר: מגוף שלישי לגוף ראשון',emoji:''},
-      {id:'cn6',from:'pkg4',to:'pkg5',label:'',emoji:''},
-      {id:'cn7',from:'pkg2',to:'pkg5a',label:'אמרי פי ↔ דיבור הבריאה',emoji:''},
-      {id:'cn8',from:'pkg3',to:'pkg5b',label:'הגיון לבי ↔ תורה',emoji:''},
-      {id:'cn9',from:'pkg4',to:'pkg5c',label:'צורי וגאלי ↔ עבד ה׳',emoji:''}
+      {id:'cn1',from:'pkg1',to:'pkg2',label:'',emoji:'',style:'straight'},
+      {id:'cn2',from:'pkg1',to:'pkg3',label:'',emoji:'',style:'straight'},
+      {id:'cn3',from:'pkg2',to:'pkg3',label:'הקבלה: טבע ↔ תורה',emoji:'',style:'curved'},
+      {id:'cn4',from:'pkg2',to:'pkg4',label:'',emoji:'',style:'elbow'},
+      {id:'cn5',from:'pkg3',to:'pkg4',label:'מעבר: מגוף שלישי לגוף ראשון',emoji:'',style:'elbow'},
+      {id:'cn6',from:'pkg4',to:'pkg5',label:'',emoji:'',style:'straight'},
+      {id:'cn7',from:'pkg2',to:'pkg5a',label:'אמרי פי ↔ דיבור הבריאה',emoji:'',style:'curved'},
+      {id:'cn8',from:'pkg3',to:'pkg5b',label:'הגיון לבי ↔ תורה',emoji:'',style:'curved'},
+      {id:'cn9',from:'pkg4',to:'pkg5c',label:'צורי וגאלי ↔ עבד ה׳',emoji:'',style:'curved'}
     ];
     S.expandedPkgs={'pkg1':true,'pkg2':true,'pkg3':true,'pkg4':true,'pkg5':true};
     S.stickies=[];
@@ -1738,7 +1738,7 @@ function sPkg(){
     </div>
     <div class="sb-sub">יצירת אריזה חדשה</div>
     <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">כותרת</label>
-    <input type="text" id="pkgNewName" class="sb-input" placeholder="כותרת האריזה" value="${S.pkgNewName}" onchange="S.pkgNewName=this.value" style="margin-bottom:8px">
+    <input type="text" id="pkgNewName" class="sb-input" placeholder="כותרת האריזה" value="${S.pkgNewName}" oninput="S.pkgNewName=this.value;const btn=document.querySelector('.sb-btn-green');if(btn){btn.disabled=!this.value||!S.pkgSel.length;btn.style.opacity=btn.disabled?'0.5':'1'}" style="margin-bottom:8px">
     <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">צבע</label>
     <div class="pal" id="pkgNewPal">
       ${C.map((col,i)=>`<div class="pal-c" style="background:${col.c}" data-ci="${i}" onclick="S.pkgNewCi=${i};document.querySelectorAll('#pkgNewPal .pal-c').forEach(el=>el.classList.remove('a'));this.classList.add('a');R()" ${S.pkgNewCi===i?'class="a"':''}></div>`).join('')}
@@ -1816,6 +1816,11 @@ function sCanv(){
         <span style="color:${fc.c};font-weight:700">${fp.emoji||''} ${fp.name}</span><span style="color:${cv('#1C335F','#7A9DC4')}">→</span>
         <span style="color:${tpc.c};font-weight:700">${tp.emoji||''} ${tp.name}</span>
         <span style="flex:1;color:${tc()};font-weight:600;cursor:pointer" onclick="editConnLabel(${ci})">${cn.label||cn.emoji||'לחץ לתווית'}</span>
+        <select style="font-size:9px;border:1px solid ${brd()};border-radius:4px;padding:1px 3px;font-family:'Heebo';background:${bgc()};color:${tc()}" onchange="setConnStyle(${ci},this.value)">
+          <option value="straight" ${(cn.style||'straight')==='straight'?'selected':''}>ישר</option>
+          <option value="curved" ${cn.style==='curved'?'selected':''}>מעוקל</option>
+          <option value="elbow" ${cn.style==='elbow'?'selected':''}>מרפק</option>
+        </select>
         <span style="color:${cv('#ef4444','#8B4A5E')};cursor:pointer;font-size:10px" onclick="delConn(${ci})">✕</span>
       </div>`}).join(''):`<div style="font-size:11px;color:${tcm()};text-align:center;padding:8px">אין קישורים עדיין</div>`}
     <div class="sb-sub" style="margin-top:14px">פתקים על הלוח</div>
@@ -2191,10 +2196,28 @@ function edgePts(fr,tr){
   return {fx,fy,tx,ty,fSide,tSide};
 }
 
-function curvedPath(ep){
-  const {fx,fy,tx,ty}=ep;
+function arrowPath(ep,style){
+  const {fx,fy,tx,ty,fSide,tSide}=ep;
+  if(style==='curved'){
+    const dist=Math.hypot(tx-fx,ty-fy);
+    const off=Math.max(40,dist*0.3);
+    let c1x=fx,c1y=fy,c2x=tx,c2y=ty;
+    if(fSide==='bottom')c1y=fy+off;else if(fSide==='top')c1y=fy-off;
+    else if(fSide==='left')c1x=fx-off;else c1x=fx+off;
+    if(tSide==='top')c2y=ty-off;else if(tSide==='bottom')c2y=ty+off;
+    else if(tSide==='right')c2x=tx+off;else c2x=tx-off;
+    return `M${fx},${fy} C${c1x},${c1y} ${c2x},${c2y} ${tx},${ty}`;
+  }
+  if(style==='elbow'){
+    const mx=(fx+tx)/2,my=(fy+ty)/2;
+    if(fSide==='bottom'||fSide==='top')return `M${fx},${fy} L${fx},${my} L${tx},${my} L${tx},${ty}`;
+    return `M${fx},${fy} L${mx},${fy} L${mx},${ty} L${tx},${ty}`;
+  }
+  // straight (default)
   return `M${fx},${fy} L${tx},${ty}`;
 }
+// backward compat
+function curvedPath(ep){return arrowPath(ep,'straight')}
 
 function buildArrowsSvg(){
   let connLines=S.conns.map((cn,ci)=>{
@@ -2202,7 +2225,7 @@ function buildArrowsSvg(){
     if(fi<0||ti<0)return '';
     const fr=ndRect(fi),tr=ndRect(ti);
     const ep=edgePts(fr,tr);
-    const d=curvedPath(ep);
+    const d=arrowPath(ep,cn.style||'straight');
     return `<path d="${d}" fill="none" stroke="${cv('#8B4A5E','#8B4A5E')}" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowhead)" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
   }).join('');
   return connLines;
@@ -2592,6 +2615,7 @@ function editConnLabel(ci){
   if(val===null)return;saveUndo();cn.label=val;R()
 }
 
+function setConnStyle(ci,style){S.conns[ci].style=style;R();}
 function delConn(ci){saveUndo();S.conns.splice(ci,1);R();toast('קישור נמחק')}
 
 function focusNode(i){
