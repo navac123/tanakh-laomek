@@ -1334,26 +1334,35 @@ function loadDemo(){
         words:['14-7','14-8','14-9'],parentId:'pkg5'}
     ];
     // === ORGANIZATION (Slide 4) ===
-    // nodes must match pkgs count exactly (8 pkgs = 8 nodes)
-    // indices: 0=כותרת, 1=בריאה, 2=תורה, 3=תפילה, 4=חתימה, 5=5a, 6=5b, 7=5c
+    // nodes: 0=כותרת, 1=בריאה, 2=תורה, 3=תפילה, 4=חתימה, 5=5a, 6=5b, 7=5c
     S.nodes=[
-      {x:300,y:20,w:220},   // 0 כותרת
-      {x:40,y:160,w:300},   // 1 שבח מהבריאה
-      {x:400,y:160,w:300},  // 2 שבח מהתורה
-      {x:200,y:400,w:300},  // 3 תפילת עבד ה׳
-      {x:200,y:600,w:320},  // 4 חתימה (parent of 5a,5b,5c)
-      {x:200,y:600,w:160},  // 5 child 5a (rendered inside parent)
-      {x:200,y:600,w:160},  // 6 child 5b
-      {x:200,y:600,w:160}   // 7 child 5c
+      {x:260,y:20,w:180},    // 0 כותרת — top center
+      {x:20,y:180,w:300},    // 1 שבח מהבריאה — left
+      {x:380,y:180,w:300},   // 2 שבח מהתורה — right
+      {x:180,y:680,w:320},   // 3 תפילת עבד ה׳ — below
+      {x:180,y:940,w:320},   // 4 חתימה — bottom (parent)
+      {x:180,y:940,w:160},   // 5 child 5a
+      {x:180,y:940,w:160},   // 6 child 5b
+      {x:180,y:940,w:160}    // 7 child 5c
     ];
     S.conns=[
       {id:'cn1',from:'pkg1',to:'pkg2',label:'',emoji:''},
       {id:'cn2',from:'pkg1',to:'pkg3',label:'',emoji:''},
       {id:'cn3',from:'pkg2',to:'pkg3',label:'הקבלה: טבע ↔ תורה',emoji:''},
-      {id:'cn4',from:'pkg3',to:'pkg4',label:'מעבר: מגוף שלישי לגוף ראשון',emoji:''},
-      {id:'cn5',from:'pkg4',to:'pkg5',label:'',emoji:''}
+      {id:'cn4',from:'pkg2',to:'pkg4',label:'',emoji:''},
+      {id:'cn5',from:'pkg3',to:'pkg4',label:'מעבר: מגוף שלישי לגוף ראשון',emoji:''},
+      {id:'cn6',from:'pkg4',to:'pkg5',label:'',emoji:''}
     ];
-    S.expandedPkgs={'pkg5':true};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';
+    S.expandedPkgs={'pkg1':true,'pkg2':true,'pkg3':true,'pkg4':true,'pkg5':true};
+    S.stickies=[];
+    S.labels=[
+      {id:'lb1',x:260,y:520,text:'הקבלה',size:16},
+      {id:'lb2',x:500,y:520,text:'טבע → תורה\nגוף שלישי → גוף ראשון',size:13}
+    ];
+    S.shapes=[
+      {id:'sh1',type:'frame',x:10,y:160,w:680,h:460,ci:12,text:'שני סוגי השבח'}
+    ];
+    S.cvZoom=100;S.cvTool='move';
     S.notes={
       0:'העימוד מחלק את המזמור ל-5 יחידות. שימו לב לעימוד המיוחד בפסוקים ח-י: מבנה תקבולתי של שלוש עמודות — שם ה׳ + תואר + תוצאה.',
       1:'בחלק הראשון (ב-ז) — לשון דיבור והודעה: מספרים, מגיד, יביע, אומר, יחוה, דעת. הפרדוקס: בריאה ש"מדברת" אך אין לה מילים.\nבחלק השני (ח-י) — מבנה קבוע: שם ה׳ (תורת/עדות/פקודי/מצות/יראת/משפטי) + תואר (תמימה/נאמנה/ישרים/ברה/טהורה/אמת) + תוצאה (משיבת נפש/מחכימת פתי...).',
