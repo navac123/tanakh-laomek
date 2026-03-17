@@ -2058,9 +2058,9 @@ function mCanv(){
         let verseNum='';
         if(firstWord.wi===0){
           const v=vv[firstWord.vi];
-          if(v)verseNum=`<span style="color:${cv('#8A96AA','#6A7590')};font-family:'Heebo';font-size:9px;margin-left:4px;user-select:none">${v.n}</span>`;
+          if(v)verseNum=`<span style="color:${cv('#9A8A92','#7A6A72')};font-family:'Heebo';font-size:9px;position:absolute;right:-24px;top:2px;user-select:none;width:20px;text-align:center">${v.n}</span>`;
         }
-        html+=`<div style="padding-right:${indentPx}px;line-height:${S.lh};position:relative;min-height:1em">`;
+        html+=`<div style="padding-right:${indentPx}px;line-height:${S.lh};position:relative;min-height:1em;margin-right:26px">`;
         html+=verseNum;
         line.words.forEach(item=>{
           if(wordSet.has(item.k)){
@@ -2163,15 +2163,8 @@ function edgePts(fr,tr){
 }
 
 function curvedPath(ep){
-  const {fx,fy,tx,ty,fSide,tSide}=ep;
-  const dist=Math.hypot(tx-fx,ty-fy);
-  const off=Math.max(40,dist*0.35);
-  let c1x=fx,c1y=fy,c2x=tx,c2y=ty;
-  if(fSide==='bottom'){c1y=fy+off}else if(fSide==='top'){c1y=fy-off}
-  else if(fSide==='left'){c1x=fx-off}else{c1x=fx+off}
-  if(tSide==='top'){c2y=ty-off}else if(tSide==='bottom'){c2y=ty+off}
-  else if(tSide==='right'){c2x=tx+off}else{c2x=tx-off}
-  return `M${fx},${fy} C${c1x},${c1y} ${c2x},${c2y} ${tx},${ty}`;
+  const {fx,fy,tx,ty}=ep;
+  return `M${fx},${fy} L${tx},${ty}`;
 }
 
 function buildArrowsSvg(){
@@ -2215,6 +2208,22 @@ function mRead(){
         <div style="font-size:11px;color:${c.c};opacity:.7;margin-bottom:4px">${p.words.length} מילים</div>
         <div style="display:flex;flex-wrap:wrap;gap:3px">${pkgWords.slice(0,8).map(w=>`<span style="background:${bgc()};padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid ${c.c}">${w}</span>`).join('')}</div>
       </div>`}).join('')}
+    </div>
+  </div>`:''}
+  ${S.conns.length?`<div class="read-card">
+    <div class="read-title">מפת קשרים</div>
+    <div style="display:flex;flex-direction:column;gap:8px">
+      ${S.conns.map(cn=>{
+        const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
+        if(!fp||!tp)return '';
+        const fc=C[fp.ci],tpc=C[tp.ci];
+        return `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:${cv('rgba(90,58,74,.04)','rgba(196,139,159,.08)')};border:1px solid ${brd()}">
+          <span style="font-size:12px;font-weight:700;color:${fc.c}">${fp.name}</span>
+          <span style="color:${tc()};font-size:14px">→</span>
+          <span style="font-size:12px;font-weight:700;color:${tpc.c}">${tp.name}</span>
+          ${cn.label?`<span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${cn.label}</span>`:''}
+        </div>`;
+      }).join('')}
     </div>
   </div>`:''}
   ${Object.keys(S.marks).length?`<div class="read-card">
