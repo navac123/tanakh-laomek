@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>תנ״ך לעומק</title>
+<!-- Google Analytics — החלף YOUR_MEASUREMENT_ID במזהה שלך מ-analytics.google.com -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=YOUR_MEASUREMENT_ID"></script>
+<script>
+window.dataLayer=window.dataLayer||[];
+function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','YOUR_MEASUREMENT_ID');
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&family=David+Libre:wght@400;500;700&family=Noto+Serif+Hebrew:wght@400;500;700&family=Secular+One&family=Rubik:wght@400;500;700&family=Assistant:wght@400;600;700&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
 <style>
 
@@ -518,12 +526,21 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes modalPop{from{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}
 
+/* Search */
+.search-wrap{display:flex;align-items:center;gap:4px;position:relative}
+.search-input{width:0;padding:0;border:1.5px solid transparent;border-radius:10px;font-size:12px;font-family:'Heebo';outline:none;background:var(--bg);color:var(--text);transition:all .3s cubic-bezier(.22,1,.36,1);direction:rtl;opacity:0}
+.search-input.open{width:160px;padding:5px 10px;border-color:var(--border);opacity:1}
+.search-input:focus{border-color:var(--earth);box-shadow:0 0 0 3px rgba(28,51,95,.08)}
+.search-input::placeholder{color:var(--text-faint)}
+.w-search-hl{outline:2.5px solid var(--coral);outline-offset:1px;border-radius:4px;animation:gentlePulse 1.5s infinite}
+.search-count{font-size:10px;color:var(--text-faint);font-weight:600;white-space:nowrap}
+
 </style>
 </head>
 <body>
-<div id="app"></div>
-<div class="toast" id="toast"></div>
-<input type="file" id="fileInput" accept=".txt,.docx,.pdf" style="display:none" onchange="handleFile(this)">
+<div id="app" role="application" aria-label="תנ״ך לעומק — כלי לניתוח טקסטים מקראיים"></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="fileInput" accept=".txt,.docx,.pdf" style="display:none" onchange="handleFile(this)" aria-label="העלאת קובץ טקסט">
 
 <script>
 
@@ -602,6 +619,57 @@ psalms131:{title:'תהלים קל״א',verses:[
 {n:'א',t:'שִׁ֥יר הַמַּעֲל֗וֹת לְדָוִ֫ד ה֥׳ לֹא־גָבַ֣הּ לִ֭בִּי וְלֹא־רָמ֣וּ עֵינַ֑י וְלֹא־הִלַּ֓כְתִּי בִּגְדֹל֖וֹת וּבְנִפְלָא֣וֹת מִמֶּֽנִּי'},
 {n:'ב',t:'אִם־לֹ֤א שִׁוִּ֨יתִי וְדוֹמַ֗מְתִּי נַ֭פְשִׁי כְּגָמֻ֣ל עֲלֵ֣י אִמּ֑וֹ כַּ֝גָּמֻ֗ל עָלַ֥י נַפְשִֽׁי'},
 {n:'ג',t:'יַחֵ֣ל יִ֭שְׂרָאֵל אֶל־ה֑׳ מֵ֝עַתָּ֗ה וְעַד־עוֹלָֽם'}
+]},
+genesis1:{title:'בראשית א׳ (א-יג)',verses:[
+{n:'א',t:'בְּרֵאשִׁ֖ית בָּרָ֣א אֱלֹהִ֑ים אֵ֥ת הַשָּׁמַ֖יִם וְאֵ֥ת הָאָֽרֶץ'},
+{n:'ב',t:'וְהָאָ֗רֶץ הָיְתָ֥ה תֹ֨הוּ֙ וָבֹ֔הוּ וְחֹ֖שֶׁךְ עַל־פְּנֵ֣י תְה֑וֹם וְר֣וּחַ אֱלֹהִ֔ים מְרַחֶ֖פֶת עַל־פְּנֵ֥י הַמָּֽיִם'},
+{n:'ג',t:'וַיֹּ֥אמֶר אֱלֹהִ֖ים יְהִ֣י א֑וֹר וַֽיְהִי־אֽוֹר'},
+{n:'ד',t:'וַיַּ֧רְא אֱלֹהִ֛ים אֶת־הָא֖וֹר כִּי־ט֑וֹב וַיַּבְדֵּ֣ל אֱלֹהִ֔ים בֵּ֥ין הָא֖וֹר וּבֵ֥ין הַחֹֽשֶׁךְ'},
+{n:'ה',t:'וַיִּקְרָ֨א אֱלֹהִ֤ים לָאוֹר֙ י֔וֹם וְלַחֹ֖שֶׁךְ קָ֣רָא לָ֑יְלָה וַֽיְהִי־עֶ֥רֶב וַֽיְהִי־בֹ֖קֶר י֥וֹם אֶחָֽד'},
+{n:'ו',t:'וַיֹּ֣אמֶר אֱלֹהִ֔ים יְהִ֥י רָקִ֖יעַ בְּת֣וֹךְ הַמָּ֑יִם וִיהִ֣י מַבְדִּ֔יל בֵּ֥ין מַ֖יִם לָמָֽיִם'},
+{n:'ז',t:'וַיַּ֣עַשׂ אֱלֹהִים֮ אֶת־הָרָקִ֒יעַ֒ וַיַּבְדֵּ֗ל בֵּ֤ין הַמַּ֨יִם֙ אֲשֶׁר֙ מִתַּ֣חַת לָרָקִ֔יעַ וּבֵ֣ין הַמַּ֔יִם אֲשֶׁ֖ר מֵעַ֣ל לָרָקִ֑יעַ וַֽיְהִי־כֵֽן'},
+{n:'ח',t:'וַיִּקְרָ֧א אֱלֹהִ֛ים לָרָקִ֖יעַ שָׁמָ֑יִם וַֽיְהִי־עֶ֥רֶב וַֽיְהִי־בֹ֖קֶר י֥וֹם שֵׁנִֽי'},
+{n:'ט',t:'וַיֹּ֣אמֶר אֱלֹהִ֗ים יִקָּו֨וּ הַמַּ֜יִם מִתַּ֤חַת הַשָּׁמַ֨יִם֙ אֶל־מָק֣וֹם אֶחָ֔ד וְתֵרָאֶ֖ה הַיַּבָּשָׁ֑ה וַֽיְהִי־כֵֽן'},
+{n:'י',t:'וַיִּקְרָ֨א אֱלֹהִ֤ים לַיַּבָּשָׁה֙ אֶ֔רֶץ וּלְמִקְוֵ֥ה הַמַּ֖יִם קָרָ֣א יַמִּ֑ים וַיַּ֥רְא אֱלֹהִ֖ים כִּי־טֽוֹב'},
+{n:'יא',t:'וַיֹּ֣אמֶר אֱלֹהִ֗ים תַּֽדְשֵׁ֤א הָאָ֨רֶץ֙ דֶּ֔שֶׁא עֵ֚שֶׂב מַזְרִ֣יעַ זֶ֔רַע עֵ֣ץ פְּרִ֞י עֹ֤שֶׂה פְּרִי֙ לְמִינ֔וֹ אֲשֶׁ֥ר זַרְעוֹ־ב֖וֹ עַל־הָאָ֑רֶץ וַֽיְהִי־כֵֽן'},
+{n:'יב',t:'וַתּוֹצֵ֨א הָאָ֜רֶץ דֶּ֠שֶׁא עֵ֣שֶׂב מַזְרִ֤יעַ זֶ֨רַע֙ לְמִינֵ֔הוּ וְעֵ֧ץ עֹ֥שֶׂה פְּרִ֛י אֲשֶׁ֥ר זַרְעוֹ־ב֖וֹ לְמִינֵ֑הוּ וַיַּ֥רְא אֱלֹהִ֖ים כִּי־טֽוֹב'},
+{n:'יג',t:'וַֽיְהִי־עֶ֥רֶב וַֽיְהִי־בֹ֖קֶר י֥וֹם שְׁלִישִֽׁי'}
+]},
+devarim6:{title:'דברים ו׳ (שמע)',verses:[
+{n:'ד',t:'שְׁמַ֖ע יִשְׂרָאֵ֑ל ה֥׳ אֱלֹהֵ֖ינוּ ה֥׳ אֶחָֽד'},
+{n:'ה',t:'וְאָ֣הַבְתָּ֔ אֵ֖ת ה֣׳ אֱלֹהֶ֑יךָ בְּכׇל־לְבָבְךָ֥ וּבְכׇל־נַפְשְׁךָ֖ וּבְכׇל־מְאֹדֶֽךָ'},
+{n:'ו',t:'וְהָי֞וּ הַדְּבָרִ֣ים הָאֵ֗לֶּה אֲשֶׁ֨ר אָנֹכִ֧י מְצַוְּךָ֛ הַיּ֖וֹם עַל־לְבָבֶֽךָ'},
+{n:'ז',t:'וְשִׁנַּנְתָּ֣ם לְבָנֶ֔יךָ וְדִבַּרְתָּ֖ בָּ֑ם בְּשִׁבְתְּךָ֤ בְּבֵיתֶ֨ךָ֙ וּבְלֶכְתְּךָ֣ בַדֶּ֔רֶךְ וּֽבְשׇׁכְבְּךָ֖ וּבְקוּמֶֽךָ'},
+{n:'ח',t:'וּקְשַׁרְתָּ֥ם לְא֖וֹת עַל־יָדֶ֑ךָ וְהָי֥וּ לְטֹטָפֹ֖ת בֵּ֥ין עֵינֶֽיךָ'},
+{n:'ט',t:'וּכְתַבְתָּ֛ם עַל־מְזוּזֹ֥ת בֵּיתֶ֖ךָ וּבִשְׁעָרֶֽיךָ'}
+]},
+isaiah2:{title:'ישעיהו ב׳ (א-ה)',verses:[
+{n:'א',t:'הַדָּבָ֛ר אֲשֶׁר־חָזָ֥ה יְשַׁעְיָ֖הוּ בֶּן־אָמ֑וֹץ עַל־יְהוּדָ֖ה וִירוּשָׁלָֽ͏ִם'},
+{n:'ב',t:'וְהָיָ֣ה בְּאַחֲרִ֣ית הַיָּמִ֗ים נָכ֨וֹן יִהְיֶ֜ה הַ֤ר בֵּית־ה֙׳ בְּרֹ֣אשׁ הֶהָרִ֔ים וְנִשָּׂ֖א מִגְּבָע֑וֹת וְנָהֲר֥וּ אֵלָ֖יו כׇּל־הַגּוֹיִֽם'},
+{n:'ג',t:'וְֽהָלְכ֞וּ עַמִּ֣ים רַבִּ֗ים וְאָמְרוּ֙ לְכ֣וּ וְנַעֲלֶ֗ה אֶל־הַ֤ר ה׳ אֶל־בֵּית֙ אֱלֹהֵ֣י יַעֲקֹ֔ב וְיֹרֵ֨נוּ֙ מִדְּרָכָ֔יו וְנֵלְכָ֖ה בְּאֹרְחֹתָ֑יו כִּ֤י מִצִּיּוֹן֙ תֵּצֵ֣א תוֹרָ֔ה וּדְבַר־ה֖׳ מִירוּשָׁלָֽ͏ִם'},
+{n:'ד',t:'וְשָׁפַט֙ בֵּ֣ין הַגּוֹיִ֔ם וְהוֹכִ֖יחַ לְעַמִּ֣ים רַבִּ֑ים וְכִתְּת֨וּ חַרְבוֹתָ֜ם לְאִתִּ֗ים וַחֲנִיתֽוֹתֵיהֶם֙ לְמַזְמֵר֔וֹת לֹא־יִשָּׂ֨א ג֤וֹי אֶל־גּוֹי֙ חֶ֔רֶב וְלֹא־יִלְמְד֥וּ ע֖וֹד מִלְחָמָֽה'},
+{n:'ה',t:'בֵּ֖ית יַעֲקֹ֑ב לְכ֥וּ וְנֵלְכָ֖ה בְּא֥וֹר ה֥׳'}
+]},
+jonah1:{title:'יונה א׳',verses:[
+{n:'א',t:'וַֽיְהִי֙ דְּבַר־ה֔׳ אֶל־יוֹנָ֥ה בֶן־אֲמִתַּ֖י לֵאמֹֽר'},
+{n:'ב',t:'ק֠וּם לֵ֧ךְ אֶל־נִֽינְוֵ֛ה הָעִ֥יר הַגְּדוֹלָ֖ה וּקְרָ֣א עָלֶ֑יהָ כִּֽי־עָלְתָ֥ה רָעָתָ֖ם לְפָנָֽי'},
+{n:'ג',t:'וַיָּ֤קׇם יוֹנָה֙ לִבְרֹ֣חַ תַּרְשִׁ֔ישָׁה מִלִּפְנֵ֖י ה֑׳ וַיֵּ֨רֶד יָפ֜וֹ וַיִּמְצָ֣א אֳנִיָּ֗ה בָּאָ֤ה תַרְשִׁישׁ֙ וַיִּתֵּ֣ן שְׂכָרָ֔הּ וַיֵּ֤רֶד בָּהּ֙ לָב֤וֹא עִמָּהֶם֙ תַּרְשִׁ֔ישָׁה מִלִּפְנֵ֖י ה֥׳'},
+{n:'ד',t:'וַה֗׳ הֵטִ֤יל רֽוּחַ־גְּדוֹלָה֙ אֶל־הַיָּ֔ם וַיְהִ֥י סַֽעַר־גָּד֖וֹל בַּיָּ֑ם וְהָאֳנִיָּ֖ה חִשְּׁבָ֥ה לְהִשָּׁבֵֽר'},
+{n:'ה',t:'וַיִּֽירְא֣וּ הַמַּלָּחִ֗ים וַֽיִּזְעֲקוּ֮ אִ֣ישׁ אֶל־אֱלֹהָיו֒ וַיָּטִ֨לוּ אֶת־הַכֵּלִ֜ים אֲשֶׁ֤ר בָּאֳנִיָּה֙ אֶל־הַיָּ֔ם לְהָקֵ֖ל מֵֽעֲלֵיהֶ֑ם וְיוֹנָ֗ה יָרַד֙ אֶל־יַרְכְּתֵ֣י הַסְּפִינָ֔ה וַיִּשְׁכַּ֖ב וַיֵּרָדַֽם'},
+{n:'ו',t:'וַיִּקְרַ֤ב אֵלָיו֙ רַ֣ב הַחֹבֵ֔ל וַיֹּ֥אמֶר ל֖וֹ מַה־לְּךָ֣ נִרְדָּ֑ם ק֚וּם קְרָ֣א אֶל־אֱלֹהֶ֔יךָ אוּלַ֞י יִתְעַשֵּׁ֧ת הָאֱלֹהִ֛ים לָ֖נוּ וְלֹ֥א נֹאבֵֽד'}
+]},
+kohelet1:{title:'קהלת א׳ (א-יא)',verses:[
+{n:'א',t:'דִּבְרֵ֣י קֹהֶ֔לֶת בֶּן־דָּוִ֖ד מֶ֥לֶךְ בִּירוּשָׁלָֽ͏ִם'},
+{n:'ב',t:'הֲבֵ֤ל הֲבָלִים֙ אָמַ֣ר קֹהֶ֔לֶת הֲבֵ֥ל הֲבָלִ֖ים הַכֹּ֥ל הָֽבֶל'},
+{n:'ג',t:'מַה־יִּתְר֖וֹן לָֽאָדָ֑ם בְּכׇל־עֲמָל֔וֹ שֶֽׁיַּעֲמֹ֖ל תַּ֥חַת הַשָּֽׁמֶשׁ'},
+{n:'ד',t:'דּ֤וֹר הֹלֵךְ֙ וְד֣וֹר בָּ֔א וְהָאָ֖רֶץ לְעוֹלָ֥ם עֹמָֽדֶת'},
+{n:'ה',t:'וְזָרַ֥ח הַשֶּׁ֖מֶשׁ וּבָ֣א הַשָּׁ֑מֶשׁ וְאֶ֨ל־מְקוֹמ֔וֹ שׁוֹאֵ֛ף זוֹרֵ֥חַ ה֖וּא שָֽׁם'},
+{n:'ו',t:'הוֹלֵךְ֙ אֶל־דָּר֔וֹם וְסוֹבֵ֖ב אֶל־צָפ֑וֹן סוֹבֵ֤ב סֹבֵב֙ הוֹלֵ֣ךְ הָר֔וּחַ וְעַל־סְבִיבֹתָ֖יו שָׁ֥ב הָרֽוּחַ'},
+{n:'ז',t:'כׇּל־הַנְּחָלִ֣ים הֹלְכִ֣ים אֶל־הַיָּ֗ם וְהַיָּם֙ אֵינֶ֣נּוּ מָלֵ֔א אֶל־מְק֗וֹם שֶׁ֤הַנְּחָלִים֙ הֹלְכִ֔ים שָׁ֖ם הֵ֥ם שָׁבִ֖ים לָלָֽכֶת'},
+{n:'ח',t:'כׇּל־הַדְּבָרִ֣ים יְגֵעִ֔ים לֹא־יוּכַ֥ל אִ֖ישׁ לְדַבֵּ֑ר לֹא־תִשְׂבַּ֥ע עַ֨יִן֙ לִרְא֔וֹת וְלֹא־תִמָּלֵ֥א אֹ֖זֶן מִשְּׁמֹֽעַ'},
+{n:'ט',t:'מַה־שֶּׁהָיָה֙ ה֣וּא שֶׁיִּהְיֶ֔ה וּמַה־שֶׁנַּעֲשָׂ֖ה ה֣וּא שֶׁיֵּעָשֶׂ֑ה וְאֵ֥ין כׇּל־חָדָ֖שׁ תַּ֥חַת הַשָּֽׁמֶשׁ'},
+{n:'י',t:'יֵ֥שׁ דָּבָ֛ר שֶׁיֹּאמַ֥ר רְאֵה־זֶ֖ה חָדָ֣שׁ ה֑וּא כְּבָר֙ הָיָ֣ה לְעֹֽלָמִ֔ים אֲשֶׁ֥ר הָיָ֖ה מִלְּפָנֵֽנוּ'},
+{n:'יא',t:'אֵ֥ין זִכְר֖וֹן לָרִאשֹׁנִ֑ים וְגַ֨ם לָאַחֲרֹנִ֜ים שֶׁיִּהְי֗וּ לֹא־יִהְיֶ֤ה לָהֶם֙ זִכָּר֔וֹן עִ֥ם שֶׁיִּהְי֖וּ לָאַחֲרֹנָֽה'}
 ]}};
 
 const C=[
@@ -662,8 +730,9 @@ let S={doc:'psalms1',step:0,darkMode:false,
   pkgs:[],pkgSel:[],pkgEdit:null,pkgNewName:'',pkgNewEmoji:'',pkgNewStyle:'fill',pkgNewCi:0,
   nodes:[],conns:[],connMode:null,expandedPkgs:{},
   stickies:[],labels:[],shapes:[],cvZoom:100,cvTool:'move',shapeColor:0,
-  showUpload:false,showExport:false,showInfo:false,showDiscInfo:false,showPkgInfo:false,showCanvInfo:false,
+  showUpload:false,showExport:false,showInfo:false,showDiscInfo:false,showPkgInfo:false,showCanvInfo:false,showKeys:false,
   selWords:[],
+  searchQuery:'',searchOpen:false,
   splash:true,
   hiddenDocs:[],
   notes:{0:'',1:'',2:'',3:'',4:''},
@@ -760,6 +829,21 @@ function initDark(){
   try{const v=localStorage.getItem('moovanly_dark');if(v==='1'){S.darkMode=true;document.documentElement.classList.add('dark')}}catch(e){}
 }
 initDark();
+
+// Search
+function toggleSearch(){S.searchOpen=!S.searchOpen;if(!S.searchOpen)S.searchQuery='';R();if(S.searchOpen)requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el)el.focus()})}
+function countSearchMatches(){
+  if(!S.searchQuery)return 0;
+  const q=stripDiacritics(S.searchQuery);
+  let count=0;
+  D().verses.forEach(v=>{v.t.split(/\s+/).forEach(w=>{if(stripDiacritics(w).includes(q))count++})});
+  return count;
+}
+function isSearchMatch(w){
+  if(!S.searchQuery)return false;
+  return stripDiacritics(w).includes(stripDiacritics(S.searchQuery));
+}
+
 // Color helpers for JS inline styles
 function cv(lightVal,darkVal){return S.darkMode?darkVal:lightVal}
 function tc(){return S.darkMode?'#E8ECF4':'#1C335F'}
@@ -895,8 +979,8 @@ function R(){
   }
   document.getElementById('app').innerHTML=`
     ${topBar()}${stepsBar()}
-    <div class="wrap">${side()}<div class="main">${mainContent()}</div></div>
-    ${S.showUpload?modal():''}${S.showExport?exportModal():''}
+    <div class="wrap">${side()}<div class="main" role="main" aria-label="אזור תוכן ראשי">${mainContent()}</div></div>
+    ${S.showUpload?modal():''}${S.showExport?exportModal():''}${S.showKeys?keysModal():''}
     ${S.showNotebook?notebookOverlay():''}${notebookPanel()}`;
   if(S.step===3)requestAnimationFrame(()=>{ensureArrowMarker();updateArrows();expandCanvas()});
   if(S.showNotebook)requestAnimationFrame(()=>{const ta=document.getElementById('nbArea');if(ta)ta.focus()});
@@ -1111,7 +1195,7 @@ function topBar(){
   const darkIcon=S.darkMode
     ?`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>`
     :`<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>`;
-  return `<div class="topbar">
+  return `<div class="topbar" role="banner" aria-label="סרגל עליון">
     <div class="logo" onclick="S.splash=true;R()" style="cursor:pointer" title="מסך פתיחה">${appLogo(24)} תנ״ך לעומק</div>
     <div class="top-docs">
       ${Object.entries(TEXTS).filter(([k])=>!(S.hiddenDocs||[]).includes(k)).map(([k,v])=>`<div class="top-doc ${S.doc===k?'a':''}" onclick="sw('${k}')"><span>${v.title}</span>${k!==S.doc?`<span class="top-doc-x" onclick="event.stopPropagation();${k==='custom'?`deleteCustomText()`:`hideDoc('${k}')`}" title="${k==='custom'?'מחק טקסט':'הסר'}">×</span>`:''}</div>`).join('')}
@@ -1121,6 +1205,13 @@ function topBar(){
       ${FONTS.map(f=>`<option value="${f.id}" ${S.font===f.id?'selected':''} style="font-family:${f.css}">${f.name}</option>`).join('')}
     </select>
     <div style="display:flex;gap:4px;margin-right:auto;align-items:center">
+      <div class="search-wrap">
+        <div style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${S.searchOpen?'var(--earth-glass-hover)':glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleSearch()" title="חיפוש (Ctrl+F)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        </div>
+        <input type="text" class="search-input ${S.searchOpen?'open':''}" id="searchInput" placeholder="חיפוש..." value="${S.searchQuery}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
+        ${S.searchQuery?`<span class="search-count">${countSearchMatches()} תוצאות</span>`:''}
+      </div>
       <div class="nb-toggle ${S.showNotebook?'open':''}" onclick="toggleNotebook()" title="מחברת מחשבות">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         מחברת
@@ -1129,6 +1220,7 @@ function topBar(){
       <div class="upload-btn" onclick="S.showUpload=true;R()">העלאה</div>
       <div style="padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};font-family:'Heebo';transition:all .2s" onclick="saveWork()" title="שמירת עבודה">שמירה</div>
       <div style="padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};font-family:'Heebo';transition:all .2s" onclick="S.showExport=true;R()" title="ייצוא">ייצוא</div>
+      <div style="padding:5px 9px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tcm()};display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px;font-weight:700" onclick="S.showKeys=true;R()" title="קיצורי מקלדת (?)">?</div>
     </div>
   </div>`;
 }
@@ -1143,9 +1235,9 @@ function stepHasWork(idx){
 }
 function stepsBar(){
   const s=[{l:'עימוד'},{l:'גילוי'},{l:'אריזה'},{l:'ארגון'},{l:'קריאה'}];
-  return `<div class="steps">${s.map((x,idx)=>{
+  return `<div class="steps" role="tablist" aria-label="שלבי העבודה">${s.map((x,idx)=>{
     const done=stepHasWork(idx);
-    return `<div class="st ${idx===S.step?'a':idx<S.step?'d':''}" data-step="${idx}" onclick="S.step=${idx};R()">
+    return `<div class="st ${idx===S.step?'a':idx<S.step?'d':''}" data-step="${idx}" onclick="S.step=${idx};R()" role="tab" aria-selected="${idx===S.step}" aria-label="שלב ${idx+1}: ${x.l}${done?' (הושלם)':''}" tabindex="${idx===S.step?'0':'-1'}">
       <span class="st-i">${done?'✓':(idx+1)}</span><span>${x.l}</span>
     </div>`;
   }).join('')}</div>`;
@@ -1210,7 +1302,8 @@ function notebookPanel(){
 
 function side(){
   const fn=[sImud,sDisc,sPkg,sCanv,sRead];
-  return `<div class="side">${fn[S.step]()}</div>`;
+  const stepNames=['עימוד','גילוי','אריזה','ארגון','קריאה'];
+  return `<div class="side" role="complementary" aria-label="כלים — ${stepNames[S.step]}">${fn[S.step]()}</div>`;
 }
 
 function sImud(){
@@ -1444,6 +1537,10 @@ function sPkg(){
       <div class="sb-sub">אריזות (${S.pkgs.length})</div>
       ${S.pkgs.map((pkg,pi)=>{const col=C[pkg.ci]||C[0];return `
         <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${col.b};border:1.5px solid ${col.c}">
+          <div style="display:flex;flex-direction:column;gap:1px">
+            <span style="cursor:pointer;font-size:10px;color:${col.c};opacity:${pi>0?'.7':'.2'};line-height:1" onclick="${pi>0?`movePkg(${pi},-1)`:''}" title="הזז למעלה">▲</span>
+            <span style="cursor:pointer;font-size:10px;color:${col.c};opacity:${pi<S.pkgs.length-1?'.7':'.2'};line-height:1" onclick="${pi<S.pkgs.length-1?`movePkg(${pi},1)`:''}" title="הזז למטה">▼</span>
+          </div>
           <span style="font-size:14px">${pkg.emoji||''}</span>
           <span style="font-size:12px;font-weight:700;color:${col.c};flex:1">${pkg.name}</span>
           <span style="font-size:10px;color:${col.c};opacity:.7">${pkg.words.length} מילים</span>
@@ -1570,7 +1667,8 @@ function wrd(w,vi,wi,mode){
   }
   const tip=getWordTip(w);
   const tipHtml=tip?`<span class="w-tip">${tip}</span>`:'';
-  return `<span class="${cls}" style="${st};position:relative" ${oc}>${w}${tipHtml}</span>`;
+  const searchCls=isSearchMatch(w)?' w-search-hl':'';
+  return `<span class="${cls}${searchCls}" style="${st};position:relative" ${oc}>${w}${tipHtml}</span>`;
 }
 
 // ===== RENDER WITH LAYOUT — verse numbers as absolute, outside text flow =====
@@ -2016,7 +2114,10 @@ function imudAction(action){
 }
 
 document.addEventListener('keydown',function(e){
+  if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();toggleSearch();return;}
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if(e.key==='?'||e.key==='/'){S.showKeys=!S.showKeys;R();return;}
+  if(e.key==='Escape'&&S.showKeys){S.showKeys=false;R();return;}
   if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();return;}
   if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();return;}
   if(S.step!==0)return;
@@ -2147,6 +2248,15 @@ function mkPkg(){
   S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];S.nodes=[];
   R();toast('אריזה נוצרה');
 }
+function movePkg(idx,dir){
+  const newIdx=idx+dir;
+  if(newIdx<0||newIdx>=S.pkgs.length)return;
+  saveUndo();
+  const tmp=S.pkgs[idx];S.pkgs[idx]=S.pkgs[newIdx];S.pkgs[newIdx]=tmp;
+  // Also swap nodes if they exist
+  if(S.nodes.length===S.pkgs.length){const tn=S.nodes[idx];S.nodes[idx]=S.nodes[newIdx];S.nodes[newIdx]=tn;}
+  R();
+}
 function deletePkg(idx){
   saveUndo();const pkg=S.pkgs[idx];
   S.pkgs.forEach(p=>{if(p.parentId===pkg.id)p.parentId=null});
@@ -2165,7 +2275,13 @@ function ds(e,i){if(S.connMode)return;e.preventDefault();dragged=false;dg={i,sx:
 function dts(e,i){if(S.connMode)return;const t=e.touches[0];dragged=false;dg={i,sx:t.clientX,sy:t.clientY,ox:S.nodes[i].x,oy:S.nodes[i].y};document.ontouchmove=e=>{const t=e.touches[0];dmxy(t.clientX,t.clientY)};document.ontouchend=de}
 function dm(e){dmxy(e.clientX,e.clientY)}
 function dmxy(x,y){if(!dg)return;dragged=true;const z=S.cvZoom/100;const el=document.getElementById('nd'+dg.i);if(el){const nx=Math.max(0,dg.ox+(x-dg.sx)/z),ny=Math.max(0,dg.oy+(y-dg.sy)/z);el.style.left=nx+'px';el.style.top=ny+'px';S.nodes[dg.i].x=nx;S.nodes[dg.i].y=ny;updateArrows()}}
-function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){S.nodes[dg.i].x=Math.max(0,parseInt(el.style.left));S.nodes[dg.i].y=Math.max(0,parseInt(el.style.top))}dg=null;document.onmousemove=document.onmouseup=document.ontouchmove=document.ontouchend=null;if(dragged)expandCanvas()}
+function snapToGrid(v,gridSize){return Math.round(v/gridSize)*gridSize}
+function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
+  const gx=snapToGrid(Math.max(0,parseInt(el.style.left)),20);
+  const gy=snapToGrid(Math.max(0,parseInt(el.style.top)),20);
+  S.nodes[dg.i].x=gx;S.nodes[dg.i].y=gy;
+  el.style.left=gx+'px';el.style.top=gy+'px';
+}dg=null;document.onmousemove=document.onmouseup=document.ontouchmove=document.ontouchend=null;if(dragged){updateArrows();expandCanvas()}}
 
 // Resize
 let rg=null;
@@ -2378,7 +2494,14 @@ function sdmxy(x,y){
   const el=document.getElementById(prefix+sdg.i);
   if(el){el.style.left=arr[sdg.i].x+'px';el.style.top=arr[sdg.i].y+'px';}
 }
-function sde(){sdg=null;document.onmousemove=document.onmouseup=document.ontouchmove=document.ontouchend=null;expandCanvas();}
+function sde(){
+  if(sdg){
+    const arr=sdg.type==='sticky'?S.stickies:sdg.type==='shape'?(S.shapes||[]):S.labels;
+    arr[sdg.i].x=snapToGrid(arr[sdg.i].x,20);
+    arr[sdg.i].y=snapToGrid(arr[sdg.i].y,20);
+  }
+  sdg=null;document.onmousemove=document.onmouseup=document.ontouchmove=document.ontouchend=null;expandCanvas();
+}
 
 function cvToolbar(){
   const icons={
@@ -2497,6 +2620,33 @@ function notesExportHTML(){
   return html;
 }
 
+function keysModal(){
+  const kbdStyle=`display:inline-block;background:${cv('#EFEFEF','#1E2845')};border:1.5px solid ${brd()};border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;font-family:monospace;min-width:28px;text-align:center;color:${tc()}`;
+  const row=(keys,desc)=>`<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid ${brd()}"><div style="min-width:140px;display:flex;gap:4px;justify-content:flex-end">${keys.map(k=>`<kbd style="${kbdStyle}">${k}</kbd>`).join(' ')}</div><div style="font-size:13px;color:${tc()}">${desc}</div></div>`;
+  return `<div class="modal-bg" onclick="S.showKeys=false;R()">
+    <div class="modal" onclick="event.stopPropagation()" style="max-width:520px;text-align:right">
+      <h3 style="margin-bottom:4px">⌨️ קיצורי מקלדת</h3>
+      <p style="font-size:12px;color:${tcm()};margin-bottom:14px">קיצורים זמינים לשלבי העבודה השונים</p>
+      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin-bottom:6px">כללי</div>
+      ${row(['Ctrl','F'],'חיפוש בטקסט')}
+      ${row(['Ctrl','Z'],'ביטול פעולה אחרונה')}
+      ${row(['Ctrl','Y'],'שחזור פעולה')}
+      ${row(['?'],'פתיחת חלון זה')}
+      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב עימוד</div>
+      ${row(['Enter'],'שבירת שורה לפני המילה הנבחרת')}
+      ${row(['Shift','Enter'],'פסקה חדשה')}
+      ${row(['Tab'],'הזחה ימינה')}
+      ${row(['Shift','Tab'],'הזחה שמאלה')}
+      ${row(['Delete'],'הסרת שבירת שורה')}
+      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב גילוי</div>
+      ${row(['לחיצה'],'סמן/הסר סימון ממילה')}
+      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב ארגון</div>
+      ${row(['גרירה'],'הזזת חבילות על הלוח')}
+      <div style="margin-top:14px"><div class="sb-btn sb-btn-out" onclick="S.showKeys=false;R()">סגור</div></div>
+    </div>
+  </div>`;
+}
+
 function exportModal(){
   return `<div class="export-bg" onclick="S.showExport=false;R()">
     <div class="export-modal" onclick="event.stopPropagation()">
@@ -2506,6 +2656,10 @@ function exportModal(){
         <div class="export-btn" onclick="exportPrint()"><span style="font-size:18px;color:${tc()}">📄 PDF</span><br><span style="font-size:11px">הדפסה / PDF</span></div>
         <div class="export-btn" onclick="exportImage()"><span style="font-size:18px;color:${tc()}">🖼️ PNG</span><br><span style="font-size:11px">תמונה</span></div>
         <div class="export-btn" onclick="exportHTML()"><span style="font-size:18px;color:${tc()}">💾 HTML</span><br><span style="font-size:11px">שמירה</span></div>
+        <div class="export-btn" onclick="exportJSON()"><span style="font-size:18px;color:${tc()}">📋 JSON</span><br><span style="font-size:11px">שיתוף עבודה</span></div>
+      </div>
+      <div style="margin-top:8px">
+        <div class="export-btn" style="width:100%" onclick="importJSON()"><span style="font-size:16px;color:${tc()}">📥 ייבוא JSON</span><br><span style="font-size:11px">טען עבודה שקיבלת מאחרים</span></div>
       </div>
       <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
         <p style="font-size:12px;font-weight:700;margin-bottom:8px;color:${tc()}">📤 שיתוף האפליקציה עם חברים</p>
@@ -2648,6 +2802,56 @@ function doImageExport(){
     if(cvInner){S.cvZoom=origZoom;R()}
     toast('שגיאה: '+err.message);
   });
+}
+
+function exportJSON(){
+  S.showExport=false;R();
+  try{
+    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+      fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+      vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+      pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
+    if(TEXTS.custom)data.customText=TEXTS.custom;
+    const json=JSON.stringify(data,null,2);
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='tanakh-laomek-'+D().title+'.json';
+    a.click();
+    toast('קובץ JSON נשמר — ניתן לשתף עם אחרים!');
+  }catch(e){toast('שגיאה בייצוא JSON');}
+}
+function importJSON(){
+  S.showExport=false;R();
+  const input=document.createElement('input');
+  input.type='file';input.accept='.json';
+  input.onchange=function(){
+    const file=input.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(e){
+      try{
+        const d=JSON.parse(e.target.result);
+        if(d.customText)TEXTS.custom=d.customText;
+        S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
+        S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
+        S.fs=d.fs||22;S.lh=d.lh||1.5;
+        S.cats=d.cats||[];S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
+        S.marks=d.marks||{};S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
+        if(d.darkMode!==undefined)S.darkMode=d.darkMode;
+        S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
+        S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
+        S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};
+        S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
+        S.splash=false;
+        document.documentElement.classList.toggle('dark',S.darkMode);
+        R();toast('עבודה יובאה בהצלחה!');startAutoSave();
+      }catch(err){toast('שגיאה בקריאת הקובץ: '+err.message);}
+    };
+    reader.readAsText(file);
+  };
+  input.click();
 }
 
 function exportHTML(){
@@ -2799,6 +3003,215 @@ function getWordTip(w){
     'לילה':'תקופת חושך',
     'ערב':'שקיעה, סוף היום',
     'בקר':'זריחה, תחילת היום',
+    // תהלים — מילים נפוצות
+    'אשרי':'מאושר, ברוך',
+    'רשעים':'חוטאים, עושי רע',
+    'חטאים':'בעלי עבירות',
+    'לצים':'מלגלגים, בוזים',
+    'תורת':'חוק, הוראה, לימוד',
+    'חפצו':'רצונו, משאלתו',
+    'יהגה':'יהרהר, ילמד בלחש',
+    'שתול':'נטוע, מושרש',
+    'פלגי':'תעלות, ערוצי מים',
+    'פריו':'תוצרתו, יבולו',
+    'יבול':'נובל, נקמל',
+    'יצליח':'יפרח, ישגשג',
+    'כמץ':'כקש, כפסולת',
+    'תדפנו':'תסחפנו, תפזרנו',
+    'יקמו':'יעמדו, יתקיימו',
+    'משפט':'דין, שפיטה',
+    'עדת':'קהילת, חבורת',
+    'צדיקים':'ישרים, בעלי מוסר',
+    'יודע':'מכיר, שומר',
+    'דרך':'נתיב, אורח חיים',
+    'תאבד':'תיכחד, תיהרס',
+    'רעי':'רועה שלי, מנהיגי',
+    'אחסר':'אהיה חסר, יחסר לי',
+    'נאות':'מקומות, שדות',
+    'דשא':'עשב ירוק, מרעה',
+    'ירביצני':'ישכיבני, ינוחני',
+    'מנחות':'שקטים, רגועים',
+    'ינהלני':'יוביל אותי, ינחני',
+    'ישובב':'ישיב, יחזק',
+    'ינחני':'יובילני, ידריכני',
+    'מעגלי':'נתיבי, דרכי',
+    'צדק':'יושר, צדקה',
+    'למען':'בשביל, לטובת',
+    'שמו':'שם ה׳, כבודו',
+    'גיא':'עמק, עמק צר',
+    'צלמות':'חשכת מוות, אפלה',
+    'אירא':'אפחד',
+    'רע':'רעה, פורענות',
+    'עמדי':'איתי, לצידי',
+    'שבטך':'מקל הרועה שלך',
+    'משענתך':'מקל התמיכה שלך',
+    'ינחמני':'ינחמו אותי, יעודדוני',
+    'תערך':'תכין, תסדר',
+    'שלחן':'מקום אכילה, שולחן',
+    'צררי':'אויבי, מציקי',
+    'דשנת':'משחת, שפכת שמן',
+    'כוסי':'גביעי, חלקי',
+    'רויה':'מלא ושופע',
+    'ירדפוני':'ילוו אותי, ירדפו אחרי',
+    'חיי':'ימי חיי',
+    'ושבתי':'ואשוב, ואשב',
+    'לארך':'למשך, לאורך',
+    // תהלים צ׳
+    'תפלה':'בקשה, תחינה',
+    'למשה':'של משה',
+    'מעון':'מקום מגורים, מחסה',
+    'בטרם':'לפני, קודם',
+    'הרים':'הרים, גבעות',
+    'ילדו':'נוצרו, באו לעולם',
+    'ותחולל':'יצרת, ילדת',
+    'תבל':'עולם, כדור הארץ',
+    'מעולם':'מאז ומתמיד',
+    'דכא':'שחיקה, אבק',
+    'שובו':'חזרו, התגלגלו',
+    'אלף':'1000',
+    'אתמול':'יום שעבר',
+    'אשמורה':'משמרת לילה (שליש)',
+    'זרמתם':'שטפת אותם',
+    'שנה':'שינה, תרדמה',
+    'חציר':'עשב, דשא',
+    'יציץ':'יפרח, יצמח',
+    'יחלף':'ישתנה, יעבור',
+    'ימולל':'יבול, יקמול',
+    'ויבש':'ייבש, ייקמל',
+    'כלינו':'נכלינו, תמנו',
+    'אפך':'כעסך, זעמך',
+    'חמתך':'חרון אפך, זעמך',
+    'נבהלנו':'נבעתנו, נפחדנו',
+    'עוונתינו':'חטאינו, עבירותינו',
+    'עלמנו':'סודותינו, הנסתרות שלנו',
+    'למאור':'לאור, לנוכח',
+    'פנו':'עברו, חלפו',
+    'עברתך':'כעסך, זעמך',
+    'הגה':'מלמול, הגייה שקטה',
+    'גבורת':'כוח, עוצמה',
+    'רהבם':'גאוותם, רוב ימיהם',
+    'עמל':'טרחה, מאמץ',
+    'און':'שווא, הבל',
+    'גז':'חלף, עבר מהר',
+    'חיש':'במהרה, במהירות',
+    'ונעפה':'ונעוף, נעלם',
+    'יראתך':'יראת הכבוד כלפיך',
+    'למנות':'לספור, להעריך',
+    'נביא':'נביא, נשיג',
+    'לבב':'לב, מחשבה',
+    'חכמה':'תבונה, דעת',
+    'שובה':'חזור, שוב',
+    'הנחם':'רחם, התנחם',
+    'עבדיך':'משרתיך, נאמניך',
+    'שבענו':'מלא אותנו, הרוונו',
+    'חסדך':'אהבתך, טובך',
+    'נרננה':'נשיר ברינה',
+    'ונשמחה':'ונהיה שמחים',
+    'שמחנו':'תן לנו שמחה',
+    'עניתנו':'ייסרת אותנו',
+    'ראינו':'חווינו, ראינו',
+    'רעה':'פורענות, צרה',
+    'יראה':'ייגלה, יתגלה',
+    'פעלך':'מעשיך, פעולתך',
+    'הדרך':'תפארתך, זוהרך',
+    'נעם':'יופי, נועם',
+    'כוננה':'חזק, ייסד',
+    'כוננהו':'חזק אותו, קיים אותו',
+    // תהלים ק׳
+    'לתודה':'להודיה, לתודה',
+    'הריעו':'הרימו קול, צהלו',
+    'עבדו':'שרתו, עבדו',
+    'בשמחה':'בששון, בגיל',
+    'באו':'היכנסו, בואו',
+    'ברננה':'בשירה, בזמרה',
+    'דעו':'הכירו, דעו',
+    'עשנו':'בראנו, יצר אותנו',
+    'אנחנו':'אנו, עמו',
+    'עמו':'העם שלו',
+    'צאן':'כבשים, עדר',
+    'מרעיתו':'שהוא רועה, מנהל',
+    'שעריו':'פתחי בית המקדש',
+    'חצרתיו':'חצרות המקדש',
+    'בתהלה':'בשירי שבח',
+    'הודו':'הודו, תנו תודה',
+    'ברכו':'שבחו, ברכו',
+    'שמו':'שם ה׳',
+    'לעולם':'תמיד, לנצח',
+    'חסדו':'אהבתו, נאמנותו',
+    'אמונתו':'נאמנותו, אמיתו',
+    // תהלים קכ״א
+    'שיר':'זמר, שיר',
+    'למעלות':'לעליה לירושלים',
+    'אשא':'ארים, אשא',
+    'עיני':'מבטי, עיני',
+    'ההרים':'ההרים, הגבעות',
+    'מאין':'מהיכן, מאיפה',
+    'יבא':'יגיע, יבוא',
+    'עזרי':'עזרתי, ישועתי',
+    'עשה':'בורא, יוצר',
+    'שמים':'רקיע, שמיים',
+    'וארץ':'והאדמה',
+    'יתן':'ייתן, יאפשר',
+    'למוט':'להתנודד, ליפול',
+    'רגלך':'כף רגלך, צעדך',
+    'ינום':'יירדם, יתנמנם',
+    'שמרך':'שומרך, מגינך',
+    'יישן':'ירדם בשינה עמוקה',
+    'שומר':'מגן, שומר',
+    'צלך':'הגנתך, צילך',
+    'יד':'כף יד, צד',
+    'ימינך':'הצד הימני, הצד החזק',
+    'יומם':'ביום, בשעות היום',
+    'השמש':'שמש, החמה',
+    'יככה':'תכה, תזיק',
+    'ירח':'לבנה, הירח',
+    'בלילה':'בשעות הלילה',
+    'ישמרך':'ישמור עליך',
+    'מכל':'מכל דבר',
+    'ישמר':'יגן, ישמור',
+    'נפשך':'חייך, רוחך',
+    'צאתך':'יציאתך',
+    'ובואך':'וכניסתך',
+    'מעתה':'מעכשיו, מרגע זה',
+    'עולם':'נצח, לתמיד',
+    // תהלים קל״א
+    'גבה':'התנשא, הגדיל',
+    'לבי':'ליבי, מחשבתי',
+    'רמו':'התנשאו, הסתכלו למעלה',
+    'הלכתי':'צעדתי, התנהלתי',
+    'בגדלות':'בדברים גדולים ממני',
+    'ובנפלאות':'בדברים נעלים ונשגבים',
+    'ממני':'ממה שביכולתי',
+    'שויתי':'השקטתי, איזנתי',
+    'ודוממתי':'והשתקתי, הרגעתי',
+    'כגמל':'כתינוק שנגמל',
+    'עלי':'עליי',
+    'אמו':'אמא שלו',
+    'יחל':'יקווה, יצפה',
+    // תהלים ס״ז
+    'יחננו':'יחון אותנו, ירחם',
+    'ויברכנו':'ויברך אותנו',
+    'יאר':'יאיר, יזריח',
+    'פניו':'פני ה׳, נוכחותו',
+    'אתנו':'עמנו, לצידנו',
+    'סלה':'הפסקה, מילוי מוזיקלי',
+    'לדעת':'כדי לדעת, להכיר',
+    'דרכך':'דרכך, מהלכך',
+    'גוים':'עמים, אומות העולם',
+    'ישועתך':'ישועתך, הצלתך',
+    'יודוך':'יודו לך, ישבחוך',
+    'עמים':'אומות, לאומים',
+    'כלם':'כולם, כל האנשים',
+    'ישמחו':'ישישו, יעלזו',
+    'וירננו':'וירנו, ישירו',
+    'לאמים':'עמים, לאומים',
+    'תשפט':'תדון, תשפוט',
+    'מישר':'ביושר, בצדק',
+    'תנחם':'תנהיגם, תדריכם',
+    'יבולה':'תנובתה, פירותיה',
+    'ויראו':'ויפחדו, ויירשמו',
+    'אותו':'ממנו, אותו',
+    'אפסי':'קצוות, סוף',
   };
   return tips[clean]||null;
 }
