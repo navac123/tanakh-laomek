@@ -272,8 +272,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .cv-svg path:hover{stroke-width:3!important}
 .c-node{position:absolute;border-radius:14px;padding:12px 16px;cursor:grab;border:2px solid;min-width:140px;max-width:280px;box-shadow:var(--node-shadow);transition:all .25s cubic-bezier(.22,1,.36,1);z-index:2;user-select:none}
 .c-node:hover{box-shadow:0 8px 24px rgba(28,51,95,.14);z-index:10;transform:translateY(-2px)}
-.c-child-wrap{margin-top:8px;padding-top:8px;display:flex;flex-direction:column;gap:6px}
-.c-child-inner{border-radius:10px;padding:8px 12px;border:1.5px solid;position:relative;cursor:pointer;transition:box-shadow .2s}
+.c-child-wrap{margin-top:8px;padding-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;gap:6px}
+.c-child-inner{border-radius:10px;padding:8px 12px;border:1.5px solid;position:relative;cursor:pointer;transition:box-shadow .2s;flex:1;min-width:140px}
 .c-child-inner:hover{box-shadow:var(--node-shadow)}
 .c-child-inner .c-node-t{font-size:12px}
 .c-child-inner .c-node-w{font-size:12px}
@@ -1356,7 +1356,7 @@ function loadDemo(){
       {x:20,y:180,w:300},    // 1 שבח מהבריאה — left
       {x:380,y:180,w:300},   // 2 שבח מהתורה — right
       {x:180,y:680,w:320},   // 3 תפילת עבד ה׳ — below
-      {x:180,y:940,w:320},   // 4 חתימה — bottom (parent)
+      {x:40,y:940,w:640},    // 4 חתימה — bottom (wide for horizontal children)
       {x:180,y:940,w:160},   // 5 child 5a
       {x:180,y:940,w:160},   // 6 child 5b
       {x:180,y:940,w:160}    // 7 child 5c
