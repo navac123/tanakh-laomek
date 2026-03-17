@@ -16,45 +16,45 @@ gtag('config','YOUR_MEASUREMENT_ID');
 <style>
 
 :root{
-  --bg:#F9F6F2;--bg-warm:#EFEFEF;--bg-glass:rgba(255,255,255,.65);--bg-glass-strong:rgba(255,255,255,.75);--bg-glass-light:rgba(255,255,255,.5);
-  --text:#1C335F;--text-muted:#4A5A7A;--text-faint:#8A96AA;
-  --earth:#1C335F;--teal:#CFE2F3;--coral:#FF8C69;
-  --border:#D9DFF2;--hover:#EFEFEF;
-  --pastel-purple:#D9DFF2;--pastel-blue:#CFE2F3;--pastel-peach:#FBD5B5;--pastel-yellow:#FFF2CC;--pastel-pink:#E6D0DE;--pastel-green:#D5E8D4;
+  --bg:#F5EDE3;--bg-warm:#EDE5DB;--bg-glass:rgba(245,237,227,.7);--bg-glass-strong:rgba(245,237,227,.82);--bg-glass-light:rgba(245,237,227,.5);
+  --text:#5A3A4A;--text-muted:#7A6070;--text-faint:#9A8A92;
+  --earth:#8B4A5E;--teal:#B8C9D4;--coral:#C48B9F;
+  --border:#D4C4CC;--hover:#EDE5DB;
+  --pastel-purple:#D4C4CC;--pastel-blue:#B8C9D4;--pastel-peach:#D4A0A0;--pastel-yellow:#C9A96E;--pastel-pink:#C48B9F;--pastel-green:#8FAF85;
   --glass-blur:blur(12px);--glass-blur-sm:blur(8px);--glass-blur-lg:blur(10px);
-  --teal-glass:rgba(207,226,243,.15);--teal-border:rgba(207,226,243,.4);
-  --earth-glass:rgba(28,51,95,.06);--earth-glass-hover:rgba(28,51,95,.1);
-  --shadow:0 2px 12px rgba(28,51,95,.05);--shadow-md:0 8px 24px rgba(28,51,95,.1);--shadow-lg:0 12px 40px rgba(28,51,95,.12);
-  --toast-bg:rgba(28,51,95,.92);--toast-text:#F9F6F2;
-  --splash-grad:linear-gradient(135deg,#F9F6F2 0%,#EFEFEF 30%,#F9F6F2 70%,#D9DFF2 100%);
-  --step-bg:#EFEFEF;--step-active-bg:#1C335F;--step-active-text:#fff;
-  --btn-primary-bg:#FF8C69;--btn-primary-text:#fff;--btn-primary-hover:#FF7A55;
-  --logo-fill:#1C335F;--logo-text:#F9F6F2;--logo-accent:#FF8C69;
-  --canvas-dots:#D9DFF2;
-  --node-shadow:0 2px 6px rgba(28,51,95,.08);
-  --arrow-label-bg:rgba(255,255,255,.75);
-  --export-overlay:rgba(28,51,95,.35);--modal-overlay:rgba(28,51,95,.3);
-  --tooltip-bg:#1C335F;--tooltip-text:#fff;
+  --teal-glass:rgba(184,201,212,.18);--teal-border:rgba(184,201,212,.45);
+  --earth-glass:rgba(139,74,94,.06);--earth-glass-hover:rgba(139,74,94,.1);
+  --shadow:0 2px 12px rgba(90,58,74,.06);--shadow-md:0 8px 24px rgba(90,58,74,.1);--shadow-lg:0 12px 40px rgba(90,58,74,.12);
+  --toast-bg:rgba(90,58,74,.92);--toast-text:#F5EDE3;
+  --splash-grad:linear-gradient(135deg,#F5EDE3 0%,#EDE5DB 25%,#F5EDE3 50%,#E8DDD2 75%,#F0E8E0 100%);
+  --step-bg:#EDE5DB;--step-active-bg:#8B4A5E;--step-active-text:#F5EDE3;
+  --btn-primary-bg:#8B4A5E;--btn-primary-text:#F5EDE3;--btn-primary-hover:#7A3A4E;
+  --logo-fill:#8B4A5E;--logo-text:#F5EDE3;--logo-accent:#C9A96E;
+  --canvas-dots:#D4C4CC;
+  --node-shadow:0 2px 6px rgba(90,58,74,.08);
+  --arrow-label-bg:rgba(245,237,227,.8);
+  --export-overlay:rgba(90,58,74,.35);--modal-overlay:rgba(90,58,74,.3);
+  --tooltip-bg:#5A3A4A;--tooltip-text:#F5EDE3;
 }
 html.dark{
-  --bg:#121A2E;--bg-warm:#1A2240;--bg-glass:rgba(18,26,46,.7);--bg-glass-strong:rgba(18,26,46,.8);--bg-glass-light:rgba(18,26,46,.55);
-  --text:#E8ECF4;--text-muted:#A0AABF;--text-faint:#6A7590;
-  --earth:#7A9DC4;--teal:#4A6A8A;--coral:#FF8C69;
-  --border:#2A3555;--hover:#1E2845;
-  --pastel-purple:#2A3060;--pastel-blue:#253050;--pastel-peach:#3A2820;--pastel-yellow:#2A2818;--pastel-pink:#2A2030;--pastel-green:#1A2A1A;
-  --teal-glass:rgba(74,106,138,.18);--teal-border:rgba(74,106,138,.3);
-  --earth-glass:rgba(122,157,196,.1);--earth-glass-hover:rgba(122,157,196,.15);
-  --shadow:0 2px 12px rgba(0,0,0,.25);--shadow-md:0 8px 24px rgba(0,0,0,.35);--shadow-lg:0 12px 40px rgba(0,0,0,.4);
-  --toast-bg:rgba(232,236,244,.94);--toast-text:#121A2E;
-  --splash-grad:linear-gradient(135deg,#121A2E 0%,#1A2240 30%,#121A2E 70%,#1E2845 100%);
-  --step-bg:#1A2240;--step-active-bg:#FF8C69;--step-active-text:#121A2E;
-  --btn-primary-bg:#FF8C69;--btn-primary-text:#121A2E;--btn-primary-hover:#FFA080;
-  --logo-fill:#7A9DC4;--logo-text:#121A2E;--logo-accent:#FF8C69;
-  --canvas-dots:#2A3555;
+  --bg:#1E1520;--bg-warm:#261A24;--bg-glass:rgba(30,21,32,.75);--bg-glass-strong:rgba(30,21,32,.85);--bg-glass-light:rgba(30,21,32,.55);
+  --text:#E8DDD2;--text-muted:#B0A098;--text-faint:#7A6A72;
+  --earth:#C48B9F;--teal:#5A7A8A;--coral:#C48B9F;
+  --border:#3A2A35;--hover:#2A1E28;
+  --pastel-purple:#3A2A35;--pastel-blue:#2A3540;--pastel-peach:#3A2828;--pastel-yellow:#352A1A;--pastel-pink:#3A2030;--pastel-green:#1A2A1A;
+  --teal-glass:rgba(90,122,138,.18);--teal-border:rgba(90,122,138,.3);
+  --earth-glass:rgba(196,139,159,.1);--earth-glass-hover:rgba(196,139,159,.15);
+  --shadow:0 2px 12px rgba(0,0,0,.3);--shadow-md:0 8px 24px rgba(0,0,0,.4);--shadow-lg:0 12px 40px rgba(0,0,0,.45);
+  --toast-bg:rgba(232,221,210,.94);--toast-text:#1E1520;
+  --splash-grad:linear-gradient(135deg,#1E1520 0%,#261A24 30%,#1E1520 70%,#2A1E28 100%);
+  --step-bg:#261A24;--step-active-bg:#C48B9F;--step-active-text:#1E1520;
+  --btn-primary-bg:#C48B9F;--btn-primary-text:#1E1520;--btn-primary-hover:#D49AAE;
+  --logo-fill:#C48B9F;--logo-text:#1E1520;--logo-accent:#C9A96E;
+  --canvas-dots:#3A2A35;
   --node-shadow:0 2px 6px rgba(0,0,0,.35);
-  --arrow-label-bg:rgba(18,26,46,.75);
-  --export-overlay:rgba(8,12,24,.5);--modal-overlay:rgba(8,12,24,.4);
-  --tooltip-bg:#E8ECF4;--tooltip-text:#121A2E;
+  --arrow-label-bg:rgba(30,21,32,.75);
+  --export-overlay:rgba(20,12,18,.5);--modal-overlay:rgba(20,12,18,.4);
+  --tooltip-bg:#E8DDD2;--tooltip-text:#1E1520;
 }
 
 *{margin:0;padding:0;box-sizing:border-box}
@@ -83,11 +83,11 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .splash-step-inner{width:42px;height:42px;border-radius:50%;background:var(--bg-glass-strong);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:var(--text);z-index:1;border:1.5px solid var(--border);backdrop-filter:var(--glass-blur-sm)}
 .splash-step:hover .splash-step-ring{transform:scale(1.08)}
 .splash-step-l{font-size:12px;font-weight:700;color:var(--text)}
-.splash-go{background:linear-gradient(135deg,#FF8C69 0%,#FF7A55 100%);color:#fff;border:none;padding:16px 52px;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo';cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);box-shadow:0 6px 20px rgba(255,140,105,.3);display:inline-block;position:relative;overflow:hidden}
+.splash-go{background:linear-gradient(135deg,#8B4A5E 0%,#7A3A4E 100%);color:#fff;border:none;padding:16px 52px;border-radius:16px;font-size:18px;font-weight:700;font-family:'Heebo';cursor:pointer;transition:all .3s cubic-bezier(.22,1,.36,1);box-shadow:0 6px 20px rgba(139,74,94,.3);display:inline-block;position:relative;overflow:hidden}
 .splash-go::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.2) 0%,transparent 50%);opacity:0;transition:opacity .3s}
-.splash-go:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(255,140,105,.4)}
+.splash-go:hover{transform:translateY(-3px);box-shadow:0 10px 32px rgba(139,74,94,.4)}
 .splash-go:hover::before{opacity:1}
-.splash-go:active{transform:scale(.97);box-shadow:0 4px 12px rgba(255,140,105,.25)}
+.splash-go:active{transform:scale(.97);box-shadow:0 4px 12px rgba(139,74,94,.25)}
 .splash-saved{margin-top:16px}
 .splash-saved-btn{background:var(--bg-glass);backdrop-filter:var(--glass-blur-sm);border:1.5px solid var(--border);color:var(--text);padding:10px 28px;border-radius:12px;font-size:13px;font-weight:700;font-family:'Heebo';cursor:pointer;transition:all .2s}
 .splash-saved-btn:hover{background:var(--bg-glass-strong);border-color:var(--text)}
@@ -116,7 +116,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
 @keyframes gentlePulse{0%,100%{opacity:1}50%{opacity:.7}}
 @keyframes wordMark{0%{filter:brightness(1.3)}100%{filter:brightness(1)}}
-@keyframes ripple{0%{box-shadow:0 0 0 0 rgba(255,140,105,.4)}100%{box-shadow:0 0 0 12px rgba(255,140,105,0)}}
+@keyframes ripple{0%{box-shadow:0 0 0 0 rgba(139,74,94,.4)}100%{box-shadow:0 0 0 12px rgba(139,74,94,0)}}
 
 /* ===== MAIN TRANSITIONS ===== */
 .main{flex:1;overflow-y:auto;padding:20px 28px;animation:fadeSlide .35s cubic-bezier(.22,1,.36,1)}
@@ -162,10 +162,10 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .sb-sub{font-size:11px;color:var(--text-muted);font-weight:700;margin-bottom:6px;margin-top:14px;text-transform:uppercase;letter-spacing:.3px}
 .sb-btn{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer;transition:all .25s cubic-bezier(.22,1,.36,1);border:none;font-family:'Heebo';position:relative;overflow:hidden}
 .sb-btn:active{transform:scale(.96)}
-.sb-btn-blue{background:var(--btn-primary-bg);color:var(--btn-primary-text);box-shadow:0 2px 8px rgba(255,140,105,.2)}
-.sb-btn-blue:hover{background:var(--btn-primary-hover);transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,140,105,.3)}
-.sb-btn-green{background:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(255,140,105,.2)}
-.sb-btn-green:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(255,140,105,.3);background:#FF7A55}
+.sb-btn-blue{background:var(--btn-primary-bg);color:var(--btn-primary-text);box-shadow:0 2px 8px rgba(139,74,94,.2)}
+.sb-btn-blue:hover{background:var(--btn-primary-hover);transform:translateY(-1px);box-shadow:0 4px 14px rgba(139,74,94,.3)}
+.sb-btn-green{background:var(--coral);color:#fff;box-shadow:0 2px 8px rgba(139,74,94,.2)}
+.sb-btn-green:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(139,74,94,.3);background:#7A3A4E}
 .sb-btn-out{background:var(--bg-glass-light);border:1.5px solid var(--border);color:var(--text-muted)}
 .sb-btn-out:hover{border-color:var(--earth);color:var(--text);background:var(--earth-glass);transform:translateY(-1px)}
 .sb-btn-sm{padding:6px 12px;font-size:11px;width:auto;border-radius:8px}
@@ -286,7 +286,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-child-label{font-size:9px;font-weight:600;color:var(--text-faint);margin-bottom:4px;display:flex;align-items:center;gap:4px}
 .c-node:active{cursor:grabbing}
 .c-node.conn-sel{outline:3px dashed var(--coral);outline-offset:3px;animation:connPulse 1s infinite}
-@keyframes connPulse{0%,100%{outline-color:var(--coral)}50%{outline-color:rgba(255,140,105,.27)}}
+@keyframes connPulse{0%,100%{outline-color:var(--coral)}50%{outline-color:rgba(139,74,94,.27)}}
 .c-node-t{font-weight:800;font-size:13px;margin-bottom:4px;display:flex;align-items:center;gap:5px;letter-spacing:-.2px}
 .c-node-w{font-size:13px;line-height:1.6;direction:rtl}
 .c-node-w.collapsed{max-height:2.6em;overflow:hidden;opacity:.7}
@@ -300,7 +300,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .conn-mode .c-conn-dot{opacity:1!important}
 .conn-mode .c-node{cursor:crosshair}
 .c-arrow-label{position:absolute;background:var(--arrow-label-bg);backdrop-filter:blur(6px);border:1px solid var(--coral);border-radius:8px;padding:2px 8px;font-size:11px;font-weight:600;color:var(--text);z-index:3;cursor:pointer;white-space:nowrap}
-.c-arrow-label:hover{background:rgba(255,140,105,.1)}
+.c-arrow-label:hover{background:rgba(139,74,94,.1)}
 
 /* Canvas toolbar */
 .cv-toolbar{position:sticky;top:0;z-index:20;display:flex;gap:5px;padding:8px 12px;background:var(--bg-glass-strong);backdrop-filter:var(--glass-blur);border-radius:14px;margin-bottom:10px;border:1px solid var(--border);flex-wrap:wrap;align-items:center;box-shadow:0 2px 12px rgba(28,51,95,.06);animation:slideUp .3s ease}
@@ -341,7 +341,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-shape-wrap{position:absolute;cursor:grab;z-index:1;user-select:none;transition:filter .2s}
 .c-shape-wrap:hover{z-index:10;filter:drop-shadow(0 4px 12px rgba(0,0,0,.12))}
 .c-shape-wrap:active{cursor:grabbing}
-.shp-del{position:absolute;top:-10px;left:-10px;width:22px;height:22px;border-radius:50%;background:var(--coral);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;opacity:0;transition:all .2s;color:#fff;z-index:5;box-shadow:0 2px 6px rgba(255,140,105,.3)}
+.shp-del{position:absolute;top:-10px;left:-10px;width:22px;height:22px;border-radius:50%;background:var(--coral);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;opacity:0;transition:all .2s;color:#fff;z-index:5;box-shadow:0 2px 6px rgba(139,74,94,.3)}
 .c-shape-wrap:hover .shp-del{opacity:1}
 .shp-del:hover{transform:scale(1.15);background:#e55}
 .shp-rsz{position:absolute;bottom:-4px;left:-4px;width:16px;height:16px;border-radius:3px;cursor:nwse-resize;opacity:0;transition:opacity .2s;z-index:5;display:flex;align-items:center;justify-content:center;color:var(--text-faint);background:var(--bg-glass-strong);border:1px solid var(--border)}
@@ -1030,7 +1030,7 @@ function decoCircle(s,col){return `<svg width="${s}" height="${s}" viewBox="0 0 
 function decoHex(s,col){return `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><polygon points="20,4 36,12 36,28 20,36 4,28 4,12" fill="none" stroke="${col}" stroke-width="1.5" opacity=".3"/></svg>`}
 function decoDots(s,col){return `<svg width="${s}" height="${s}" viewBox="0 0 40 40"><circle cx="10" cy="10" r="3" fill="${col}" opacity=".3"/><circle cx="30" cy="10" r="2" fill="${col}" opacity=".2"/><circle cx="10" cy="30" r="2" fill="${col}" opacity=".2"/><circle cx="30" cy="30" r="3" fill="${col}" opacity=".3"/><circle cx="20" cy="20" r="2.5" fill="${col}" opacity=".25"/></svg>`}
 function splashDecor(){
-  const c1=cv('#D9DFF2','#2A3060'),c2=cv('#CFE2F3','#253050'),c3=cv('#FBD5B5','#3A2820'),c4=cv('#FF8C69','#FF8C69'),c5=cv('#E6D0DE','#2A2030');
+  const c1=cv('#D9DFF2','#2A3060'),c2=cv('#CFE2F3','#253050'),c3=cv('#FBD5B5','#3A2820'),c4=cv('#8B4A5E','#8B4A5E'),c5=cv('#E6D0DE','#2A2030');
   return `
     <div class="splash-decor dec-a" style="top:8%;right:6%">${decoStar(36,c4)}</div>
     <div class="splash-decor dec-b" style="top:15%;left:8%">${decoLeaf(42,c2)}</div>
@@ -1046,7 +1046,7 @@ function splashDecor(){
 function splashIllust(){
   const skin='#F5D0B0';const hair='#3A2218';const shirt=cv('#CFE2F3','#4A6A8A');const pants=cv('#1C335F','#253050');
   const desk=cv('#D9DFF2','#2A3555');const laptop=cv('#4A5A7A','#A0AABF');const laptopScreen=cv('#CFE2F3','#1A2240');
-  const book1=cv('#FF8C69','#FF8C69');const book2=cv('#FBD5B5','#3A2820');const book3=cv('#E6D0DE','#2A2030');
+  const book1=cv('#8B4A5E','#8B4A5E');const book2=cv('#FBD5B5','#3A2820');const book3=cv('#E6D0DE','#2A2030');
   const floor=cv('#D9DFF2','#1E2845');const chair=cv('#1C335F','#4A6A8A');
   return `<svg viewBox="0 0 380 340" fill="none" xmlns="http://www.w3.org/2000/svg">
     <!-- Desk -->
@@ -1066,7 +1066,7 @@ function splashIllust(){
     <rect x="134" y="159" width="112" height="30" rx="2" fill="${laptopScreen}"/>
     <rect x="120" y="193" width="140" height="4" rx="2" fill="${laptop}" opacity=".8"/>
     <!-- Text lines on screen -->
-    <rect x="142" y="166" width="40" height="2.5" rx="1" fill="${cv('#FF8C69','#FF8C69')}" opacity=".6"/>
+    <rect x="142" y="166" width="40" height="2.5" rx="1" fill="${cv('#8B4A5E','#8B4A5E')}" opacity=".6"/>
     <rect x="142" y="172" width="60" height="2" rx="1" fill="${cv('#E8ECF4','#A0AABF')}" opacity=".4"/>
     <rect x="142" y="177" width="50" height="2" rx="1" fill="${cv('#E8ECF4','#A0AABF')}" opacity=".3"/>
     <rect x="142" y="182" width="55" height="2" rx="1" fill="${cv('#E8ECF4','#A0AABF')}" opacity=".4"/>
@@ -1122,43 +1122,77 @@ function splashStepCircle(idx){
     <div class="splash-step-inner">${idx+1}</div>
   </div>`;
 }
+function splashBotanical(){
+  const sage=cv('#8FAF85','#4A6A4A');const rose=cv('#C48B9F','#8A5A6A');const gold=cv('#C9A96E','#8A7A4A');const blue=cv('#9AADBC','#5A7A8A');const burg=cv('#8B4A5E','#C48B9F');
+  // Organic watercolor blobs
+  const blob=(cx,cy,r,col,op)=>`<ellipse cx="${cx}" cy="${cy}" rx="${r*1.2}" ry="${r}" fill="${col}" opacity="${op}" transform="rotate(${Math.random()*30-15} ${cx} ${cy})"/>`;
+  // Botanical branch
+  const branch=(x,y,len,angle,col)=>{
+    const rad=angle*Math.PI/180;
+    const ex=x+Math.cos(rad)*len,ey=y+Math.sin(rad)*len;
+    const mx=(x+ex)/2+Math.sin(rad)*20,my=(y+ey)/2-Math.cos(rad)*20;
+    let leaves='';
+    for(let i=0;i<5;i++){
+      const t=0.2+i*0.15;const lx=x+(ex-x)*t+Math.sin(rad)*(i%2?12:-12),ly=y+(ey-y)*t-Math.cos(rad)*(i%2?12:-12);
+      leaves+=`<ellipse cx="${lx}" cy="${ly}" rx="8" ry="4" fill="${col}" opacity=".4" transform="rotate(${angle+(i%2?30:-30)} ${lx} ${ly})"/>`;
+    }
+    return `<path d="M${x},${y} Q${mx},${my} ${ex},${ey}" fill="none" stroke="${col}" stroke-width="1.5" opacity=".5"/>${leaves}`;
+  };
+  return `<svg width="100%" height="100%" viewBox="0 0 1200 800" preserveAspectRatio="xMidYMid slice" style="position:absolute;inset:0;z-index:0">
+    <defs><filter id="wc"><feGaussianBlur stdDeviation="8"/></filter></defs>
+    ${blob(180,150,90,rose,'.12')}${blob(200,170,70,blue,'.1')}${blob(160,180,50,gold,'.08')}
+    ${blob(1020,120,80,blue,'.1')}${blob(1050,140,60,sage,'.08')}
+    ${blob(100,600,100,sage,'.1')}${blob(130,620,70,gold,'.07')}
+    ${blob(1080,580,90,rose,'.09')}${blob(1100,600,60,blue,'.07')}
+    ${blob(600,700,120,blue,'.06')}${blob(580,680,80,rose,'.05')}
+    ${branch(80,300,140,-30,sage)}${branch(1120,250,130,210,rose)}
+    ${branch(60,550,120,20,gold)}${branch(1140,500,110,160,sage)}
+    <circle cx="200" cy="100" r="3" fill="${gold}" opacity=".3"/>
+    <circle cx="1000" cy="80" r="2.5" fill="${rose}" opacity=".25"/>
+    <circle cx="150" cy="500" r="2" fill="${sage}" opacity=".3"/>
+    <circle cx="1050" cy="450" r="3" fill="${gold}" opacity=".2"/>
+  </svg>`;
+}
 function splashScreen(){
   const saved=hasSavedWork();
   const time=getSaveTime();
   const stepNames=['עימוד','גילוי','אריזה','ארגון','קריאה'];
+  const stepDescs=['פירוק ועימוד חכם','סימון תופעות ספרותיות','קיבוץ ליחידות משמעות','מיפוי קשרים ויחסים','סיכום ותובנות'];
+  const stepIcons=['◇','◈','▣','⬡','◎'];
+  const burg=cv('#8B4A5E','#C48B9F');const gold=cv('#C9A96E','#D4B888');const rose=cv('#C48B9F','#D49AAE');
+  const sage=cv('#8FAF85','#6A8A60');const blue=cv('#9AADBC','#7A9AAA');
+  const stepColors=[blue,rose,sage,gold,burg];
   return `<div class="splash" id="splashEl">
-    ${splashDecor()}
-    <div class="splash-wrap">
-      <div class="splash-illust">${splashIllust()}</div>
-      <div class="splash-content">
-        <div class="splash-logo" style="flex-direction:column;gap:6px">${appLogo(56)} <span class="splash-title">תנ״ך <span>לעומק</span></span></div>
-        <div class="splash-sub">כלי חכם לניתוח כתובים מקראיים</div>
-        <div class="splash-steps">
-          <div class="splash-steps-line"></div>
-          ${stepNames.map((n,i)=>`<div class="splash-step">
-            ${splashStepCircle(i)}
-            <div class="splash-step-l">${n}</div>
-          </div>`).join('')}
+    ${splashBotanical()}
+    <div class="splash-wrap" style="flex-direction:column;gap:0;max-width:680px;text-align:center;position:relative;z-index:1">
+      <div style="margin-bottom:24px">
+        <div style="display:inline-block;width:80px;height:80px;border-radius:50%;border:2px solid ${rose};display:flex;align-items:center;justify-content:center;margin:0 auto 16px;background:${cv('rgba(245,237,227,.8)','rgba(30,21,32,.8)')};backdrop-filter:blur(8px)">
+          ${appLogo(48)}
         </div>
-        <button class="splash-go" onclick="startApp()">התחל לעבוד</button>
-        ${saved?`<div class="splash-saved">
-          <button class="splash-saved-btn" onclick="loadSaved()">טען עבודה שמורה <span style="font-size:11px;color:${tcm()};font-weight:400">(${time})</span></button>
-        </div>`:''}
-        <div style="display:flex;gap:12px;justify-content:center;margin-top:16px;flex-wrap:wrap">
-          <a href="guide-tanakh-laomek.html" target="_blank" style="font-size:13px;color:${tcm()};text-decoration:none;padding:8px 18px;border-radius:10px;border:1.5px solid ${brd()};background:${glss()};font-weight:600;font-family:'Heebo';transition:all .2s;display:flex;align-items:center;gap:6px" onmouseover="this.style.borderColor='${cv('#FF8C69','#FF8C69')}'" onmouseout="this.style.borderColor='${brd()}'">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            מדריך שימוש
-          </a>
-          <a href="https://alhatorah.org" target="_blank" style="font-size:13px;color:${tcm()};text-decoration:none;padding:8px 18px;border-radius:10px;border:1.5px solid ${brd()};background:${glss()};font-weight:600;font-family:'Heebo';transition:all .2s;display:flex;align-items:center;gap:6px" onmouseover="this.style.borderColor='${cv('#FF8C69','#FF8C69')}'" onmouseout="this.style.borderColor='${brd()}'">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
-            על התורה ❖
-          </a>
-        </div>
-        <div class="splash-footer">נבנה עם אהבה ללימוד תנ״ך</div>
-        <div style="font-size:11px;color:${tcm()};text-align:center;margin-top:8px;opacity:.7;line-height:1.5;max-width:320px;margin-left:auto;margin-right:auto">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-left:4px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          המידע נשמר בדפדפן שלך בלבד ואינו נשלח לשום שרת. ללא עוגיות, ללא מעקב.
-        </div>
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:56px;font-weight:700;color:${burg};letter-spacing:-2px;line-height:1">תנ״ך</div>
+        <div style="font-family:'Frank Ruhl Libre',serif;font-size:28px;font-weight:400;color:${gold};letter-spacing:4px;margin-top:2px">ל ע ו מ ק</div>
+        <div style="width:60px;height:1.5px;background:linear-gradient(90deg,transparent,${rose},transparent);margin:16px auto"></div>
+        <div style="font-size:15px;color:${cv('#7A6070','#B0A098')};font-weight:400;letter-spacing:.5px;line-height:1.7">כלי לניתוח עומק של כתובים מקראיים</div>
+      </div>
+
+      <div style="display:flex;gap:8px;justify-content:center;margin-bottom:32px;flex-wrap:wrap">
+        ${stepNames.map((n,i)=>`<div style="display:flex;flex-direction:column;align-items:center;gap:6px;min-width:90px;padding:12px 8px;border-radius:14px;border:1.5px solid ${cv('rgba(212,196,204,.5)','rgba(58,42,53,.5)')};background:${cv('rgba(245,237,227,.5)','rgba(30,21,32,.5)')};backdrop-filter:blur(6px);transition:all .3s" onmouseover="this.style.borderColor='${stepColors[i]}';this.style.transform='translateY(-3px)'" onmouseout="this.style.borderColor='${cv('rgba(212,196,204,.5)','rgba(58,42,53,.5)')}';this.style.transform='none'">
+          <div style="font-size:20px;color:${stepColors[i]};opacity:.7">${stepIcons[i]}</div>
+          <div style="font-size:13px;font-weight:700;color:${tc()}">${n}</div>
+          <div style="font-size:10px;color:${cv('#9A8A92','#7A6A72')};line-height:1.3">${stepDescs[i]}</div>
+        </div>`).join('')}
+      </div>
+
+      <button class="splash-go" onclick="startApp()" style="background:${burg};box-shadow:0 6px 24px ${cv('rgba(139,74,94,.25)','rgba(196,139,159,.25)')};border-radius:14px;padding:14px 48px;font-size:16px;letter-spacing:.5px">התחל לעבוד</button>
+      ${saved?`<div style="margin-top:14px">
+        <button class="splash-saved-btn" onclick="loadSaved()" style="border-color:${cv('rgba(212,196,204,.6)','rgba(58,42,53,.6)')}">טען עבודה שמורה <span style="font-size:11px;color:${cv('#9A8A92','#7A6A72')};font-weight:400">(${time})</span></button>
+      </div>`:''}
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+        <a href="guide-tanakh-laomek.html" target="_blank" style="font-size:12px;color:${cv('#7A6070','#B0A098')};text-decoration:none;padding:7px 16px;border-radius:10px;border:1px solid ${cv('rgba(212,196,204,.4)','rgba(58,42,53,.4)')};font-weight:500;font-family:'Heebo';transition:all .2s;display:flex;align-items:center;gap:5px;background:${cv('rgba(245,237,227,.4)','rgba(30,21,32,.4)')}" onmouseover="this.style.borderColor='${rose}'" onmouseout="this.style.borderColor='${cv('rgba(212,196,204,.4)','rgba(58,42,53,.4)')}'">מדריך שימוש</a>
+      </div>
+      <div style="margin-top:24px;font-size:10px;color:${cv('#9A8A92','#7A6A72')};opacity:.6;line-height:1.5;max-width:300px;margin-left:auto;margin-right:auto">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;margin-left:3px"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        המידע נשמר בדפדפן שלך בלבד. ללא מעקב.
       </div>
     </div>
   </div>`;
@@ -1347,7 +1381,7 @@ function sImud(){
       <div class="sb-btn sb-btn-out sb-btn-sm" onclick="S.fs=Math.min(36,S.fs+2);R()">+</div>
     </div>
     <div class="sb-sub">רווח שורות</div>
-    <input type="range" min="1.2" max="2.4" step=".1" value="${S.lh}" oninput="S.lh=+this.value;R()" style="width:100%;accent-color:${cv('#FF8C69','#FF8C69')};margin-bottom:8px">
+    <input type="range" min="1.2" max="2.4" step=".1" value="${S.lh}" oninput="S.lh=+this.value;R()" style="width:100%;accent-color:${cv('#8B4A5E','#8B4A5E')};margin-bottom:8px">
     <div style="display:flex;gap:6px;margin:8px 0">
       <div class="sb-btn sb-btn-out sb-btn-sm" style="flex:1" onclick="S.brks={};S.indents={};S.paraBreaks={};R();toast('עימוד נוקה')">נקה הכל</div>
     </div>
@@ -1361,7 +1395,7 @@ function sDisc(){
   Object.values(S.marks).forEach(m=>{if(cntMap[m.catId]!==undefined)cntMap[m.catId]++});
   const totalMarks=Object.keys(S.marks).length;
   let html=`<div class="sb-title">גילוי וסימון</div>`;
-  html+=`<div style="background:${cv('rgba(255,140,105,.08)','rgba(255,140,105,.12)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(255,140,105,.25)','rgba(255,140,105,.2)')};font-size:12px;line-height:1.6">
+  html+=`<div style="background:${cv('rgba(139,74,94,.08)','rgba(139,74,94,.12)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(139,74,94,.25)','rgba(139,74,94,.2)')};font-size:12px;line-height:1.6">
     <b>🖍️ איך מתחילים?</b> בחר צבע למטה → לחץ על מילים בטקסט → זהו!
   </div>`;
   html+=`<div class="info-box" onclick="S.showDiscInfo=!S.showDiscInfo;R()">
@@ -1401,7 +1435,7 @@ function sDisc(){
           <input type="text" value="${c.name}" onclick="event.stopPropagation()" onchange="S.cats[${i}].name=this.value.trim()||'קטגוריה';R()" style="border:none;background:transparent;font-size:12px;font-weight:700;font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl;width:100%">
         </div>
         <span class="cat-cnt">${cnt}</span>
-        <span style="cursor:pointer;color:${cv('#ef4444','#FF8C69')};font-size:15px;padding:0 2px;opacity:.5;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5" onclick="event.stopPropagation();deleteCat(${i})" title="מחק קטגוריה">×</span>
+        <span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:15px;padding:0 2px;opacity:.5;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5" onclick="event.stopPropagation();deleteCat(${i})" title="מחק קטגוריה">×</span>
       </div>`;
     });
   }
@@ -1421,7 +1455,7 @@ function sDisc(){
           <div style="width:16px;height:12px;border-radius:3px;flex-shrink:0;${style.apply(subCol)}"></div>
           <input type="text" value="${sub.name}" onclick="event.stopPropagation()" onchange="renameSub(${S.activeCat},${si},this.value)" style="flex:1;border:none;background:transparent;font-size:11px;font-weight:${isActive?'700':'500'};font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl">
           <span style="font-size:9px;color:${tcm()}">(${subCnt})</span>
-          ${cat.subs.length>1?`<span style="cursor:pointer;color:${cv('#ef4444','#FF8C69')};font-size:13px" onclick="event.stopPropagation();delSub(${S.activeCat},${si})">×</span>`:''}
+          ${cat.subs.length>1?`<span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:13px" onclick="event.stopPropagation();delSub(${S.activeCat},${si})">×</span>`:''}
         </div>`;
       }).join('');
       html+=`<div style="display:flex;gap:4px;margin-top:4px"><div class="sb-btn sb-btn-out sb-btn-sm" style="font-size:10px;padding:4px 8px" onclick="addSub(${S.activeCat})">＋ תת-קבוצה</div></div>`;
@@ -1544,7 +1578,7 @@ function sPkg(){
           <span style="font-size:14px">${pkg.emoji||''}</span>
           <span style="font-size:12px;font-weight:700;color:${col.c};flex:1">${pkg.name}</span>
           <span style="font-size:10px;color:${col.c};opacity:.7">${pkg.words.length} מילים</span>
-          <span style="cursor:pointer;color:${cv('#ef4444','#FF8C69')};font-size:16px;padding:0 4px" onclick="deletePkg(${pi})">×</span>
+          <span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:16px;padding:0 4px" onclick="deletePkg(${pi})">×</span>
         </div>`;}).join('')}
       ${S.pkgs.length>1?`
         <div class="sb-sub">אריזת על / אריזת משנה</div>
@@ -1584,7 +1618,7 @@ function sCanv(){
     <div class="sb-hint">גרור חבילות על הלוח, לחץ על הנקודה ליצירת חיצים בין חבילות.</div>
     <div class="sb-sub">חבילות</div>
     ${S.pkgs.map((p,i)=>{const c=C[p.ci];const sel=cm&&cm.from===p.id;
-      return `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${c.b};border:1.5px solid ${sel?cv('#FF8C69','#FF8C69'):c.c+'44'};cursor:pointer" onclick="focusNode(${i})">
+      return `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${c.b};border:1.5px solid ${sel?cv('#8B4A5E','#8B4A5E'):c.c+'44'};cursor:pointer" onclick="focusNode(${i})">
         <div style="width:10px;height:10px;border-radius:4px;background:${c.c}"></div>
         <span style="font-size:12px;font-weight:700;color:${c.c};flex:1">${p.emoji||''} ${p.name}</span>
         <span style="font-size:10px;color:${tcm()}">${p.words.length} מ׳</span>
@@ -1598,7 +1632,7 @@ function sCanv(){
         <span style="color:${fc.c};font-weight:700">${fp.emoji||''} ${fp.name}</span><span style="color:${cv('#1C335F','#7A9DC4')}">→</span>
         <span style="color:${tpc.c};font-weight:700">${tp.emoji||''} ${tp.name}</span>
         <span style="flex:1;color:${tc()};font-weight:600;cursor:pointer" onclick="editConnLabel(${ci})">${cn.label||cn.emoji||'לחץ לתווית'}</span>
-        <span style="color:${cv('#ef4444','#FF8C69')};cursor:pointer;font-size:10px" onclick="delConn(${ci})">✕</span>
+        <span style="color:${cv('#ef4444','#8B4A5E')};cursor:pointer;font-size:10px" onclick="delConn(${ci})">✕</span>
       </div>`}).join(''):`<div style="font-size:11px;color:${tcm()};text-align:center;padding:8px">אין קישורים עדיין</div>`}
     <div class="sb-sub" style="margin-top:14px">פתקים על הלוח</div>
     <div style="font-size:11px;color:${tcm()};margin-bottom:6px">${S.stickies.length} פתקים · ${S.labels.length} תוויות</div>
@@ -1662,8 +1696,9 @@ function wrd(w,vi,wi,mode){
   }
   if(mode==='disc') oc=`onclick="tglMark('${k}')"`;
   if(mode==='pkg'){
-    if(S.pkgSel.includes(k)) st+=`box-shadow:0 0 0 2px ${cv('#FF8C69','#FF8C69')};border-radius:6px;padding:1px 3px;`;
-    oc=`onclick="tglWordSel('${k}')"`;
+    if(S.pkgSel.includes(k)) st+=`box-shadow:0 0 0 2px ${cv('#8B4A5E','#C48B9F')};border-radius:6px;padding:1px 3px;background:${cv('rgba(139,74,94,.08)','rgba(196,139,159,.12)')};`;
+    oc=`onmousedown="pkgWordDown('${k}',event)" onmouseenter="pkgWordEnter('${k}')" ontouchstart="pkgWordDown('${k}',event)"`;
+    st+=`user-select:none;-webkit-user-select:none;cursor:pointer;`;
   }
   const tip=getWordTip(w);
   const tipHtml=tip?`<span class="w-tip">${tip}</span>`:'';
@@ -1992,7 +2027,7 @@ function buildArrowsSvg(){
     const fr=ndRect(fi),tr=ndRect(ti);
     const ep=edgePts(fr,tr);
     const d=curvedPath(ep);
-    return `<path d="${d}" fill="none" stroke="${cv('#FF7F6B','#FF7F6B')}" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowhead)" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
+    return `<path d="${d}" fill="none" stroke="${cv('#8B4A5E','#8B4A5E')}" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowhead)" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
   }).join('');
   return connLines;
 }
@@ -2226,9 +2261,25 @@ function deleteCustomText(){
   S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נמחק');
 }
+// Drag-to-select for packaging
+let pkgDrag=null;
+function pkgWordDown(k,e){
+  e.preventDefault();
+  pkgDrag={startKey:k,selecting:!S.pkgSel.includes(k)};
+  tglWordSel(k);
+}
+function pkgWordEnter(k){
+  if(!pkgDrag)return;
+  if(pkgDrag.selecting&&!S.pkgSel.includes(k)){S.pkgSel.push(k);sortPkgSel();R();}
+  else if(!pkgDrag.selecting&&S.pkgSel.includes(k)){S.pkgSel=S.pkgSel.filter(x=>x!==k);R();}
+}
+function pkgWordUp(){pkgDrag=null;}
+document.addEventListener('mouseup',pkgWordUp);
+document.addEventListener('touchend',pkgWordUp);
+function sortPkgSel(){S.pkgSel.sort((a,b)=>{const[av,aw]=a.split('-').map(Number);const[bv,bw]=b.split('-').map(Number);return av!==bv?av-bv:aw-bw;});}
 function tglWordSel(k){
   const i=S.pkgSel.indexOf(k);i>=0?S.pkgSel.splice(i,1):S.pkgSel.push(k);
-  S.pkgSel.sort((a,b)=>{const[av,aw]=a.split('-').map(Number);const[bv,bw]=b.split('-').map(Number);return av!==bv?av-bv:aw-bw;});
+  sortPkgSel();
   R();
 }
 function selectVerseWords(vi){
@@ -2356,7 +2407,7 @@ function expandCanvas(){
 function ensureArrowMarker(){
   const svg=document.getElementById('cvSvg');
   if(!svg||svg.querySelector('#arrowhead'))return;
-  svg.insertAdjacentHTML('afterbegin',`<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${cv('#FF7F6B','#FF7F6B')}"/></marker></defs>`);
+  svg.insertAdjacentHTML('afterbegin',`<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="${cv('#8B4A5E','#8B4A5E')}"/></marker></defs>`);
 }
 
 // ===== CANVAS STICKIES & LABELS =====
@@ -2627,20 +2678,20 @@ function keysModal(){
     <div class="modal" onclick="event.stopPropagation()" style="max-width:520px;text-align:right">
       <h3 style="margin-bottom:4px">⌨️ קיצורי מקלדת</h3>
       <p style="font-size:12px;color:${tcm()};margin-bottom:14px">קיצורים זמינים לשלבי העבודה השונים</p>
-      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin-bottom:6px">כללי</div>
+      <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin-bottom:6px">כללי</div>
       ${row(['Ctrl','F'],'חיפוש בטקסט')}
       ${row(['Ctrl','Z'],'ביטול פעולה אחרונה')}
       ${row(['Ctrl','Y'],'שחזור פעולה')}
       ${row(['?'],'פתיחת חלון זה')}
-      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב עימוד</div>
+      <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin:10px 0 6px">שלב עימוד</div>
       ${row(['Enter'],'שבירת שורה לפני המילה הנבחרת')}
       ${row(['Shift','Enter'],'פסקה חדשה')}
       ${row(['Tab'],'הזחה ימינה')}
       ${row(['Shift','Tab'],'הזחה שמאלה')}
       ${row(['Delete'],'הסרת שבירת שורה')}
-      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב גילוי</div>
+      <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin:10px 0 6px">שלב גילוי</div>
       ${row(['לחיצה'],'סמן/הסר סימון ממילה')}
-      <div style="font-size:12px;font-weight:700;color:${cv('#FF8C69','#FF8C69')};margin:10px 0 6px">שלב ארגון</div>
+      <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin:10px 0 6px">שלב ארגון</div>
       ${row(['גרירה'],'הזזת חבילות על הלוח')}
       <div style="margin-top:14px"><div class="sb-btn sb-btn-out" onclick="S.showKeys=false;R()">סגור</div></div>
     </div>
@@ -2929,7 +2980,7 @@ function showShareGuide(method){
     <div style="font-size:40px;margin-bottom:8px">${method==='email'?'✉️':method==='whatsapp'?'💬':'📁'}</div>
     <h3 style="font-size:17px;margin-bottom:14px">הקובץ נשמר! עכשיו שלח/י אותו</h3>
     <div style="text-align:right;font-size:13px;line-height:2.1;color:${tcm()}">${steps}</div>
-    <div style="margin-top:16px"><button onclick="this.closest('div[style*=fixed]').remove()" style="background:var(--btn-primary-bg,#FF8C69);color:#fff;border:none;padding:10px 32px;border-radius:12px;font-size:14px;font-weight:700;font-family:Heebo;cursor:pointer">הבנתי!</button></div>
+    <div style="margin-top:16px"><button onclick="this.closest('div[style*=fixed]').remove()" style="background:var(--btn-primary-bg,#8B4A5E);color:#fff;border:none;padding:10px 32px;border-radius:12px;font-size:14px;font-weight:700;font-family:Heebo;cursor:pointer">הבנתי!</button></div>
   </div>`;
   document.body.appendChild(overlay);
 }
