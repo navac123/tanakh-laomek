@@ -842,6 +842,13 @@ function stripDiacritics(w){
   // Remove niqqud (U+0591-U+05BD, U+05BF-U+05C7) and maqaf
   return w.replace(/[\u0591-\u05BD\u05BF-\u05C7\u05F3\u05F4]/g,'').replace(/־/g,'');
 }
+function stripPrefix(w){
+  // Remove common Hebrew prefixes: ב,כ,ל,מ,ו,ש,ה
+  const prefixes=/^(וב|וכ|ול|ומ|וש|וה|מה|שב|של|שה|בכ|לב|ב|כ|ל|מ|ו|ש|ה)/;
+  let s=w;
+  if(s.length>2){const m=s.match(prefixes);if(m&&s.length-m[1].length>=2)s=s.slice(m[1].length);}
+  return s;
+}
 function detectRepeatingWords(){
   const verses=D().verses;
   const wordMap={};// stripped -> [{vi,wi,original}]
@@ -849,12 +856,17 @@ function detectRepeatingWords(){
     const words=v.t.split(/\s+/);
     words.forEach((w,wi)=>{
       const stripped=stripDiacritics(w);
-      if(stripped.length<2)return;// skip single-letter words like ו
-      // Also skip common function words
+      if(stripped.length<2)return;
       const common=['את','אל','על','גם','כי','לא','אם','כל','עד','מן','הם','הן','לו','בו','זה','מה','אף'];
       if(common.includes(stripped))return;
+      // Index both the full word and prefix-stripped version
       if(!wordMap[stripped])wordMap[stripped]=[];
       wordMap[stripped].push({vi,wi,original:w});
+      const root=stripPrefix(stripped);
+      if(root!==stripped&&root.length>=2){
+        if(!wordMap[root])wordMap[root]=[];
+        wordMap[root].push({vi,wi,original:w});
+      }
     });
   });
   // Filter to words that appear 2+ times
@@ -943,11 +955,21 @@ function R(){
     document.getElementById('app').innerHTML=splashScreen();
     return;
   }
+  // Save scroll positions before re-render
+  const sideEl=document.querySelector('.side');
+  const mainEl=document.querySelector('.main');
+  const sideScroll=sideEl?sideEl.scrollTop:0;
+  const mainScroll=mainEl?mainEl.scrollTop:0;
   document.getElementById('app').innerHTML=`
     ${topBar()}${stepsBar()}
     <div class="wrap">${side()}<div class="main" role="main" aria-label="אזור תוכן ראשי">${mainContent()}</div></div>
     ${S.showUpload?modal():''}${S.showExport?exportModal():''}${S.showKeys?keysModal():''}
     ${S.showNotebook?notebookOverlay():''}${notebookPanel()}`;
+  // Restore scroll positions
+  requestAnimationFrame(()=>{
+    const s=document.querySelector('.side');if(s)s.scrollTop=sideScroll;
+    const m=document.querySelector('.main');if(m)m.scrollTop=mainScroll;
+  });
   if(S.step===3)requestAnimationFrame(()=>{ensureArrowMarker();updateArrows();expandCanvas()});
   if(S.showNotebook)requestAnimationFrame(()=>{const ta=document.getElementById('nbArea');if(ta)ta.focus()});
 }
@@ -2212,10 +2234,21 @@ function mRead(){
       </div>`}).join('')}
     </div>
   </div>`:''}
-  ${S.conns.length?`<div class="read-card">
-    <div class="read-title">מפת קשרים</div>
+  ${S.nodes.length&&S.pkgs.length?`<div class="read-card">
+    <div class="read-title">מפת ארגון</div>
+    <div style="overflow:auto;border:1px solid ${brd()};border-radius:12px;background:${cv('rgba(245,237,227,.5)','rgba(30,21,32,.3)')};padding:10px;max-height:500px">
+      ${(()=>{
+        const oldStep=S.step;S.step=3;
+        const canvasHtml=mCanv();
+        S.step=oldStep;
+        return canvasHtml;
+      })()}
+    </div>
+  </div>
+  <div class="read-card">
+    <div class="read-title">קשרים בין חבילות</div>
     <div style="display:flex;flex-direction:column;gap:8px">
-      ${S.conns.map(cn=>{
+      ${S.conns.filter(cn=>cn.label).map(cn=>{
         const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
         if(!fp||!tp)return '';
         const fc=C[fp.ci],tpc=C[tp.ci];
@@ -2223,7 +2256,7 @@ function mRead(){
           <span style="font-size:12px;font-weight:700;color:${fc.c}">${fp.name}</span>
           <span style="color:${tc()};font-size:14px">→</span>
           <span style="font-size:12px;font-weight:700;color:${tpc.c}">${tp.name}</span>
-          ${cn.label?`<span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${cn.label}</span>`:''}
+          <span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${cn.label}</span>
         </div>`;
       }).join('')}
     </div>
