@@ -805,15 +805,48 @@ function toggleDictation(){
   recognition.onresult=(e)=>{
     let final='';
     for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;}
-    if(final){
-      const active=document.activeElement;
-      if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA')){
-        const start=active.selectionStart,end=active.selectionEnd;
-        active.value=active.value.slice(0,start)+final+active.value.slice(end);
-        active.selectionStart=active.selectionEnd=start+final.length;
-        active.dispatchEvent(new Event('input',{bubbles:true}));
-      }else{toast('לחצו על שדה טקסט ואז דברו');}
+    if(!final)return;
+    const cmd=final.trim().toLowerCase();
+    // Voice commands in layout step (עימוד)
+    if(S.step===0){
+      if(cmd.includes('שורה')||cmd.includes('שבור')||cmd.includes('ירידת שורה')){
+        imudAction('break');toast('🎤 שורה חדשה');return;
+      }
+      if(cmd.includes('פסקה')){
+        imudAction('para');toast('🎤 פסקה חדשה');return;
+      }
+      if(cmd.includes('הזח')||cmd.includes('טאב')||cmd.includes('ימינה')){
+        imudAction('indent');toast('🎤 הזחה');return;
+      }
+      if(cmd.includes('חזור')||cmd.includes('שמאלה')||cmd.includes('החזר')){
+        imudAction('outdent');toast('🎤 הזחה חזרה');return;
+      }
+      if(cmd.includes('מחק')||cmd.includes('הסר')){
+        imudAction('removeBrk');toast('🎤 שבירה הוסרה');return;
+      }
+      if(cmd.includes('בטל')){
+        doUndo();toast('🎤 בוטל');return;
+      }
+      // Select word by saying its text
+      const verses=D().verses;
+      for(let vi=0;vi<verses.length;vi++){
+        const words=verses[vi].t.split(/\s+/);
+        for(let wi=0;wi<words.length;wi++){
+          if(stripDiacritics(words[wi])===stripDiacritics(cmd)){
+            selectWord(`${vi}-${wi}`);toast('🎤 נבחרה: '+words[wi]);return;
+          }
+        }
+      }
+      toast('🎤 "'+final+'" — לא זוהתה פקודה');return;
     }
+    // Default: type into active field
+    const active=document.activeElement;
+    if(active&&(active.tagName==='INPUT'||active.tagName==='TEXTAREA')){
+      const start=active.selectionStart,end=active.selectionEnd;
+      active.value=active.value.slice(0,start)+final+active.value.slice(end);
+      active.selectionStart=active.selectionEnd=start+final.length;
+      active.dispatchEvent(new Event('input',{bubbles:true}));
+    }else{toast('🎤 "'+final+'"');}
   };
   recognition.onerror=(e)=>{if(e.error!=='no-speech')toast('שגיאה: '+e.error);stopDictation();};
   recognition.onend=()=>{if(dictationActive){try{recognition.start()}catch(e){stopDictation()}}};
@@ -1576,6 +1609,14 @@ function sImud(){
       • <b>Shift+Tab ←</b> — הזחה חזרה שמאלה<br>
       • <b>פסקה חדשה</b> — הפרדה לפסקאות לפי נושאים<br>
       • <b>Ctrl+Z</b> — ביטול | <b>Ctrl+Y</b> — שחזור
+    </div>
+    <div class="sb-hint" style="background:${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')};border-color:${cv('rgba(139,74,94,.2)','rgba(196,139,159,.2)')}">
+      <b>פקודות קוליות 🎤</b> (הפעילו מיקרופון בסרגל):<br>
+      • <b>"שורה"</b> — שבירת שורה<br>
+      • <b>"פסקה"</b> — פסקה חדשה<br>
+      • <b>"ימינה"</b> — הזחה | <b>"שמאלה"</b> — חזרה<br>
+      • <b>"בטל"</b> — ביטול | <b>"מחק"</b> — הסרת שבירה<br>
+      • אמרו <b>מילה מהטקסט</b> לבחירתה
     </div>
     <div class="sb-sub">גודל טקסט</div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
