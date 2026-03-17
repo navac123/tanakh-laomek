@@ -270,7 +270,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .cv-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .cv-svg path{pointer-events:stroke;cursor:pointer}
 .cv-svg path:hover{stroke-width:3!important}
-.c-node{position:absolute;border-radius:14px;padding:12px 16px;cursor:grab;border:2px solid;min-width:140px;max-width:280px;box-shadow:var(--node-shadow);transition:all .25s cubic-bezier(.22,1,.36,1);z-index:2;user-select:none}
+.c-node{position:absolute;border-radius:14px;padding:12px 16px;cursor:grab;border:2px solid;min-width:140px;box-shadow:var(--node-shadow);transition:all .25s cubic-bezier(.22,1,.36,1);z-index:2;user-select:none}
 .c-node:hover{box-shadow:0 8px 24px rgba(28,51,95,.14);z-index:10;transform:translateY(-2px)}
 .c-child-wrap{margin-top:8px;padding-top:8px;display:flex;flex-direction:row;flex-wrap:wrap;gap:6px}
 .c-child-inner{border-radius:10px;padding:8px 12px;border:1.5px solid;position:relative;cursor:pointer;transition:box-shadow .2s;flex:1;min-width:140px}
@@ -286,9 +286,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-node-w.collapsed{max-height:2.6em;overflow:hidden;opacity:.7}
 .c-node-tgl{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;z-index:3}
 .c-node-tgl:hover{background:var(--hover);border-color:var(--earth)}
-.c-rsz{position:absolute;bottom:2px;left:2px;width:14px;height:14px;cursor:nwse-resize;opacity:.3;z-index:3}
-.c-rsz:hover{opacity:.8}
-.c-rsz::after{content:'';position:absolute;bottom:0;left:0;width:10px;height:10px;border-bottom:2px solid var(--text-faint);border-left:2px solid var(--text-faint);border-radius:0 0 0 3px}
+.c-rsz{position:absolute;bottom:0;left:0;width:24px;height:24px;cursor:nwse-resize;opacity:.5;z-index:3;display:flex;align-items:center;justify-content:center;border-radius:0 8px 0 12px;background:var(--bg-glass-light);transition:all .2s}
+.c-rsz:hover{opacity:1;background:var(--earth-glass-hover)}
+.c-rsz::after{content:'⤡';font-size:14px;color:var(--text-faint)}
 .c-conn-dot{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;background:var(--coral);border:2px solid var(--bg);cursor:crosshair;z-index:4;opacity:0;transition:opacity .2s}
 .c-node:hover .c-conn-dot{opacity:1}
 .conn-mode .c-conn-dot{opacity:1!important}
@@ -1725,6 +1725,17 @@ function sPkg(){
         </div>
       </div>
     </div>
+    <div style="background:${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(139,74,94,.15)','rgba(196,139,159,.15)')};font-size:12px;line-height:1.6">
+      <b>איך בוחרים מילים?</b><br>
+      • <b>גרירה</b> — לחצו וגררו על מילים רצופות (כמו בוורד)<br>
+      • <b>מספר פסוק</b> — לחצו על המספר לבחירת פסוק שלם<br>
+      • <b>לחיצה בודדת</b> — להוסיף/להסיר מילה אחת
+    </div>
+    <div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
+      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="selectAllWords()">בחר הכל</div>
+      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="S.pkgSel=[];R()">נקה בחירה</div>
+      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="selectVerseRange()">בחר טווח פסוקים...</div>
+    </div>
     <div class="sb-sub">יצירת אריזה חדשה</div>
     <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">כותרת</label>
     <input type="text" id="pkgNewName" class="sb-input" placeholder="כותרת האריזה" value="${S.pkgNewName}" onchange="S.pkgNewName=this.value" style="margin-bottom:8px">
@@ -2485,6 +2496,23 @@ function tglWordSel(k){
   sortPkgSel();
   R();
 }
+function selectAllWords(){
+  S.pkgSel=[];
+  D().verses.forEach((v,vi)=>{v.t.split(/\s+/).forEach((_,wi)=>{S.pkgSel.push(`${vi}-${wi}`)})});
+  R();toast('כל המילים נבחרו');
+}
+function selectVerseRange(){
+  const from=prompt('מפסוק מספר (למשל: 1):');
+  const to=prompt('עד פסוק מספר (למשל: 6):');
+  if(!from||!to)return;
+  const f=parseInt(from)-1,t=parseInt(to)-1;
+  if(isNaN(f)||isNaN(t)||f<0||t<0)return;
+  const verses=D().verses;
+  for(let vi=f;vi<=Math.min(t,verses.length-1);vi++){
+    verses[vi].t.split(/\s+/).forEach((_,wi)=>{const k=`${vi}-${wi}`;if(!S.pkgSel.includes(k))S.pkgSel.push(k)});
+  }
+  sortPkgSel();R();toast(`פסוקים ${from}–${to} נבחרו`);
+}
 function selectVerseWords(vi){
   const words=D().verses[vi].t.split(/\s+/);
   const keys=words.map((_,wi)=>`${vi}-${wi}`);
@@ -2540,7 +2568,7 @@ function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
 // Resize
 let rg=null;
 function startResize(e,i){e.preventDefault();rg={i,sx:e.clientX,ow:S.nodes[i].w||220};document.onmousemove=resizeMove;document.onmouseup=resizeEnd}
-function resizeMove(e){if(!rg)return;const el=document.getElementById('nd'+rg.i);const dw=rg.sx-e.clientX;const nw=Math.max(120,Math.min(400,rg.ow+dw));if(el)el.style.width=nw+'px';S.nodes[rg.i].w=nw;updateArrows()}
+function resizeMove(e){if(!rg)return;const el=document.getElementById('nd'+rg.i);const dw=rg.sx-e.clientX;const nw=Math.max(120,Math.min(800,rg.ow+dw));if(el)el.style.width=nw+'px';S.nodes[rg.i].w=nw;updateArrows()}
 function resizeEnd(){rg=null;document.onmousemove=document.onmouseup=null}
 function resetNodeSizes(){S.nodes.forEach(n=>n.w=220);R();toast('גדלים אופסו')}
 
