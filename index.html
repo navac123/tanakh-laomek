@@ -673,20 +673,20 @@ kohelet1:{title:'קהלת א׳ (א-יא)',verses:[
 ]}};
 
 const C=[
-{n:'ורוד',c:'#ec4899',b:'#fce7f3'},
-{n:'אדום',c:'#ef4444',b:'#fee2e2'},
-{n:'כתום',c:'#f97316',b:'#ffedd5'},
-{n:'חום זהב',c:'#a16207',b:'#fef3c7'},
-{n:'צהוב',c:'#ca8a04',b:'#fef9c3'},
-{n:'ירוק בהיר',c:'#65a30d',b:'#ecfccb'},
-{n:'ירוק',c:'#16a34a',b:'#dcfce7'},
-{n:'טורקיז',c:'#0d9488',b:'#ccfbf1'},
-{n:'תכלת',c:'#0891b2',b:'#cffafe'},
-{n:'כחול',c:'#2563eb',b:'#dbeafe'},
-{n:'סגול',c:'#7c3aed',b:'#ede9fe'},
-{n:'אינדיגו',c:'#4f46e5',b:'#e0e7ff'},
-{n:'פוקסיה',c:'#c026d3',b:'#fae8ff'},
-{n:'חום',c:'#78350f',b:'#e8d5b7'},
+{n:'בורגנדי',c:'#8B4A5E',b:'#F0DDE3'},
+{n:'ורוד מושתק',c:'#C48B9F',b:'#F5E5EC'},
+{n:'זהב',c:'#9A7A3A',b:'#F5EDD5'},
+{n:'חום חם',c:'#8A6A4A',b:'#F0E5D8'},
+{n:'מרווה',c:'#5A7A50',b:'#E0EDDA'},
+{n:'ירוק עדין',c:'#6A9A6A',b:'#E5F0E5'},
+{n:'כחול אפור',c:'#5A7A8A',b:'#DDE8EE'},
+{n:'תכלת עמוק',c:'#4A6A8A',b:'#D8E5EE'},
+{n:'סגול עדין',c:'#7A5A7A',b:'#EAE0EA'},
+{n:'לילך',c:'#8A6A8A',b:'#EDE5ED'},
+{n:'חלודה',c:'#9A5A3A',b:'#F0DDD5'},
+{n:'אדמה',c:'#7A5A4A',b:'#ECE0D8'},
+{n:'ים',c:'#3A7A7A',b:'#D5EAEA'},
+{n:'ברונזה',c:'#7A6A3A',b:'#EDE5D5'},
 ];
 
 const STYLES=[
@@ -1565,7 +1565,7 @@ function sPkg(){
       <div class="style-opt ${S.pkgNewStyle==='subtle'?'a':''}" onclick="S.pkgNewStyle='subtle';R()">רקע עדין</div>
       <div class="style-opt ${S.pkgNewStyle==='border'?'a':''}" onclick="S.pkgNewStyle='border';R()">מסגרת</div>
     </div>
-    <div style="font-size:11px;color:${tcm()};margin-bottom:8px">מילים נבחרות: ${S.pkgSel.length}</div>
+    <div style="font-size:11px;color:${tcm()};margin-bottom:8px">מילים נבחרות: <span id="pkgSelCount">${S.pkgSel.length}</span> <span style="font-size:10px;opacity:.6">· גרור על מילים לבחירה מהירה</span></div>
     <button class="sb-btn sb-btn-green" onclick="mkPkg()" ${!S.pkgNewName||!S.pkgSel.length?'disabled style="opacity:0.5;cursor:not-allowed"':''}><span>צור אריזה</span></button>
     ${S.pkgs.length>0?`
       <div class="sb-sub">אריזות (${S.pkgs.length})</div>
@@ -1697,7 +1697,7 @@ function wrd(w,vi,wi,mode){
   if(mode==='disc') oc=`onclick="tglMark('${k}')"`;
   if(mode==='pkg'){
     if(S.pkgSel.includes(k)) st+=`box-shadow:0 0 0 2px ${cv('#8B4A5E','#C48B9F')};border-radius:6px;padding:1px 3px;background:${cv('rgba(139,74,94,.08)','rgba(196,139,159,.12)')};`;
-    oc=`onmousedown="pkgWordDown('${k}',event)" onmouseenter="pkgWordEnter('${k}')" ontouchstart="pkgWordDown('${k}',event)"`;
+    oc=`data-pk="${k}" onmousedown="pkgWordDown('${k}',event)" onmouseenter="pkgWordEnter('${k}')" ontouchstart="pkgWordDown('${k}',event)"`;
     st+=`user-select:none;-webkit-user-select:none;cursor:pointer;`;
   }
   const tip=getWordTip(w);
@@ -2263,17 +2263,28 @@ function deleteCustomText(){
 }
 // Drag-to-select for packaging
 let pkgDrag=null;
+function updateWordVisual(k,selected){
+  const els=document.querySelectorAll(`[data-pk="${k}"]`);
+  els.forEach(el=>{
+    if(selected){el.style.boxShadow=`0 0 0 2px ${cv('#8B4A5E','#C48B9F')}`;el.style.borderRadius='6px';el.style.background=cv('rgba(139,74,94,.08)','rgba(196,139,159,.12)');}
+    else{el.style.boxShadow='';el.style.background='';}
+  });
+}
 function pkgWordDown(k,e){
   e.preventDefault();
-  pkgDrag={startKey:k,selecting:!S.pkgSel.includes(k)};
-  tglWordSel(k);
+  const isSelected=S.pkgSel.includes(k);
+  pkgDrag={startKey:k,selecting:!isSelected};
+  if(isSelected){S.pkgSel=S.pkgSel.filter(x=>x!==k);updateWordVisual(k,false);}
+  else{S.pkgSel.push(k);sortPkgSel();updateWordVisual(k,true);}
+  updatePkgCount();
 }
 function pkgWordEnter(k){
   if(!pkgDrag)return;
-  if(pkgDrag.selecting&&!S.pkgSel.includes(k)){S.pkgSel.push(k);sortPkgSel();R();}
-  else if(!pkgDrag.selecting&&S.pkgSel.includes(k)){S.pkgSel=S.pkgSel.filter(x=>x!==k);R();}
+  if(pkgDrag.selecting&&!S.pkgSel.includes(k)){S.pkgSel.push(k);sortPkgSel();updateWordVisual(k,true);updatePkgCount();}
+  else if(!pkgDrag.selecting&&S.pkgSel.includes(k)){S.pkgSel=S.pkgSel.filter(x=>x!==k);updateWordVisual(k,false);updatePkgCount();}
 }
-function pkgWordUp(){pkgDrag=null;}
+function pkgWordUp(){if(pkgDrag){pkgDrag=null;R();}}
+function updatePkgCount(){const el=document.getElementById('pkgSelCount');if(el)el.textContent=S.pkgSel.length;}
 document.addEventListener('mouseup',pkgWordUp);
 document.addEventListener('touchend',pkgWordUp);
 function sortPkgSel(){S.pkgSel.sort((a,b)=>{const[av,aw]=a.split('-').map(Number);const[bv,bw]=b.split('-').map(Number);return av!==bv?av-bv:aw-bw;});}
