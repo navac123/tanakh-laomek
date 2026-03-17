@@ -4,275 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>מדריך שימוש — תנ״ך לעומק</title>
-<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#F9F6F2;--bg-warm:#EFEFEF;
-  --text:#1C335F;--text-muted:#4A5A7A;--text-faint:#8A96AA;
-  --earth:#1C335F;--coral:#FF8C69;
-  --border:#D9DFF2;
-  --pastel-purple:#D9DFF2;--pastel-blue:#CFE2F3;--pastel-peach:#FBD5B5;--pastel-yellow:#FFF2CC;--pastel-pink:#E6D0DE;--pastel-green:#D5E8D4;
-  --shadow:0 2px 12px rgba(28,51,95,.05);--shadow-md:0 8px 24px rgba(28,51,95,.1);
-  --glass:rgba(255,255,255,.7);--glass-strong:rgba(255,255,255,.8);
+  --bg:#F5EDE3;--bg-warm:#EDE5DB;
+  --text:#5A3A4A;--text-muted:#7A6070;--text-faint:#9A8A92;
+  --burg:#8B4A5E;--rose:#C48B9F;--sage:#8FAF85;--gold:#C9A96E;--blue:#9AADBC;
+  --border:#D4C4CC;
+  --shadow:0 2px 12px rgba(90,58,74,.06);--shadow-md:0 8px 24px rgba(90,58,74,.1);
 }
 *{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:'Assistant',sans-serif;
-  background:var(--bg);
-  color:var(--text);
-  min-height:100vh;
-  line-height:1.75;
-  direction:rtl;
-}
+body{font-family:'Assistant',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.85;direction:rtl}
 
-/* Hero */
-.hero{
-  background:linear-gradient(135deg,#F9F6F2 0%,#EFEFEF 30%,#F9F6F2 70%,#D9DFF2 100%);
-  padding:60px 24px 48px;
-  text-align:center;
-  position:relative;
-  overflow:hidden;
-}
-.hero::after{
-  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--border),transparent);
-}
-.hero-icon{
-  width:80px;height:80px;
-  background:var(--earth);
-  border-radius:22px;
-  display:inline-flex;align-items:center;justify-content:center;
-  margin-bottom:20px;
-  box-shadow:0 8px 32px rgba(28,51,95,.15);
-}
-.hero h1{
-  font-size:42px;font-weight:800;letter-spacing:-1px;
-  margin-bottom:8px;color:var(--earth);
-}
-.hero h1 span{color:var(--coral)}
-.hero-sub{
-  font-size:17px;color:var(--text-muted);
-  max-width:520px;margin:0 auto;font-weight:400;
-}
+.hero{background:linear-gradient(135deg,#F5EDE3 0%,#EDE5DB 30%,#F5EDE3 70%,#E8DDD2 100%);padding:60px 24px 48px;text-align:center;position:relative;overflow:hidden}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--border),transparent)}
+.hero h1{font-family:'Frank Ruhl Libre',serif;font-size:38px;font-weight:700;letter-spacing:-1px;margin-bottom:8px;color:var(--burg)}
+.hero h1 span{color:var(--gold)}
+.hero-sub{font-size:16px;color:var(--text-muted);max-width:520px;margin:0 auto;font-weight:400}
+.hero-author{font-size:13px;color:var(--text-faint);margin-top:12px}
 
-/* Container */
-.container{
-  max-width:820px;margin:0 auto;padding:32px 24px 60px;
-}
+.container{max-width:780px;margin:0 auto;padding:32px 24px 60px}
 
-/* Section */
-.section{
-  margin-bottom:32px;
-}
-.section-title{
-  font-size:22px;font-weight:800;
-  color:var(--earth);
-  margin-bottom:16px;
-  display:flex;align-items:center;gap:12px;
-  padding-bottom:10px;
-  border-bottom:2px solid var(--border);
-}
-.section-title .num{
-  width:36px;height:36px;
-  border-radius:50%;
-  background:var(--earth);
-  color:#fff;
-  display:flex;align-items:center;justify-content:center;
-  font-size:16px;font-weight:800;
-  flex-shrink:0;
-}
+.section{margin-bottom:36px}
+.section-title{font-size:22px;font-weight:800;color:var(--burg);margin-bottom:14px;display:flex;align-items:center;gap:12px;padding-bottom:10px;border-bottom:2px solid var(--border)}
+.section-title .num{width:36px;height:36px;border-radius:50%;background:var(--burg);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0}
 
-/* Step cards */
-.steps-grid{
-  display:flex;flex-direction:column;gap:16px;
-}
-.step-card{
-  background:var(--glass-strong);
-  border:1.5px solid var(--border);
-  border-radius:16px;
-  padding:20px 24px;
-  display:flex;gap:16px;align-items:flex-start;
-  transition:all .2s;
-  backdrop-filter:blur(8px);
-}
-.step-card:hover{
-  border-color:var(--coral);
-  box-shadow:var(--shadow-md);
-  transform:translateY(-2px);
-}
-.step-num{
-  width:48px;height:48px;
-  border-radius:14px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:22px;font-weight:800;
-  flex-shrink:0;
-  color:#fff;
-}
-.step-body h3{
-  font-size:18px;font-weight:700;margin-bottom:4px;
-}
-.step-body p{
-  font-size:14.5px;color:var(--text-muted);line-height:1.7;
-}
-.step-body .tools{
-  margin-top:8px;display:flex;flex-wrap:wrap;gap:6px;
-}
-.tool-tag{
-  background:var(--bg-warm);
-  border:1px solid var(--border);
-  border-radius:8px;
-  padding:3px 10px;
-  font-size:12px;font-weight:600;
-  color:var(--text-muted);
-}
+.steps-grid{display:flex;flex-direction:column;gap:14px}
+.step-card{background:rgba(245,237,227,.8);border:1.5px solid var(--border);border-radius:16px;padding:20px 24px;display:flex;gap:16px;align-items:flex-start;transition:all .2s;backdrop-filter:blur(8px)}
+.step-card:hover{border-color:var(--rose);box-shadow:var(--shadow-md)}
+.step-num{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;flex-shrink:0;color:#fff}
+.step-body h3{font-size:17px;font-weight:800;margin-bottom:4px;color:var(--text)}
+.step-body p{font-size:14px;color:var(--text-muted);line-height:1.7}
 
-/* Colors for steps */
-.s1{background:#1C335F}
-.s2{background:#7A9DC4}
-.s3{background:#FF8C69}
-.s4{background:#D9DFF2;color:#1C335F}
-.s5{background:#4A5A7A}
+.tip-box{background:rgba(143,175,133,.1);border:1.5px solid rgba(143,175,133,.3);border-radius:12px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.7;color:var(--text)}
+.tip-box b{color:var(--sage)}
 
-/* Info boxes */
-.info-box{
-  background:var(--glass);
-  border:1.5px solid var(--border);
-  border-radius:14px;
-  padding:18px 22px;
-  margin-bottom:14px;
-  display:flex;gap:14px;align-items:flex-start;
-  backdrop-filter:blur(8px);
-}
-.info-box .icon{
-  font-size:22px;flex-shrink:0;margin-top:2px;
-}
-.info-box .content{
-  font-size:14.5px;line-height:1.7;
-}
-.info-box .content strong{
-  color:var(--earth);font-weight:700;
-}
+.warn-box{background:rgba(196,139,159,.08);border:1.5px solid rgba(196,139,159,.25);border-radius:12px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.7;color:var(--text)}
+.warn-box b{color:var(--burg)}
 
-/* Feature list */
-.feature-list{
-  display:grid;grid-template-columns:1fr 1fr;gap:12px;
-  margin-top:12px;
-}
-.feature-item{
-  background:var(--glass);
-  border:1.5px solid var(--border);
-  border-radius:12px;
-  padding:14px 18px;
-  display:flex;gap:10px;align-items:center;
-}
-.feature-item .fi-icon{
-  width:36px;height:36px;border-radius:10px;
-  display:flex;align-items:center;justify-content:center;
-  font-size:18px;flex-shrink:0;
-}
-.feature-item .fi-text{
-  font-size:13.5px;font-weight:600;
-}
+.example{background:rgba(201,169,110,.08);border:1.5px solid rgba(201,169,110,.25);border-radius:12px;padding:14px 18px;margin:10px 0;font-size:13px;line-height:1.7;color:var(--text)}
+.example b{color:var(--gold)}
 
-/* Tips */
-.tip{
-  background:linear-gradient(135deg,rgba(255,140,105,.06),rgba(207,226,243,.1));
-  border:1.5px solid rgba(255,140,105,.2);
-  border-radius:14px;
-  padding:18px 22px;
-  margin-top:16px;
-}
-.tip-title{
-  font-size:14px;font-weight:700;color:var(--coral);
-  margin-bottom:6px;display:flex;align-items:center;gap:8px;
-}
-.tip p{
-  font-size:14px;color:var(--text-muted);line-height:1.7;
-}
+.kbd{display:inline-block;background:var(--bg-warm);border:1.5px solid var(--border);border-radius:6px;padding:1px 7px;font-size:12px;font-weight:700;font-family:monospace;color:var(--text)}
 
-/* CTA link */
-.cta-box{
-  background:var(--earth);
-  border-radius:16px;
-  padding:24px 28px;
-  text-align:center;
-  margin-top:32px;
-  box-shadow:0 8px 32px rgba(28,51,95,.15);
-}
-.cta-box h3{
-  font-size:20px;font-weight:800;color:#fff;margin-bottom:8px;
-}
-.cta-box p{
-  font-size:14px;color:rgba(255,255,255,.7);margin-bottom:16px;
-}
-.cta-btn{
-  display:inline-block;
-  background:var(--coral);color:#fff;
-  padding:12px 36px;border-radius:12px;
-  font-size:16px;font-weight:700;
-  text-decoration:none;
-  font-family:'Assistant',sans-serif;
-  transition:all .2s;
-  box-shadow:0 4px 16px rgba(255,140,105,.3);
-}
-.cta-btn:hover{
-  transform:translateY(-2px);
-  box-shadow:0 8px 24px rgba(255,140,105,.4);
-}
+.back-link{display:inline-flex;align-items:center;gap:6px;color:var(--burg);text-decoration:none;font-weight:600;font-size:14px;padding:8px 16px;border-radius:10px;border:1.5px solid var(--border);transition:all .2s;margin-top:24px}
+.back-link:hover{background:var(--burg);color:var(--bg);border-color:var(--burg)}
 
-/* Resource link */
-.resource-link{
-  background:var(--glass-strong);
-  border:1.5px solid var(--border);
-  border-radius:14px;
-  padding:18px 22px;
-  display:flex;gap:16px;align-items:center;
-  margin-top:14px;
-  text-decoration:none;
-  color:var(--text);
-  transition:all .2s;
-}
-.resource-link:hover{
-  border-color:var(--coral);
-  box-shadow:var(--shadow-md);
-  transform:translateY(-2px);
-}
-.resource-link .rl-icon{
-  width:48px;height:48px;border-radius:12px;
-  background:linear-gradient(135deg,#1C335F,#4A5A7A);
-  display:flex;align-items:center;justify-content:center;
-  flex-shrink:0;
-}
-.resource-link .rl-body h4{
-  font-size:16px;font-weight:700;margin-bottom:2px;
-}
-.resource-link .rl-body p{
-  font-size:13px;color:var(--text-muted);
-}
+.footer{text-align:center;padding:24px;font-size:12px;color:var(--text-faint);border-top:1px solid var(--border);margin-top:40px}
 
-/* Footer */
-.footer{
-  text-align:center;
-  padding:28px 24px;
-  border-top:1px solid var(--border);
-  margin-top:40px;
-}
-.footer p{
-  font-size:13px;color:var(--text-faint);
-}
-
-/* Print */
-@media print{
-  .hero{padding:30px 0 20px;background:none}
-  .step-card:hover,.resource-link:hover{transform:none;box-shadow:none}
-  body{font-size:12px}
-  .container{padding:16px 0}
-}
-
-/* Mobile */
-@media(max-width:640px){
-  .hero h1{font-size:30px}
-  .feature-list{grid-template-columns:1fr}
+@media(max-width:600px){
+  .hero h1{font-size:28px}
   .step-card{flex-direction:column;gap:10px}
   .container{padding:20px 16px 40px}
 }
@@ -280,282 +61,211 @@ body{
 </head>
 <body>
 
-<!-- Hero -->
 <div class="hero">
-  <div class="hero-icon">
-    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#F9F6F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
-  </div>
-  <h1>תנ״ך <span>לעומק</span></h1>
-  <p class="hero-sub">מדריך שימוש מלא — כלי אינטראקטיבי לניתוח טקסט מקראי בחמישה שלבים</p>
+  <h1>מדריך שימוש — תנ״ך <span>לעומק</span></h1>
+  <div class="hero-sub">מדריך לסטודנטים לשימוש באפליקציה לניתוח טקסטים מקראיים</div>
+  <div class="hero-author">ד״ר נאוה כהן · אוניברסיטת בר אילן</div>
 </div>
 
 <div class="container">
 
-  <!-- What is this -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">?</div>
-      מה זה תנ״ך לעומק?
-    </div>
-    <div class="info-box">
-      <div class="icon">📖</div>
-      <div class="content">
-        <strong>תנ״ך לעומק</strong> הוא כלי דיגיטלי אינטראקטיבי שמלווה אתכם בניתוח מובנה של טקסט מקראי.
-        הכלי מנחה אתכם דרך חמישה שלבי ניתוח — מהעימוד הראשוני ועד לקריאה המסכמת — ומאפשר לגלות דפוסים, קשרים ותובנות בטקסט.
-      </div>
-    </div>
-    <div class="info-box">
-      <div class="icon">🎯</div>
-      <div class="content">
-        <strong>למי מתאים?</strong> לסטודנטים, מורים, ולכל מי שרוצה להעמיק בטקסט המקראי בצורה שיטתית ויצירתית. אין צורך בהתקנה — הכלי עובד ישירות בדפדפן.
+<!-- מבוא -->
+<div class="section">
+  <div class="section-title"><span class="num">?</span> מהי האפליקציה?</div>
+  <p>
+    <b>תנ״ך לעומק</b> היא כלי דיגיטלי לניתוח ספרותי של טקסטים מקראיים. האפליקציה מנחה אתכם דרך תהליך שיטתי בן <b>חמישה שלבים</b> — מקריאה ראשונית ועד לתובנות מעמיקות.
+  </p>
+  <p style="margin-top:8px">
+    המטרה: לעבור ממבט שטחי על הטקסט לקריאה עומק שחושפת את <b>המבנה הספרותי</b>, <b>התופעות הלשוניות</b>, ו<b>הרעיונות המרכזיים</b>.
+  </p>
+  <div class="tip-box">
+    <b>דוגמה מוכנה:</b> בדף הפתיחה תמצאו כפתור "צפה בדוגמה — מזמור י״ט" שטוען ניתוח מלא ומודגם של כל חמשת השלבים. מומלץ לצפות בו לפני שמתחילים לעבוד לבד.
+  </div>
+</div>
+
+<!-- שלב 1: עימוד -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--blue)">1</span> שלב 1: עימוד</div>
+  <p>
+    שלב העימוד עוסק ב<b>פירוק הטקסט הלינארי</b> לשורות ופסקאות בעלות משמעות. רוב הטקסטים מודפסים בצורה לינארית — שורות חסרות כוונה. בשלב זה אתם מתערבים בעימוד ומפרקים את הטקסט למשפטים, חצאי משפטים ויחידות.
+  </p>
+  <div class="steps-grid" style="margin-top:12px">
+    <div class="step-card">
+      <div class="step-body">
+        <h3>איך עושים?</h3>
+        <p>
+          • <b>לחצו על מילה</b> כדי לבחור אותה, ואז לחצו <span class="kbd">Enter</span> לשבירת שורה לפניה<br>
+          • <span class="kbd">Tab</span> — הזחה ימינה (כמו טאב בוורד)<br>
+          • <span class="kbd">Shift+Tab</span> — הזחה שמאלה (חזרה)<br>
+          • <span class="kbd">Shift+Enter</span> — פסקה חדשה (הפרדה רחבה יותר)<br>
+          • <span class="kbd">Delete</span> — הסרת שבירת שורה
+        </p>
       </div>
     </div>
   </div>
-
-  <!-- How to start -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">1</div>
-      איך מתחילים?
-    </div>
-    <div class="info-box">
-      <div class="icon">🔗</div>
-      <div class="content">
-        <strong>פתחו את הקישור</strong> בכל דפדפן (מחשב או נייד). במסך הפתיחה תוכלו לבחור טקסט מובנה מתוך מבחר מזמורי תהלים, או להעלות טקסט משלכם.
-      </div>
-    </div>
-    <div class="info-box">
-      <div class="icon">✏️</div>
-      <div class="content">
-        <strong>טקסט מותאם אישית:</strong> לחצו על ״העלאת טקסט חדש״, הקלידו את שם הטקסט, הדביקו את הטקסט עצמו — ולחצו על ״הוסף טקסט״. הטקסט יופיע ברשימה ויישמר עבורכם.
-      </div>
-    </div>
-    <div style="background:linear-gradient(135deg,rgba(255,140,105,.08),rgba(255,140,105,.04));border:2px solid rgba(255,140,105,.3);border-radius:14px;padding:20px 22px;margin-bottom:14px">
-      <div style="font-size:16px;font-weight:800;color:#FF8C69;margin-bottom:10px;display:flex;align-items:center;gap:8px">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF8C69" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-        חשוב! הכנת הטקסט לפני העלאה
-      </div>
-      <div style="font-size:14.5px;line-height:1.8;color:#1C335F">
-        כשמכניסים טקסט תנ״כי חדש לאפליקציה, יש להכין אותו כך:
-      </div>
-      <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="width:28px;height:28px;border-radius:50%;background:#FF8C69;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">1</div>
-          <div style="font-size:14px;line-height:1.7;color:#1C335F"><strong>מחקו את אותיות הפסוקים</strong> (א, ב, ג...) מתוך הטקסט. האפליקציה מוסיפה מספור פסוקים בעצמה — אם תשאירו את האותיות המקוריות, יופיעו סימוני פסוקים כפולים.</div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:flex-start">
-          <div style="width:28px;height:28px;border-radius:50%;background:#FF8C69;color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0">2</div>
-          <div style="font-size:14px;line-height:1.7;color:#1C335F"><strong>לחצו Enter בין פסוק לפסוק</strong> — כל פסוק צריך להיות בשורה נפרדת. כך האפליקציה תזהה ותמספר את הפסוקים בצורה נכונה.</div>
-        </div>
-      </div>
-      <div style="margin-top:14px;background:rgba(255,255,255,.6);border:1.5px solid rgba(28,51,95,.1);border-radius:10px;padding:14px 16px;direction:rtl">
-        <div style="font-size:12px;font-weight:700;color:#4A5A7A;margin-bottom:8px">דוגמה — כך צריך להיראות הטקסט:</div>
-        <div style="font-family:'Frank Ruhl Libre',serif;font-size:16px;line-height:2.2;color:#1C335F;white-space:pre-line">אַ֥שְֽׁרֵי הָאִ֗ישׁ אֲשֶׁ֤ר לֹ֥א הָלַךְ֮ בַּעֲצַ֢ת רְשָׁ֫עִ֥ים
-כִּ֤י אִם֮ בְּתוֹרַ֢ת יְ֫הֹוָ֥ה חֶ֫פְצ֥וֹ
-וְֽהָיָ֗ה כְּעֵץ֮ שָׁת֢וּל עַֽל פַּלְגֵ֢י מָ֫יִ֥ם</div>
-        <div style="font-size:11px;color:#8A96AA;margin-top:8px">שימו לב: כל פסוק בשורה נפרדת, ללא אותיות מספור (א, ב, ג)</div>
-      </div>
-    </div>
-    <div class="tip">
-      <div class="tip-title">💡 טיפ</div>
-      <p>העבודה נשמרת אוטומטית בדפדפן שלכם. כדי לחזור לעבודה קודמת, פשוט לחצו על ״המשך עבודה שמורה״ במסך הפתיחה.</p>
-    </div>
+  <div class="warn-box">
+    <b>על מה לשים לב בעימוד:</b><br>
+    • מעבר מגוף שלישי לגוף שני או ראשון<br>
+    • מעבר מיחיד לרבים<br>
+    • נושא חדש / מעבר בין דוברים<br>
+    • תקבולות (חלקי משפט מקבילים)<br>
+    • ו' החיבור, "כי", "אשר" — לרוב מסמנים מעבר<br>
+    • משפט ארוך — חלקו ליותר משורה אחת
   </div>
-
-  <!-- The 5 Steps -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">2</div>
-      חמשת השלבים
-    </div>
-
-    <div class="steps-grid">
-
-      <div class="step-card">
-        <div class="step-num s1">1</div>
-        <div class="step-body">
-          <h3>עימוד</h3>
-          <p>בשלב הזה אתם מעצבים את הופעת הטקסט על המסך — בוחרים גופן, גודל כתב, ומרווחים. המטרה: ליצור עימוד נוח שמאפשר קריאה מדויקת ומרוכזת.</p>
-          <div class="tools">
-            <span class="tool-tag">בחירת גופן</span>
-            <span class="tool-tag">גודל טקסט</span>
-            <span class="tool-tag">מרווח שורות</span>
-            <span class="tool-tag">מרווח מילים</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-num s2">2</div>
-        <div class="step-body">
-          <h3>גילוי</h3>
-          <p>כאן אתם סורקים את הטקסט ומסמנים מילים או ביטויים בולטים בצבעים שונים. לחצו על מילה כדי לסמן אותה, או השתמשו בלוח הצבעים המהיר בתחתית המסך.</p>
-          <div class="tools">
-            <span class="tool-tag">סימון בצבעים</span>
-            <span class="tool-tag">לוח צבעים מהיר</span>
-            <span class="tool-tag">קטגוריות אוטומטיות</span>
-            <span class="tool-tag">מחיקת סימון</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-num s3">3</div>
-        <div class="step-body">
-          <h3>אריזה</h3>
-          <p>אספו את המילים המסומנות לקבוצות (״חבילות״) לפי נושא, שורש, או כל קטגוריה שתבחרו. גררו מילים בין קבוצות, שנו שמות, ובנו מבנה.</p>
-          <div class="tools">
-            <span class="tool-tag">יצירת קבוצות</span>
-            <span class="tool-tag">גרירה בין קבוצות</span>
-            <span class="tool-tag">תת-קבוצות</span>
-            <span class="tool-tag">שינוי שם</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-num s4">4</div>
-        <div class="step-body">
-          <h3>ארגון</h3>
-          <p>שלב ויזואלי — סדרו את הקבוצות על קנבס חופשי, חברו ביניהן בחיצים, הוסיפו פתקיות ותוויות. כאן מתגלים היחסים בין החבילות: הקבלות, ניגודים, ומבנים.</p>
-          <div class="tools">
-            <span class="tool-tag">קנבס חופשי</span>
-            <span class="tool-tag">חיצים וקשרים</span>
-            <span class="tool-tag">פתקיות</span>
-            <span class="tool-tag">תוויות</span>
-            <span class="tool-tag">צורות</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="step-card">
-        <div class="step-num s5">5</div>
-        <div class="step-body">
-          <h3>קריאה</h3>
-          <p>הסיכום הסופי — צפייה בטקסט המסומן לצד סטטיסטיקות, הקבוצות שיצרתם, המחברת, והתובנות. מכאן תוכלו לייצא את העבודה כ-PDF או כתמונה.</p>
-          <div class="tools">
-            <span class="tool-tag">סיכום מלא</span>
-            <span class="tool-tag">ייצוא PDF</span>
-            <span class="tool-tag">ייצוא תמונה</span>
-            <span class="tool-tag">שיתוף</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
+  <div class="example">
+    <b>דוגמה ממזמור י״ט:</b> פסוקים ח–י מעומדים בשלוש עמודות מקבילות: שם ה׳ (תורת/עדות/פקודי...) + תואר (תמימה/נאמנה/ישרים...) + תוצאה (משיבת נפש/מחכימת פתי...). העימוד חושף את המבנה התקבולתי.
   </div>
+</div>
 
-  <!-- Notebook -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">3</div>
-      מחברת מחשבות
-    </div>
-    <div class="info-box">
-      <div class="icon">📓</div>
-      <div class="content">
-        <strong>בכל שלב</strong> ניתן ללחוץ על כפתור ״מחברת״ בסרגל העליון כדי לפתוח את פאנל המחשבות. כתבו שאלות, תובנות והערות — הן יישמרו אוטומטית ויופיעו בשלב הקריאה הסופי ובייצוא.
+<!-- שלב 2: גילוי -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--rose)">2</span> שלב 2: גילוי וסימון</div>
+  <p>
+    שלב הגילוי הוא שלב של <b>צביעה וסימון</b>. אתם מזהים תופעות ספרותיות בטקסט ומסמנים אותן בצבעים שונים.
+  </p>
+  <div class="steps-grid" style="margin-top:12px">
+    <div class="step-card">
+      <div class="step-body">
+        <h3>איך עושים?</h3>
+        <p>
+          • בחרו <b>צבע</b> מתוך לוח הצבעים בצד<br>
+          • <b>לחצו על מילים</b> בטקסט — הן יסומנו בצבע שבחרתם<br>
+          • שנו <b>סגנון</b> סימון: רקע צבעוני, קו תחתון, מסגרת, טקסט מודגש ועוד<br>
+          • תנו <b>שם לקטגוריה</b> (למשל: "לשון דיבור", "שם ה׳", "תואר")
+        </p>
       </div>
     </div>
   </div>
+  <div class="tip-box">
+    <b>כלל הזהב:</b> אותו סוג תופעה = אותו צבע וסגנון. עקביות בסימון מאפשרת לזהות דפוסים חוזרים.
+  </div>
+  <div class="example">
+    <b>דוגמה ממזמור י״ט:</b> בחלק הראשון (ב–ז) מסמנים את <b>לשון הדיבור</b> (מספרים, מגיד, יביע, אומר, יחוה, דעת) — הפרדוקס של בריאה ש"מדברת" ללא מילים. בחלק השני (ח–י) מסמנים <b>שם ה׳</b> (6 פעמים), <b>תארים</b> (תמימה, נאמנה...) ו<b>תוצאות</b> (משיבת נפש, מחכימת פתי...).
+  </div>
+</div>
 
-  <!-- Features -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">4</div>
-      תכונות נוספות
-    </div>
-    <div class="feature-list">
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#D9DFF2">🌙</div>
-        <div class="fi-text">מצב כהה / בהיר</div>
-      </div>
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#FBD5B5">💾</div>
-        <div class="fi-text">שמירה אוטומטית</div>
-      </div>
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#CFE2F3">📤</div>
-        <div class="fi-text">ייצוא PDF ותמונה</div>
-      </div>
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#D5E8D4">📱</div>
-        <div class="fi-text">מותאם לנייד</div>
-      </div>
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#FFF2CC">🔤</div>
-        <div class="fi-text">החלפת שם ה׳</div>
-      </div>
-      <div class="feature-item">
-        <div class="fi-icon" style="background:#E6D0DE">🔗</div>
-        <div class="fi-text">שיתוף עבודה</div>
+<!-- שלב 3: אריזה -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--sage)">3</span> שלב 3: אריזה</div>
+  <p>
+    אחרי שגילינו תופעות, שלב האריזה מאפשר ל<b>קבץ מילים ופסוקים ליחידות משמעותיות</b> — כמו לארוז רעיונות בקופסאות.
+  </p>
+  <div class="steps-grid" style="margin-top:12px">
+    <div class="step-card">
+      <div class="step-body">
+        <h3>איך עושים?</h3>
+        <p>
+          • <b>גררו על מילים</b> בטקסט (כמו בוורד) כדי לבחור אותן — או לחצו על מספר פסוק לבחירת פסוק שלם<br>
+          • תנו <b>כותרת</b> לאריזה שמתארת את תוכנה<br>
+          • בחרו <b>צבע וסגנון</b> (רקע מלא, רקע עדין, מסגרת)<br>
+          • ניתן ליצור <b>אריזות-על</b> — אריזה שמכילה אריזות אחרות
+        </p>
       </div>
     </div>
   </div>
+  <div class="example">
+    <b>דוגמה ממזמור י״ט — 5 אריזות:</b><br>
+    1. <b>כותרת</b> (פס׳ א)<br>
+    2. <b>שבח ה׳ העולה מ"דיבור" הבריאה</b> (פס׳ ב–ז)<br>
+    3. <b>שבח ה׳ העולה מהתורה והמצוות</b> (פס׳ ח–יב)<br>
+    4. <b>תפילת עבד ה׳ להימנעות מחטאים</b> (פס׳ יג–יד)<br>
+    5. <b>חתימה</b> (פס׳ טו) — עם תת-אריזות: 5א תפילה להתקבלות הדיבור, 5ב תפילה להתקבלות הגיון הלב, 5ג פניה לאל
+  </div>
+</div>
 
-  <!-- Export guide -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">5</div>
-      ייצוא ושיתוף
-    </div>
-    <div class="info-box">
-      <div class="icon">📄</div>
-      <div class="content">
-        <strong>ייצוא PDF:</strong> לחצו על ״ייצוא״ בסרגל העליון ובחרו ״PDF״. ייפתח חלון הדפסה — בחרו ״שמור כ-PDF״ כדי לשמור את העבודה כקובץ.
-      </div>
-    </div>
-    <div class="info-box">
-      <div class="icon">🖼️</div>
-      <div class="content">
-        <strong>ייצוא תמונה:</strong> בחרו ״תמונה״ מתפריט הייצוא. הכלי יצור תמונה של הניתוח שלכם שתוכלו לשמור ולשתף.
-      </div>
-    </div>
-    <div class="info-box">
-      <div class="icon">📋</div>
-      <div class="content">
-        <strong>שיתוף:</strong> לחצו על ״שיתוף״ כדי להוריד את קובץ העבודה. שלחו אותו לאחרים — הם יוכלו לטעון אותו מתפריט ״שיתוף״ באפליקציה.
+<!-- שלב 4: ארגון -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--gold)">4</span> שלב 4: ארגון וקישור</div>
+  <p>
+    בשלב זה <b>הטקסט הופך למפה ויזואלית</b>. כל אריזה הופכת לקופסה על לוח, ואתם יוצרים קשרים ביניהן — הקבלות, ניגודים, סיבה ותוצאה.
+  </p>
+  <div class="steps-grid" style="margin-top:12px">
+    <div class="step-card">
+      <div class="step-body">
+        <h3>איך עושים?</h3>
+        <p>
+          • <b>גררו</b> חבילות על הלוח למיקום הרצוי<br>
+          • <b>לחצו על הנקודה התחתונה</b> של חבילה ואז על חבילה אחרת ליצירת חץ<br>
+          • הוסיפו <b>תווית</b> לחץ (למשל: "הקבלה", "מעבר מגוף שלישי לראשון")<br>
+          • הוסיפו <b>פתקים</b>, <b>תוויות</b> ו<b>צורות</b> לעיצוב המפה<br>
+          • השתמשו ב<b>"סדר"</b> לארגון אוטומטי מהיר
+        </p>
       </div>
     </div>
   </div>
+  <div class="example">
+    <b>דוגמה ממזמור י״ט:</b> חץ בין אריזה 2 ל-3 עם תווית "הקבלה: טבע ↔ תורה". חץ בין 3 ל-4 עם "מעבר: מגוף שלישי לגוף ראשון". המבנה חושף את המשפך: שמים → תורה → עבד ה׳ → תפילה.
+  </div>
+</div>
 
-  <!-- AlHaTorah resource -->
-  <div class="section">
-    <div class="section-title">
-      <div class="num">6</div>
-      משאב נוסף ללימוד
+<!-- שלב 5: קריאה -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--burg)">5</span> שלב 5: קריאה חכמה</div>
+  <p>
+    שלב הקריאה מרכז את כל העבודה שעשיתם — הטקסט המעומד עם הסימונים, סיכום החבילות, מקרא הסימונים, ומחברת המחשבות.
+  </p>
+  <div class="steps-grid" style="margin-top:12px">
+    <div class="step-card">
+      <div class="step-body">
+        <h3>מחברת מחשבות</h3>
+        <p>
+          בכל שלב תוכלו לפתוח את <b>המחברת</b> (כפתור בסרגל העליון) ולכתוב מחשבות, שאלות ותובנות. ההערות נשמרות ומופיעות בשלב הקריאה ובייצוא.
+        </p>
+      </div>
     </div>
-    <a href="https://alhatorah.org" target="_blank" class="resource-link">
-      <div class="rl-icon">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F9F6F2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-          <polyline points="15 3 21 3 21 9"/>
-          <line x1="10" y1="14" x2="21" y2="3"/>
-        </svg>
-      </div>
-      <div class="rl-body">
-        <h4>על התורה — AlHaTorah.org</h4>
-        <p>פורטל מקיף ללימוד תנ״ך עם פרשנויות, מקראות גדולות, עיונים בפרשה, ועוד. השתמשו בו לצד הכלי שלנו כדי להעמיק את הלימוד.</p>
-      </div>
-    </a>
   </div>
+</div>
 
-  <!-- CTA -->
-  <div class="cta-box">
-    <h3>מוכנים להתחיל? 🚀</h3>
-    <p>פתחו את הכלי והתחילו לנתח טקסט מקראי בחמישה שלבים</p>
-    <a href="https://tanakh-laomek.neocities.org/moovanly-v6.html" class="cta-btn" target="_blank">
-      כניסה לתנ״ך לעומק ←
-    </a>
+<!-- טיפים כלליים -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--text-faint)">!</span> טיפים כלליים</div>
+  <div class="tip-box">
+    <b>שמירה:</b> האפליקציה שומרת אוטומטית כל דקה. אפשר גם ללחוץ "שמירה" ידנית. המידע נשמר בדפדפן שלכם בלבד.
   </div>
-
-  <div class="footer">
-    <p>תנ״ך לעומק — כלי ניתוח טקסט מקראי אינטראקטיבי</p>
+  <div class="tip-box">
+    <b>ביטול/שחזור:</b> <span class="kbd">Ctrl+Z</span> לביטול, <span class="kbd">Ctrl+Y</span> לשחזור. עובד בכל השלבים.
   </div>
+  <div class="tip-box">
+    <b>חיפוש:</b> <span class="kbd">Ctrl+F</span> לחיפוש מילים בטקסט.
+  </div>
+  <div class="tip-box">
+    <b>ייצוא:</b> לחצו "ייצוא" בסרגל העליון — PDF להדפסה, PNG לתמונה, HTML לשמירת הכל, או JSON לשיתוף עם אחרים.
+  </div>
+  <div class="tip-box">
+    <b>קיצורי מקלדת:</b> לחצו <span class="kbd">?</span> בכל מקום לצפייה בכל קיצורי המקלדת.
+  </div>
+  <div class="tip-box">
+    <b>העלאת טקסט:</b> אפשר להעלות טקסט תנ"כי משלכם — לחצו "העלאה" בסרגל העליון, הדביקו טקסט או העלו קובץ.
+  </div>
+</div>
 
+<!-- משימה -->
+<div class="section">
+  <div class="section-title"><span class="num" style="background:var(--gold)">✎</span> המשימה שלכם</div>
+  <p style="font-size:15px;line-height:1.8">
+    בחרו <b>מזמור תהלים</b> מתוך הטקסטים המובנים באפליקציה (או העלו פרק משלכם). בצעו את <b>חמשת השלבים</b> במלואם:
+  </p>
+  <ol style="margin:12px 24px;font-size:14px;line-height:2">
+    <li>עמדו את הטקסט — פרקו לשורות ופסקאות בעלות משמעות</li>
+    <li>סמנו תופעות ספרותיות — מילות מפתח, חזרות, מבנים</li>
+    <li>ארזו את הטקסט ליחידות — תנו כותרת לכל יחידה</li>
+    <li>ארגנו על הלוח — צרו קשרים בין היחידות</li>
+    <li>כתבו תובנות במחברת — מה למדתם מהניתוח?</li>
+  </ol>
+  <p style="font-size:14px;color:var(--text-muted)">
+    לסיום, ייצאו את העבודה כ-PDF או כ-JSON ושלחו למרצה.
+  </p>
+  <div class="warn-box">
+    <b>חשוב:</b> צפו קודם בדוגמה של מזמור י״ט (כפתור בדף הפתיחה) כדי להבין מה נדרש בכל שלב.
+  </div>
+</div>
+
+<a href="index.html" class="back-link">← חזרה לאפליקציה</a>
+
+</div>
+
+<div class="footer">
+  תנ״ך לעומק · ד״ר נאוה כהן · אוניברסיטת בר אילן
 </div>
 
 </body>
