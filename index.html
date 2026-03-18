@@ -3328,12 +3328,13 @@ function exportHTML(){
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
     if(TEXTS.custom)stateData.customText=TEXTS.custom;
-    const stateScript=`<script>window.__TANAKH_STATE=${JSON.stringify(stateData)};<\/script>`;
+    // Build exported HTML by injecting state as JSON in a data attribute on body
     let html=document.documentElement.outerHTML;
-    html=html.replace('</head>',stateScript+'</head>');
-    // Add auto-load logic before closing script
-    html=html.replace('R();\n\n</script>',
-      `if(window.__TANAKH_STATE){const d=window.__TANAKH_STATE;if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc||'psalms1',step:d.step||0,font:d.font||'assistant',brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||'all',hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle('dark',S.darkMode);}R();\n\n<\/script>`);
+    const safeState=JSON.stringify(stateData).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+    html=html.replace('<body','<body data-saved-state="'+safeState.replace(/"/g,'&quot;')+'"');
+    // Inject loader before R() call — uses a comment marker approach
+    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
+    html=html.replace('R();',loader+'\nR();');
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
