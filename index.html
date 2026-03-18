@@ -534,7 +534,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 <body>
 <div id="app" role="application" aria-label="תנ״ך לעומק — כלי לניתוח טקסטים מקראיים"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
-<input type="file" id="fileInput" accept=".txt,.docx,.pdf" style="display:none" onchange="handleFile(this)" aria-label="העלאת קובץ טקסט">
+<input type="file" id="fileInput" accept=".txt" style="display:none" onchange="handleFile(this)" aria-label="העלאת קובץ טקסט">
 
 <script>
 
@@ -663,7 +663,13 @@ const STYLES=[
   {id:'box',name:'מסגרת מלאה',icon:'▢',desc:'מסגרת רציפה',
    apply:(col)=>`border:2px solid ${col.c};border-radius:6px;padding:1px 5px;background:${col.b}40;`},
   {id:'circle',name:'עיגול',icon:'⭕',desc:'רקע עגול',
-   apply:(col)=>`background:${col.b};border-radius:20px;padding:1px 8px;border:1.5px solid ${col.c};`}
+   apply:(col)=>`background:${col.b};border-radius:20px;padding:1px 8px;border:1.5px solid ${col.c};`},
+  {id:'boldhl',name:'הדגשה + רקע',icon:'𝐁🖍️',desc:'טקסט מודגש עם רקע',
+   apply:(col)=>`color:${col.c};font-weight:700;background:${col.b};border-radius:4px;padding:1px 4px;`},
+  {id:'fontcolor',name:'צבע גופן בלבד',icon:'🅰️',desc:'שינוי צבע הגופן',
+   apply:(col)=>`color:${col.c};`},
+  {id:'strikethrough',name:'קו חוצה',icon:'—',desc:'קו חוצה',
+   apply:(col)=>`text-decoration:line-through;text-decoration-color:${col.c};text-decoration-thickness:2px;`}
 ];
 
 const DEFAULT_CATS=[];
@@ -748,29 +754,26 @@ const undoStack=[];
 const redoStack=[];
 const MAX_UNDO=50;
 
+function undoSnapshot(){return JSON.stringify({brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes,stickies:S.stickies,labels:S.labels,shapes:S.shapes})}
+function restoreSnapshot(s){const p=JSON.parse(s);S.brks=p.brks;S.indents=p.indents;S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
 function saveUndo(){
-  undoStack.push(JSON.stringify({brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes}));
+  undoStack.push(undoSnapshot());
   if(undoStack.length>MAX_UNDO) undoStack.shift();
   redoStack.length=0;
 }
 
 function doUndo(){
   if(!undoStack.length){toast('אין מה לבטל');return;}
-  redoStack.push(JSON.stringify({brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes}));
-  const prev=JSON.parse(undoStack.pop());
-  S.brks=prev.brks;S.indents=prev.indents;S.paraBreaks=prev.paraBreaks;S.marks=prev.marks;S.pkgs=prev.pkgs;S.cats=prev.cats;
-  S.conns=prev.conns||[];S.nodes=prev.nodes||[];
-  S.selWords=[];
+  redoStack.push(undoSnapshot());
+  restoreSnapshot(undoStack.pop());
   R();toast('בוטל');
 }
 
 function doRedo(){
   if(!redoStack.length){toast('אין מה לחזור');return;}
-  undoStack.push(JSON.stringify({brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes}));
+  undoStack.push(undoSnapshot());
   const next=JSON.parse(redoStack.pop());
-  S.brks=next.brks;S.indents=next.indents;S.paraBreaks=next.paraBreaks;S.marks=next.marks;S.pkgs=next.pkgs;S.cats=next.cats;
-  S.conns=next.conns||[];S.nodes=next.nodes||[];
-  S.selWords=[];
+  restoreSnapshot(JSON.stringify(next));
   R();toast('שוחזר');
 }
 
@@ -871,12 +874,12 @@ function isSearchMatch(w){
 
 // Color helpers for JS inline styles
 function cv(lightVal,darkVal){return S.darkMode?darkVal:lightVal}
-function tc(){return S.darkMode?'#E8ECF4':'#1C335F'}
-function tcm(){return S.darkMode?'#A0AABF':'#4A5A7A'}
-function bgc(){return S.darkMode?'#121A2E':'#F9F6F2'}
-function brd(){return S.darkMode?'#2A3555':'#D9DFF2'}
-function hov(){return S.darkMode?'#1E2845':'#EFEFEF'}
-function glss(){return S.darkMode?'rgba(18,26,46,.7)':'rgba(255,255,255,.55)'}
+function tc(){return S.darkMode?'#E8DDD2':'#5A3A4A'}
+function tcm(){return S.darkMode?'#B0A098':'#7A6070'}
+function bgc(){return S.darkMode?'#1E1520':'#F5EDE3'}
+function brd(){return S.darkMode?'#3A2A35':'#D4C4CC'}
+function hov(){return S.darkMode?'#2A1E28':'#EDE5DB'}
+function glss(){return S.darkMode?'rgba(30,21,32,.75)':'rgba(245,237,227,.7)'}
 
 function buildLines(){
   const lines=[];
@@ -1035,7 +1038,7 @@ function R(){
 
 function appLogo(size){
   const s=size||28;
-  const col=cv('#1C335F','#7A9DC4');
+  const col=cv('#1C335F','#8B4A5E');
   return `<svg width="${s}" height="${Math.round(s*0.6)}" viewBox="0 0 100 60" fill="none" xmlns="http://www.w3.org/2000/svg">
     <g stroke="${col}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none">
       <path d="M15,55 C30,50 70,50 85,55"/>
@@ -1092,7 +1095,7 @@ function splashDecor(){
 }
 function splashIllust(){
   const skin='#F5D0B0';const hair='#3A2218';const shirt=cv('#CFE2F3','#4A6A8A');const pants=cv('#1C335F','#253050');
-  const desk=cv('#D9DFF2','#2A3555');const laptop=cv('#4A5A7A','#A0AABF');const laptopScreen=cv('#CFE2F3','#1A2240');
+  const desk=cv('#D9DFF2','#2A3555');const laptop=cv('#7A6070','#A0AABF');const laptopScreen=cv('#CFE2F3','#1A2240');
   const book1=cv('#8B4A5E','#8B4A5E');const book2=cv('#FBD5B5','#3A2820');const book3=cv('#E6D0DE','#2A2030');
   const floor=cv('#D9DFF2','#1E2845');const chair=cv('#1C335F','#4A6A8A');
   return `<svg viewBox="0 0 380 340" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1889,7 +1892,7 @@ function sCanv(){
       if(!fp||!tp)return '';
       const fc=C[fp.ci],tpc=C[tp.ci];
       return `<div style="display:flex;align-items:center;gap:4px;padding:6px 8px;margin-bottom:3px;border-radius:8px;background:${cv('rgba(207,226,243,.1)','rgba(74,106,138,.12)')};border:1px solid ${cv('rgba(207,226,243,.5)','rgba(74,106,138,.25)')};font-size:11px">
-        <span style="color:${fc.c};font-weight:700">${fp.emoji||''} ${fp.name}</span><span style="color:${cv('#1C335F','#7A9DC4')}">→</span>
+        <span style="color:${fc.c};font-weight:700">${fp.emoji||''} ${fp.name}</span><span style="color:${cv('#1C335F','#8B4A5E')}">→</span>
         <span style="color:${tpc.c};font-weight:700">${tp.emoji||''} ${tp.name}</span>
         <span style="flex:1;color:${tc()};font-weight:600;cursor:pointer" onclick="editConnLabel(${ci})">${cn.label||cn.emoji||'לחץ לתווית'}</span>
         <select style="font-size:9px;border:1px solid ${brd()};border-radius:4px;padding:1px 3px;font-family:'Heebo';background:${bgc()};color:${tc()}" onchange="setConnStyle(${ci},this.value)">
@@ -2241,6 +2244,14 @@ function mCanv(){
 function ndRect(i){
   const el=document.getElementById('nd'+i);
   if(el){
+    // For child nodes (no absolute positioning), use offsetLeft/offsetTop relative to canvas
+    const cvInner=document.getElementById('cvInner');
+    if(cvInner&&!el.style.left){
+      // Child node — calculate position relative to canvas inner
+      let ox=0,oy=0,cur=el;
+      while(cur&&cur!==cvInner){ox+=cur.offsetLeft;oy+=cur.offsetTop;cur=cur.offsetParent;}
+      return {x:ox,y:oy,w:el.offsetWidth||120,h:el.offsetHeight||60};
+    }
     const x=parseInt(el.style.left)||S.nodes[i].x;
     const y=parseInt(el.style.top)||S.nodes[i].y;
     const w=el.offsetWidth||S.nodes[i].w||220;
@@ -2382,8 +2393,14 @@ function mRead(){
     <div style="overflow:auto;border:1px solid ${brd()};border-radius:12px;background:${cv('rgba(245,237,227,.5)','rgba(30,21,32,.3)')};padding:10px;max-height:500px">
       ${(()=>{
         const oldStep=S.step;S.step=3;
-        const canvasHtml=mCanv();
+        let canvasHtml=mCanv();
         S.step=oldStep;
+        // Strip interactive handlers for static reading view
+        canvasHtml=canvasHtml.replace(/onmousedown="[^"]*"/g,'')
+          .replace(/ontouchstart="[^"]*"/g,'')
+          .replace(/onmouseenter="[^"]*"/g,'')
+          .replace(/onclick="(ds|startConn|de|dm)[^"]*"/g,'')
+          .replace(/style="([^"]*)cursor:\s*\w+/g,'style="$1cursor:default');
         return canvasHtml;
       })()}
     </div>
@@ -2431,7 +2448,7 @@ function mRead(){
       ${sn.map((n,i)=>{
         const txt=(S.notes||{})[i];
         if(!txt||!txt.trim())return '';
-        return `<div style="margin-bottom:12px;padding:10px 14px;background:${cv('rgba(28,51,95,.03)','rgba(122,157,196,.06)')};border-radius:10px;border-right:4px solid ${cv('#7A9DC4','#5A8AB0')}">
+        return `<div style="margin-bottom:12px;padding:10px 14px;background:${cv('rgba(28,51,95,.03)','rgba(122,157,196,.06)')};border-radius:10px;border-right:4px solid ${cv('#8B4A5E','#5A8AB0')}">
           <div style="font-size:12px;font-weight:700;color:${tcm()};margin-bottom:4px">שלב ${i+1}: ${n}</div>
           <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:${tc()}">${txt.trim()}</div>
         </div>`;
@@ -2493,7 +2510,12 @@ document.addEventListener('keydown',function(e){
   if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();toggleSearch();return;}
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
   if(e.key==='?'||e.key==='/'){S.showKeys=!S.showKeys;R();return;}
-  if(e.key==='Escape'&&S.showKeys){S.showKeys=false;R();return;}
+  if(e.key==='Escape'){
+    if(S.showKeys){S.showKeys=false;R();return;}
+    if(S.showExport){S.showExport=false;R();return;}
+    if(S.showUpload){S.showUpload=false;R();return;}
+    if(S.showNotebook){nbSave();S.showNotebook=false;R();return;}
+  }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();return;}
   if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();return;}
   if(S.step!==0)return;
@@ -2591,7 +2613,11 @@ function hideDoc(k){
   if(S.doc===k){const remaining=Object.keys(TEXTS).filter(x=>!S.hiddenDocs.includes(x));if(remaining.length)sw(remaining[0]);}
   R();toast('הטקסט הוסתר');
 }
-function sw(k){S.doc=k;S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;R();toast(D().title)}
+function sw(k){
+  if(k===S.doc)return;
+  const hasWork=Object.keys(S.marks).length||Object.keys(S.brks).length||S.pkgs.length;
+  if(hasWork&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית. להמשיך?'))return;
+  S.doc=k;S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
@@ -2706,7 +2732,7 @@ function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
 // Resize
 let rg=null;
 function startResize(e,i){e.preventDefault();rg={i,sx:e.clientX,ow:S.nodes[i].w||220};document.onmousemove=resizeMove;document.onmouseup=resizeEnd}
-function resizeMove(e){if(!rg)return;const el=document.getElementById('nd'+rg.i);const dw=rg.sx-e.clientX;const nw=Math.max(120,Math.min(800,rg.ow+dw));if(el)el.style.width=nw+'px';S.nodes[rg.i].w=nw;updateArrows()}
+function resizeMove(e){if(!rg)return;const el=document.getElementById('nd'+rg.i);const dw=e.clientX-rg.sx;const nw=Math.max(120,Math.min(800,rg.ow+dw));if(el)el.style.width=nw+'px';S.nodes[rg.i].w=nw;updateArrows()}
 function resizeEnd(){rg=null;document.onmousemove=document.onmouseup=null}
 function resetNodeSizes(){S.nodes.forEach(n=>n.w=220);R();toast('גדלים אופסו')}
 
@@ -2830,7 +2856,7 @@ function startShapeResize(e,i){
 }
 function shapeResizeMove(e){
   if(!shpRg)return;const z=S.cvZoom/100;
-  const nw=Math.max(50,shpRg.ow+(shpRg.sx-e.clientX)/z);
+  const nw=Math.max(50,shpRg.ow+(e.clientX-shpRg.sx)/z);
   const nh=Math.max(40,shpRg.oh+(e.clientY-shpRg.sy)/z);
   S.shapes[shpRg.i].w=nw;S.shapes[shpRg.i].h=nh;
   const el=document.getElementById('shp'+shpRg.i);
@@ -2984,6 +3010,21 @@ function renderZoom(){
 }
 
 // File upload
+function hebrewNum(n){
+  const ones=['','א','ב','ג','ד','ה','ו','ז','ח','ט'];
+  const tens=['','י','כ','ל','מ','נ','ס','ע','פ','צ'];
+  const hundreds=['','ק','ר','ש','ת'];
+  if(n<=0)return String(n);
+  let s='';
+  if(n>=100){s+=hundreds[Math.min(Math.floor(n/100),4)];n%=100;}
+  if(n===15){return s+'ט״ו';}
+  if(n===16){return s+'ט״ז';}
+  if(n>=10){s+=tens[Math.floor(n/10)];n%=10;}
+  if(n>0)s+=ones[n];
+  if(s.length>=2)s=s.slice(0,-1)+'״'+s.slice(-1);
+  else if(s.length===1)s+='׳';
+  return s;
+}
 function replaceDivineName(t){
   // Match יהוה with any combination of niqqud (U+05B0-U+05BD,U+05BF,U+05C1-U+05C2,U+05C4-U+05C5,U+05C7) and cantillation (U+0591-U+05AF)
   const m='[\u0591-\u05C7]*';
@@ -3004,7 +3045,7 @@ function loadPaste(){
   const customName=(document.getElementById('customTextName')?.value||'').trim()||'טקסט מותאם';
   const lines=txt.split('\n').filter(l=>l.trim());
   const verses=lines.map((l,i)=>{
-    let num=String.fromCharCode(0x5D0+i);
+    let num=hebrewNum(i+1);
     return {n:num,t:replaceDivineName(l.trim())};
   });
   TEXTS.custom={title:customName,verses};
@@ -3028,13 +3069,13 @@ function notesExportHTML(){
   if(!hasNotes)return '';
   const steps=['עימוד','גילוי','אריזה','ארגון','קריאה'];
   let html='<div style="margin-top:28px;padding-top:20px;border-top:2px solid #D9DFF2;direction:rtl">';
-  html+='<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;color:#1C335F;display:flex;align-items:center;gap:8px">📓 מחברת מחשבות</h3>';
+  html+='<h3 style="font-size:18px;font-weight:800;margin-bottom:14px;color:#5A3A4A;display:flex;align-items:center;gap:8px">📓 מחברת מחשבות</h3>';
   steps.forEach((name,i)=>{
     const txt=(S.notes||{})[i];
     if(!txt||!txt.trim())return;
-    html+=`<div style="margin-bottom:14px;padding:12px 16px;background:#F5F3EE;border-radius:10px;border-right:4px solid #7A9DC4">
-      <div style="font-size:13px;font-weight:700;color:#4A5A7A;margin-bottom:6px">שלב ${i+1}: ${name}</div>
-      <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:#1C335F">${txt.trim()}</div>
+    html+=`<div style="margin-bottom:14px;padding:12px 16px;background:#F5EDE3;border-radius:10px;border-right:4px solid #8B4A5E">
+      <div style="font-size:13px;font-weight:700;color:#7A6070;margin-bottom:6px">שלב ${i+1}: ${name}</div>
+      <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:#5A3A4A">${txt.trim()}</div>
     </div>`;
   });
   html+='</div>';
@@ -3132,7 +3173,7 @@ function exportPrint(){
 <style>
 ${allCSS}
 /* Print overrides */
-body{background:#fff!important;margin:0;padding:20px;font-family:'Heebo',sans-serif;color:#1C335F;direction:rtl}
+body{background:#fff!important;margin:0;padding:20px;font-family:'Heebo',sans-serif;color:#5A3A4A;direction:rtl}
 .topbar,.steps,.side,.splash,.toast,.modal-bg,.export-bg,.cv-toolbar,.cv-zoom,
 .shp-del,.shp-rsz,.c-sticky-del,.c-label-del,.c-label-drag,.c-rsz,.c-conn-dot,.c-node-tgl,
 .disc-indicator,.minimap{display:none!important}
@@ -3278,14 +3319,27 @@ function importJSON(){
 function exportHTML(){
   S.showExport=false;R();
   try{
-    const html=document.documentElement.outerHTML;
+    // Inject state into HTML so it loads with all work
+    const stateData={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+      fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+      vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+      pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
+    if(TEXTS.custom)stateData.customText=TEXTS.custom;
+    const stateScript=`<script>window.__TANAKH_STATE=${JSON.stringify(stateData)};<\/script>`;
+    let html=document.documentElement.outerHTML;
+    html=html.replace('</head>',stateScript+'</head>');
+    // Add auto-load logic before closing script
+    html=html.replace('R();\n\n</script>',
+      `if(window.__TANAKH_STATE){const d=window.__TANAKH_STATE;if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc||'psalms1',step:d.step||0,font:d.font||'assistant',brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||'all',hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle('dark',S.darkMode);}R();\n\n<\/script>`);
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
     a.download='tanakh-laomek-'+D().title+'.html';
     a.click();
-    toast('קובץ HTML נשמר — ניתן לשלוח לחברים!');
-  }catch(e){toast('שגיאה בייצוא');}
+    toast('קובץ HTML נשמר עם כל העבודה!');
+  }catch(e){toast('שגיאה בייצוא: '+e.message);}
 }
 
 function downloadShareFile(){
