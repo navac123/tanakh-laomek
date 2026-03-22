@@ -529,9 +529,47 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .w-search-hl{outline:2.5px solid var(--coral);outline-offset:1px;border-radius:4px;animation:gentlePulse 1.5s infinite}
 .search-count{font-size:10px;color:var(--text-faint);font-weight:600;white-space:nowrap}
 
+
+/* ===== CONSENT OVERLAY ===== */
+.consent-ov{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:99999;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s;pointer-events:none;direction:rtl}
+.consent-ov.show{opacity:1;pointer-events:auto}
+.consent-box{background:var(--bg);border-radius:16px;max-width:540px;width:92%;padding:2rem;box-shadow:0 20px 60px rgba(0,0,0,.3);transform:scale(.92);transition:transform .35s;font-family:'Heebo',sans-serif;color:var(--text)}
+.consent-ov.show .consent-box{transform:scale(1)}
+.consent-box h3{color:var(--earth);font-size:1.3rem;margin-bottom:.4rem;text-align:center}
+.consent-box .cb-sub{text-align:center;font-size:.84rem;color:var(--text-muted);margin-bottom:1rem;padding-bottom:.8rem;border-bottom:1px solid var(--border)}
+.consent-box p{font-size:.88rem;line-height:1.7;margin-bottom:.6rem}
+.consent-lbl{display:flex;align-items:flex-start;gap:.6rem;margin:1rem 0;font-size:.86rem;line-height:1.6;cursor:pointer;background:rgba(139,74,94,.06);padding:.8rem;border-radius:8px;border:1px solid var(--border)}
+.consent-lbl input{margin-top:.25rem;min-width:18px;min-height:18px;accent-color:var(--earth)}
+.consent-research{background:rgba(139,74,94,.05);border-radius:8px;padding:.9rem 1rem;margin:.8rem 0;border:1.5px solid var(--border)}
+.consent-research strong{font-size:.88rem;display:block;margin-bottom:.5rem;color:var(--earth)}
+.consent-research p{font-size:.84rem;color:var(--text-muted);margin-bottom:.6rem;line-height:1.6}
+.consent-radio{display:flex;align-items:center;gap:.5rem;margin:.35rem 0;font-size:.87rem;cursor:pointer;padding:.35rem .6rem;border-radius:6px;transition:background .15s}
+.consent-radio:hover{background:rgba(139,74,94,.07)}
+.consent-radio input{accent-color:var(--earth);width:16px;height:16px;cursor:pointer}
+.consent-btn{display:block;margin:1rem auto 0;background:var(--earth);color:#fff;border:none;padding:.7rem 2.2rem;border-radius:10px;font-size:1rem;font-family:'Heebo',sans-serif;font-weight:700;cursor:pointer;opacity:.4;pointer-events:none;transition:opacity .3s,transform .15s}
+.consent-btn.enabled{opacity:1;pointer-events:auto}
+.consent-btn.enabled:hover{transform:scale(1.03)}
+.consent-note{text-align:center;font-size:.76rem;color:var(--text-muted);margin-top:.8rem}
 </style>
 </head>
 <body>
+<div class="consent-ov" id="consentOv">
+<div class="consent-box">
+<h3>הסכמה מדעת</h3>
+<div class="cb-sub">מובןלי — תנ״ך לעומק | ד״ר נאוה כהן | אוניברסיטת בר-אילן</div>
+<p>אפליקציה זו פותחה על ידי <strong>ד״ר נאוה כהן</strong> באוניברסיטת בר-אילן ומיועדת לניתוח טקסטים תנ״כיים. הנתונים נשמרים באופן מקומי בדפדפן שלך בלבד.</p>
+<label class="consent-lbl"><input type="checkbox" id="consentCb" onchange="updConsentBtn()"><span>אני מסכים/ה שהנתונים יישמרו באופן מקומי בדפדפן שלי בלבד — לא נשלח מידע לשרתים חיצוניים.</span></label>
+<div class="consent-research">
+<strong>השתתפות במחקר</strong>
+<p>האם את/ה מסכים/ה שתגובותיך ישמשו לצורכי מחקר אקדמי? כל הנתונים <strong>אנונימיים לחלוטין</strong> ולא יהיה בהם שימוש אחר.</p>
+<label class="consent-radio"><input type="radio" name="mvConsent" value="yes" onchange="updConsentBtn()"> כן, אני מסכים/ה לשימוש לצורכי מחקר</label>
+<label class="consent-radio"><input type="radio" name="mvConsent" value="no" onchange="updConsentBtn()"> אני מעדיף/ה לא</label>
+</div>
+<button class="consent-btn" id="consentBtn" onclick="acceptConsent()">אישור והמשך →</button>
+<div class="consent-note">בשני המקרים תוכל/י להשתמש באפליקציה במלואה</div>
+</div>
+</div>
+
 <div id="app" role="application" aria-label="תנ״ך לעומק — כלי לניתוח טקסטים מקראיים"></div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <input type="file" id="fileInput" accept=".txt" style="display:none" onchange="handleFile(this)" aria-label="העלאת קובץ טקסט">
@@ -3701,7 +3739,26 @@ function getWordTip(w){
 
 // Auto-save is handled by startAutoSave() which runs every 60s after app starts
 
+// ===== CONSENT =====
+function updConsentBtn(){
+  const cb=document.getElementById('consentCb');
+  const r=document.querySelector('input[name="mvConsent"]:checked');
+  document.getElementById('consentBtn').classList.toggle('enabled',!!(cb&&cb.checked&&r));
+}
+function acceptConsent(){
+  const r=document.querySelector('input[name="mvConsent"]:checked');
+  localStorage.setItem('moovanly_consent','1');
+  localStorage.setItem('moovanly_research',r?r.value:'no');
+  document.getElementById('consentOv').classList.remove('show');
+}
+function checkConsent(){
+  if(!localStorage.getItem('moovanly_consent')){
+    document.getElementById('consentOv').classList.add('show');
+  }
+}
+
 R();
+checkConsent();
 
 </script>
 </body>
