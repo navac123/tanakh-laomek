@@ -1,0 +1,525 @@
+<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>כלי ציונים — מובןלי</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Heebo:wght@300;400;500;700&display=swap');
+:root{--p:#5A3A4A;--pl:#8B4A5E;--a:#C48B9F;--al:#f5e0e8;--bg:#F5EDE3;--c:#fff;--t:#2d2a26;--tl:#6b6560;--b:#ddd5c9;--s:#4a8c6f;--e:#c45050;--teal:#B8C9D4;--r:10px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--t);min-height:100vh;display:flex;flex-direction:column}
+h1,h2,h3,h4{font-family:'Assistant',sans-serif;font-weight:700}
+.hdr{background:linear-gradient(135deg,#5A3A4A,#8B4A5E);color:#fff;padding:1.5rem 2rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.hdr h1{font-size:1.6rem;font-weight:800}
+.hdr .sub{font-size:.9rem;color:var(--al);margin-top:.2rem}
+.layout{display:flex;flex:1;overflow:hidden;height:calc(100vh - 80px)}
+.sidebar{width:320px;min-width:260px;background:var(--c);border-left:1px solid var(--b);display:flex;flex-direction:column;overflow:hidden}
+.sb-top{padding:1rem;border-bottom:1px solid var(--b)}
+.sb-search{width:100%;padding:.5rem .8rem;border:1px solid var(--b);border-radius:8px;font-family:'Heebo',sans-serif;font-size:.9rem;background:var(--bg)}
+.sb-search:focus{outline:none;border-color:var(--pl)}
+.sb-stats{display:flex;gap:.5rem;margin-top:.7rem;font-size:.78rem;color:var(--tl)}
+.sb-stat{background:var(--bg);border:1px solid var(--b);border-radius:6px;padding:.3rem .6rem;text-align:center;flex:1}
+.sb-stat b{display:block;color:var(--p);font-size:1rem}
+.sb-list{flex:1;overflow-y:auto;padding:.5rem}
+.sb-item{padding:.7rem 1rem;border-radius:8px;cursor:pointer;margin-bottom:.3rem;border:1px solid transparent;transition:all .2s;display:flex;align-items:center;justify-content:space-between;gap:.5rem}
+.sb-item:hover{background:var(--bg);border-color:var(--b)}
+.sb-item.active{background:rgba(90,58,74,.08);border-color:var(--pl)}
+.sb-item .si-name{font-weight:600;font-size:.88rem;color:var(--t)}
+.sb-item .si-meta{font-size:.75rem;color:var(--tl);margin-top:.1rem}
+.sb-item .si-score{font-size:.88rem;font-weight:700;color:var(--p);white-space:nowrap}
+.sb-item .si-score.done{color:var(--s)}
+.sb-nav{display:flex;gap:.5rem;padding:.8rem 1rem;border-top:1px solid var(--b);background:var(--bg)}
+.sb-nav button{flex:1;padding:.5rem;border:1px solid var(--b);border-radius:8px;font-family:'Heebo',sans-serif;font-size:.82rem;cursor:pointer;background:var(--c);color:var(--p);transition:all .2s}
+.sb-nav button:hover{background:var(--p);color:#fff}
+.sb-export{padding:.8rem 1rem;border-top:1px solid var(--b)}
+.sb-export button{width:100%;padding:.6rem;background:linear-gradient(135deg,var(--s),#3a7058);color:#fff;border:none;border-radius:8px;font-family:'Heebo',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:.4rem}
+.main{flex:1;overflow-y:auto;padding:1.5rem 2rem}
+.drop-zone{border:3px dashed var(--b);border-radius:var(--r);padding:3rem;text-align:center;cursor:pointer;background:var(--c);transition:all .3s;max-width:600px;margin:2rem auto}
+.drop-zone:hover{border-color:var(--pl);background:#f5ece8}
+.drop-zone .dz-icon{font-size:3rem;margin-bottom:1rem}
+.drop-zone h3{color:var(--p);margin-bottom:.5rem}
+.drop-zone p{color:var(--tl);font-size:.9rem}
+.drop-zone input[type=file]{display:none}
+.grade-header{background:linear-gradient(135deg,rgba(90,58,74,.06),rgba(196,139,159,.1));border:1px solid var(--b);border-radius:var(--r);padding:1.2rem 1.5rem;margin-bottom:1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap}
+.gh-name{font-size:1.3rem;font-weight:800;color:var(--p)}
+.gh-meta{font-size:.85rem;color:var(--tl);margin-top:.2rem}
+.gh-score{text-align:center;background:var(--p);color:#fff;border-radius:10px;padding:.8rem 1.5rem;min-width:100px}
+.gh-score .gs-num{font-size:2rem;font-weight:800;line-height:1}
+.gh-score .gs-lbl{font-size:.75rem;color:var(--al);margin-top:.2rem}
+.criterion{background:var(--c);border:1px solid var(--b);border-radius:var(--r);margin-bottom:1.2rem;overflow:hidden;box-shadow:0 1px 6px rgba(90,58,74,.06)}
+.cr-head{display:flex;align-items:center;justify-content:space-between;padding:.9rem 1.2rem;cursor:pointer;transition:background .2s}
+.cr-head:hover{background:rgba(90,58,74,.03)}
+.cr-title{font-weight:700;color:var(--p);font-size:.95rem;display:flex;align-items:center;gap:.5rem}
+.cr-pts{display:flex;align-items:center;gap:.5rem}
+.cr-score{font-size:1.1rem;font-weight:700;color:var(--p)}
+.cr-max{font-size:.82rem;color:var(--tl)}
+.cr-btns{display:flex;gap:.3rem}
+.cr-btn{width:28px;height:28px;border:1px solid var(--b);background:var(--bg);border-radius:6px;cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.cr-btn:hover{background:var(--p);color:#fff;border-color:var(--p)}
+.cr-body{padding:0 1.2rem 1.2rem;display:none}
+.cr-body.open{display:block}
+.cr-slider{display:flex;align-items:center;gap:.8rem;margin:1rem 0}
+.cr-slider input[type=range]{flex:1;accent-color:var(--p)}
+.cr-slider span{font-size:1rem;font-weight:700;color:var(--p);min-width:2.5rem;text-align:center}
+.field-block{background:var(--bg);border-radius:8px;padding:.8rem 1rem;margin:.5rem 0;border-right:3px solid var(--b)}
+.field-block.has-data{border-right-color:var(--s)}
+.fb-label{font-size:.75rem;font-weight:700;color:var(--tl);text-transform:uppercase;letter-spacing:.04em;margin-bottom:.3rem}
+.fb-val{font-size:.9rem;color:var(--t);line-height:1.7;white-space:pre-wrap;word-break:break-word}
+.cat-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .6rem;border-radius:10px;font-size:.78rem;font-weight:600;margin:.2rem;border:1.5px solid currentColor}
+.mark-count{background:rgba(90,58,74,.08);border-radius:6px;padding:.5rem .8rem;margin:.3rem 0;font-size:.85rem;display:flex;justify-content:space-between}
+.pkg-card{background:rgba(90,58,74,.04);border:1px solid var(--b);border-radius:8px;padding:.6rem .8rem;margin:.4rem 0;font-size:.88rem}
+.pkg-card .pc-name{font-weight:700;color:var(--p);margin-bottom:.2rem}
+.pkg-card .pc-words{font-size:.8rem;color:var(--tl);font-family:serif}
+.conn-item{font-size:.85rem;padding:.3rem .5rem;margin:.2rem 0;background:rgba(90,58,74,.04);border-radius:6px}
+.note-block{background:rgba(90,58,74,.04);border-right:3px solid var(--a);border-radius:8px;padding:.6rem .8rem;margin:.3rem 0}
+.nb-step-lbl{font-size:.75rem;font-weight:700;color:var(--pl);margin-bottom:.2rem}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.5rem 0}
+.stat-box{background:rgba(90,58,74,.06);border-radius:6px;padding:.5rem;text-align:center}
+.stat-box .sv{font-size:1.2rem;font-weight:700;color:var(--p)}
+.stat-box .sl{font-size:.72rem;color:var(--tl)}
+.completeness-bar{height:8px;background:var(--b);border-radius:4px;overflow:hidden;margin:.5rem 0}
+.comp-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--s),var(--a));transition:width .3s}
+.cr-note{width:100%;padding:.6rem .8rem;border:1px solid var(--b);border-radius:8px;font-family:'Heebo',sans-serif;font-size:.9rem;background:var(--bg);resize:vertical;min-height:60px;margin-top:.8rem}
+.cr-note:focus{outline:none;border-color:var(--pl)}
+.overall-card{background:var(--c);border:2px solid var(--a);border-radius:var(--r);padding:1.2rem 1.5rem;margin-bottom:1.5rem}
+.overall-card h3{color:var(--p);margin-bottom:.8rem}
+.overall-note{width:100%;padding:.8rem 1rem;border:1px solid var(--b);border-radius:8px;font-family:'Heebo',sans-serif;font-size:.9rem;background:var(--c);resize:vertical;min-height:80px}
+.overall-note:focus{outline:none;border-color:var(--pl)}
+.empty-state{text-align:center;padding:3rem;color:var(--tl);font-size:.95rem}
+.empty-state .es-icon{font-size:3rem;margin-bottom:1rem}
+.consent-badge{display:inline-flex;align-items:center;gap:.3rem;font-size:.75rem;padding:.2rem .5rem;border-radius:10px;font-weight:600;margin-right:.4rem}
+.consent-yes{background:rgba(74,140,111,.12);color:var(--s);border:1px solid rgba(74,140,111,.3)}
+.consent-no{background:rgba(196,80,80,.1);color:var(--e);border:1px solid rgba(196,80,80,.25)}
+.step-lbl{display:inline-block;padding:.15rem .5rem;border-radius:8px;font-size:.72rem;font-weight:700;background:rgba(90,58,74,.1);color:var(--p);margin-bottom:.3rem}
+@media(max-width:768px){.layout{flex-direction:column;height:auto}.sidebar{width:100%;height:300px;border-left:none;border-bottom:1px solid var(--b)}.main{padding:1rem}.stats-grid{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<div class="hdr">
+  <div>
+    <h1>📊 כלי ציונים — מובןלי תנ״ך לעומק</h1>
+    <div class="sub">ד״ר נאוה כהן | אוניברסיטת בר-אילן</div>
+  </div>
+  <div style="font-size:.82rem;color:var(--al);text-align:left">
+    ← → לניווט בין סטודנטים<br>
+    ציונים נשמרים אוטומטית
+  </div>
+</div>
+<div class="layout">
+  <div class="sidebar">
+    <div class="sb-top">
+      <input class="sb-search" id="sbSearch" type="text" placeholder="חיפוש לפי שם..." oninput="filterList()">
+      <div class="sb-stats">
+        <div class="sb-stat"><b id="statTotal">0</b>עבודות</div>
+        <div class="sb-stat"><b id="statGraded">0</b>נבדקו</div>
+        <div class="sb-stat"><b id="statAvg">—</b>ממוצע</div>
+      </div>
+    </div>
+    <div class="sb-list" id="sbList">
+      <div class="empty-state" style="padding:2rem">
+        <div class="es-icon">📂</div>
+        <div>טענו עבודות כדי להתחיל</div>
+      </div>
+    </div>
+    <div class="sb-nav">
+      <button onclick="prevStudent()">→ הקודם</button>
+      <button onclick="nextStudent()">← הבא</button>
+    </div>
+    <div class="sb-export">
+      <button onclick="exportCSV()">📊 ייצוא Excel (CSV)</button>
+    </div>
+  </div>
+  <div class="main" id="mainArea">
+    <div class="drop-zone" id="dropZone" onclick="document.getElementById('fileInput').click()" ondragover="event.preventDefault();this.style.borderColor='var(--pl)'" ondragleave="this.style.borderColor=''" ondrop="handleDrop(event)">
+      <div class="dz-icon">📂</div>
+      <h3>לחצו כאן לטעינת עבודות</h3>
+      <p>בחרו קבצי JSON שהסטודנטים הגישו (Cmd+A לבחירת הכל)</p>
+      <input type="file" id="fileInput" accept=".json" multiple onchange="loadFiles(this.files)">
+    </div>
+  </div>
+</div>
+
+<script>
+// === CONSTANTS ===
+const STEP_NAMES=['עימוד','גילוי','אריזה','ארגון','קריאה'];
+
+const CRITERIA=[
+  {id:'c1',label:'עימוד ועיצוב (שלב 0)',max:15,icon:'📐',desc:'פירוק לשורות, כניסות, פסקאות — הבנת מבנה הטקסט'},
+  {id:'c2',label:'גילוי וסימון (שלב 1)',max:25,icon:'🔍',desc:'קטגוריות, סימונים, שימוש בסגנונות — עומק הניתוח'},
+  {id:'c3',label:'אריזה ומיפוי (שלב 2)',max:20,icon:'📦',desc:'חבילות נושאיות, שמות, קישורים'},
+  {id:'c4',label:'ארגון ויזואלי (שלב 3)',max:15,icon:'🗺️',desc:'קנבס — פריסה, חצים, הערות'},
+  {id:'c5',label:'רפלקציה וקריאה (שלב 4)',max:15,icon:'💭',desc:'מחברת, פרשנות אישית'},
+  {id:'c6',label:'שלמות הגשה',max:10,icon:'✅',auto:true}
+];
+
+// === STATE ===
+let students=[];
+let grades={};
+let currentIdx=-1;
+let filteredIds=[];
+
+// === LOAD ===
+function loadFiles(files){
+  Array.from(files).forEach(f=>{
+    const r=new FileReader();
+    r.onload=e=>{
+      try{
+        const d=JSON.parse(e.target.result);
+        const name=(d.studentName||'').trim()||f.name.replace('.json','');
+        const doc=(d.doc||'').trim();
+        const sid=name+'|||'+doc;
+        if(!students.find(s=>s.id===sid)){
+          students.push({id:sid,name,doc,data:d});
+          if(!grades[sid])grades[sid]={c1:0,c2:0,c3:0,c4:0,c5:0,c6:computeComp(d),notes:{c1:'',c2:'',c3:'',c4:'',c5:''},overall:''};
+          else grades[sid].c6=computeComp(d);
+        }
+      }catch(err){alert('שגיאה בקריאת קובץ: '+f.name);}
+    };
+    r.readAsText(f);
+  });
+  setTimeout(()=>{
+    students.sort((a,b)=>a.name.localeCompare(b.name,'he'));
+    filterList();
+    if(currentIdx===-1&&students.length>0)selectStudent(0);
+    updateStats();
+    document.getElementById('dropZone').style.display='none';
+  },300);
+}
+
+function handleDrop(e){e.preventDefault();e.currentTarget.style.borderColor='';loadFiles(e.dataTransfer.files);}
+
+function computeComp(d){
+  let score=0;
+  if(d.brks&&Object.keys(d.brks).length>0)score+=2;
+  if(d.indents&&Object.keys(d.indents).length>0)score+=1;
+  if(d.cats&&d.cats.length>0)score+=1;
+  if(d.marks&&Object.keys(d.marks).length>=5)score+=2;
+  if(d.marks&&Object.keys(d.marks).length>=15)score+=1;
+  if(d.pkgs&&d.pkgs.length>=2)score+=1;
+  if(d.pkgs&&d.pkgs.length>=4)score+=1;
+  if(d.conns&&d.conns.length>=1)score+=0.5;
+  if(d.notes){const noteCnt=Object.values(d.notes).filter(v=>v&&v.trim()).length;if(noteCnt>=1)score+=0.5;}
+  return Math.min(10,Math.round(score));
+}
+
+// === LIST ===
+function filterList(){
+  const q=(document.getElementById('sbSearch').value||'').toLowerCase();
+  filteredIds=students.filter(s=>s.name.toLowerCase().includes(q)||s.doc.toLowerCase().includes(q)).map(s=>s.id);
+  renderList();
+}
+
+function renderList(){
+  const el=document.getElementById('sbList');
+  if(!filteredIds.length){el.innerHTML='<div class="empty-state" style="padding:2rem"><div>לא נמצאו סטודנטים</div></div>';return;}
+  el.innerHTML=filteredIds.map(sid=>{
+    const s=students.find(x=>x.id===sid);
+    const total=totalScore(sid);
+    const graded=total>0;
+    const active=students[currentIdx]&&students[currentIdx].id===sid;
+    return `<div class="sb-item${active?' active':''}" onclick="selectByIdx(${students.indexOf(s)})">
+      <div><div class="si-name">${esc(s.name)}</div><div class="si-meta">${esc(s.doc)||'ללא מסמך'}</div></div>
+      <div class="si-score${graded?' done':''}">${graded?total+'/100':'—'}</div>
+    </div>`;
+  }).join('');
+}
+
+function selectStudent(idx){currentIdx=idx;saveGrades();renderList();renderGrade();updateStats();}
+function selectByIdx(idx){selectStudent(idx);}
+function prevStudent(){if(currentIdx>0)selectStudent(currentIdx-1);}
+function nextStudent(){if(currentIdx<students.length-1)selectStudent(currentIdx+1);}
+
+document.addEventListener('keydown',function(e){
+  if(document.activeElement.tagName==='TEXTAREA'||document.activeElement.tagName==='INPUT')return;
+  if(e.key==='ArrowLeft'||e.key==='ArrowDown')nextStudent();
+  if(e.key==='ArrowRight'||e.key==='ArrowUp')prevStudent();
+});
+
+function totalScore(sid){
+  const g=grades[sid];if(!g)return 0;
+  return (g.c1||0)+(g.c2||0)+(g.c3||0)+(g.c4||0)+(g.c5||0)+(g.c6||0);
+}
+
+function updateStats(){
+  document.getElementById('statTotal').textContent=students.length;
+  const graded=students.filter(s=>totalScore(s.id)>0).length;
+  document.getElementById('statGraded').textContent=graded;
+  if(graded>0){
+    const avg=Math.round(students.filter(s=>totalScore(s.id)>0).reduce((a,s)=>a+totalScore(s.id),0)/graded);
+    document.getElementById('statAvg').textContent=avg;
+  }else document.getElementById('statAvg').textContent='—';
+}
+
+// === GRADE RENDER ===
+function renderGrade(){
+  if(currentIdx<0||currentIdx>=students.length){
+    document.getElementById('mainArea').innerHTML='<div class="empty-state"><div class="es-icon">👆</div><div>בחרו סטודנט מהרשימה</div></div>';
+    return;
+  }
+  const s=students[currentIdx];
+  const d=s.data;
+  const g=grades[s.id]||(grades[s.id]={c1:0,c2:0,c3:0,c4:0,c5:0,c6:computeComp(d),notes:{c1:'',c2:'',c3:'',c4:'',c5:''},overall:''});
+
+  const total=totalScore(s.id);
+  const researchBadge=d.researchConsent==='yes'
+    ?'<span class="consent-badge consent-yes">✓ הסכים/ה למחקר</span>'
+    :'<span class="consent-badge consent-no">✗ ללא הסכמה למחקר</span>';
+
+  // Compute statistics from data
+  const numMarks=d.marks?Object.keys(d.marks).length:0;
+  const numCats=d.cats?d.cats.length:0;
+  const numPkgs=d.pkgs?d.pkgs.length:0;
+  const numConns=d.conns?d.conns.length:0;
+  const numBrks=d.brks?Object.keys(d.brks).length:0;
+  const numNotes=d.notes?Object.values(d.notes).filter(v=>v&&v.trim()).length:0;
+  const reachedStep=d.step||0;
+
+  const docName=d.doc||'—';
+  const stepLbl=STEP_NAMES[reachedStep]||reachedStep;
+
+  // Build criteria sections
+  const critH=CRITERIA.map(cr=>{
+    const score=g[cr.id]||0;
+    const noteVal=g.notes&&g.notes[cr.id]?g.notes[cr.id]:'';
+    let contentH='';
+    if(cr.id==='c1'){
+      contentH=`
+        <div class="stats-grid">
+          <div class="stat-box"><div class="sv">${numBrks}</div><div class="sl">מעברי שורה</div></div>
+          <div class="stat-box"><div class="sv">${d.indents?Object.keys(d.indents).length:0}</div><div class="sl">כניסות</div></div>
+          <div class="stat-box"><div class="sv">${d.paraBreaks?Object.keys(d.paraBreaks).length:0}</div><div class="sl">פסקאות</div></div>
+          <div class="stat-box"><div class="sv">${d.fs||18}px</div><div class="sl">גופן</div></div>
+        </div>`;
+    } else if(cr.id==='c2'){
+      // Show categories and mark counts
+      let catsH='';
+      if(d.cats&&d.cats.length){
+        catsH=d.cats.map(cat=>{
+          const catMarks=d.marks?Object.keys(d.marks).filter(k=>{const m=d.marks[k];return m.catId===cat.id;}).length:0;
+          return `<div class="mark-count"><span>${esc(cat.name||'—')}</span><span style="font-weight:700;color:var(--p)">${catMarks} מילים</span></div>`;
+        }).join('');
+      }
+      contentH=`
+        <div class="stats-grid">
+          <div class="stat-box"><div class="sv">${numCats}</div><div class="sl">קטגוריות</div></div>
+          <div class="stat-box"><div class="sv">${numMarks}</div><div class="sl">סימונים</div></div>
+        </div>
+        ${catsH}`;
+    } else if(cr.id==='c3'){
+      let pkgsH='';
+      if(d.pkgs&&d.pkgs.length){
+        pkgsH=d.pkgs.map(p=>{
+          // Get word texts from the stored data
+          return `<div class="pkg-card"><div class="pc-name">${p.emoji||''} ${esc(p.name||'—')}</div><div class="pc-words">${p.words?p.words.length+' מילים':''}</div></div>`;
+        }).join('');
+      }
+      contentH=`
+        <div class="stats-grid">
+          <div class="stat-box"><div class="sv">${numPkgs}</div><div class="sl">חבילות</div></div>
+        </div>${pkgsH}`;
+    } else if(cr.id==='c4'){
+      let connsH='';
+      if(d.conns&&d.conns.length){
+        connsH=d.conns.map(c=>`<div class="conn-item">${esc(c.label||'')} ${c.emoji||''}</div>`).join('');
+      }
+      let stickiesH='';
+      if(d.stickies&&d.stickies.length){
+        stickiesH=d.stickies.map(s=>`<div class="note-block" style="font-size:.82rem">${esc(s.text||'')}</div>`).join('');
+      }
+      contentH=`
+        <div class="stats-grid">
+          <div class="stat-box"><div class="sv">${d.nodes?d.nodes.length:0}</div><div class="sl">צמתים</div></div>
+          <div class="stat-box"><div class="sv">${numConns}</div><div class="sl">חצים</div></div>
+          <div class="stat-box"><div class="sv">${d.stickies?d.stickies.length:0}</div><div class="sl">פתקיות</div></div>
+          <div class="stat-box"><div class="sv">${d.labels?d.labels.length:0}</div><div class="sl">תוויות</div></div>
+        </div>${connsH}${stickiesH}`;
+    } else if(cr.id==='c5'){
+      let notesH='';
+      if(d.notes){
+        Object.entries(d.notes).forEach(([k,v])=>{
+          if(v&&v.trim()){
+            notesH+=`<div class="note-block"><div class="nb-step-lbl">שלב ${parseInt(k)+1}: ${STEP_NAMES[k]||k}</div><div style="font-size:.88rem;line-height:1.7">${esc(v)}</div></div>`;
+          }
+        });
+      }
+      contentH=`<div class="stats-grid"><div class="stat-box"><div class="sv">${numNotes}/5</div><div class="sl">הערות שנכתבו</div></div></div>${notesH}`;
+    } else if(cr.id==='c6'){
+      const pct=Math.min(100,score*10);
+      contentH=`<div><div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--tl);margin-bottom:.3rem"><span>שלמות כוללת</span><span>${pct}%</span></div><div class="completeness-bar"><div class="comp-fill" style="width:${pct}%"></div></div></div>
+      <div style="font-size:.8rem;color:var(--tl);margin-top:.5rem">שלב אחרון: ${esc(stepLbl)} | שמות קבצים: ${d.doc||'—'}</div>`;
+    }
+    const isAuto=cr.auto;
+    return `<div class="criterion">
+      <div class="cr-head" onclick="toggleCr('${cr.id}')">
+        <div class="cr-title">${cr.icon} ${cr.label}</div>
+        <div class="cr-pts">
+          <div class="cr-score" id="sc_${cr.id}">${score}</div>
+          <div class="cr-max">/ ${cr.max}</div>
+          ${!isAuto?`<div class="cr-btns">
+            <button class="cr-btn" onclick="event.stopPropagation();adj('${cr.id}',-1)">−</button>
+            <button class="cr-btn" onclick="event.stopPropagation();adj('${cr.id}',+1)">+</button>
+          </div>`:''}
+        </div>
+      </div>
+      <div class="cr-body" id="body_${cr.id}">
+        ${!isAuto?`<div class="cr-slider"><span>0</span><input type="range" min="0" max="${cr.max}" value="${score}" id="sl_${cr.id}" oninput="setScore('${cr.id}',+this.value)"><span>${cr.max}</span></div>`:''}
+        <div style="font-size:.8rem;color:var(--tl);margin-bottom:.5rem">${cr.desc}</div>
+        ${contentH}
+        ${!isAuto?`<textarea class="cr-note" id="note_${cr.id}" placeholder="הערות לקריטריון זה..." onchange="setNote('${cr.id}',this.value)">${esc(noteVal)}</textarea>`:''}
+      </div>
+    </div>`;
+  }).join('');
+
+  document.getElementById('mainArea').innerHTML=`
+    <div class="grade-header">
+      <div>
+        <div class="gh-name">${esc(s.name)}</div>
+        <div class="gh-meta">מסמך: ${esc(docName)} &nbsp;|&nbsp; שלב: ${esc(stepLbl)} &nbsp;|&nbsp; ${d.timestamp?new Date(d.timestamp).toLocaleDateString('he-IL'):''} &nbsp;|&nbsp; ${researchBadge}</div>
+      </div>
+      <div class="gh-score">
+        <div class="gs-num" id="totalDisplay">${total}</div>
+        <div class="gs-lbl">/ 100</div>
+      </div>
+      <button onclick="exportStudentPDF()" style="background:linear-gradient(135deg,var(--p),#2d1a26);color:#fff;border:none;border-radius:8px;padding:.6rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;white-space:nowrap">📄 ייצוא PDF לסטודנט</button>
+    </div>
+    ${critH}
+    <div class="overall-card">
+      <h3>📝 הערה כללית</h3>
+      <textarea class="overall-note" id="overallNote" placeholder="הערה כוללת לעבודה..." onchange="setOverall(this.value)">${esc(g.overall||'')}</textarea>
+    </div>`;
+}
+
+function toggleCr(id){
+  const b=document.getElementById('body_'+id);
+  if(b)b.classList.toggle('open');
+}
+
+function adj(cid, delta){
+  if(currentIdx<0)return;
+  const s=students[currentIdx];
+  const cr=CRITERIA.find(c=>c.id===cid);
+  if(!cr||cr.auto)return;
+  const g=grades[s.id];
+  g[cid]=Math.max(0,Math.min(cr.max,(g[cid]||0)+delta));
+  const sl=document.getElementById('sl_'+cid);
+  if(sl)sl.value=g[cid];
+  document.getElementById('sc_'+cid).textContent=g[cid];
+  updateTotal();saveGrades();
+}
+
+function setScore(cid, val){
+  if(currentIdx<0)return;
+  const s=students[currentIdx];
+  const cr=CRITERIA.find(c=>c.id===cid);
+  if(!cr||cr.auto)return;
+  grades[s.id][cid]=Math.max(0,Math.min(cr.max,val));
+  document.getElementById('sc_'+cid).textContent=grades[s.id][cid];
+  updateTotal();saveGrades();
+}
+
+function setNote(cid, val){
+  if(currentIdx<0)return;
+  const g=grades[students[currentIdx].id];
+  if(!g.notes)g.notes={};
+  g.notes[cid]=val;saveGrades();
+}
+
+function setOverall(val){
+  if(currentIdx<0)return;
+  grades[students[currentIdx].id].overall=val;saveGrades();
+}
+
+function updateTotal(){
+  const t=totalScore(students[currentIdx].id);
+  const el=document.getElementById('totalDisplay');
+  if(el)el.textContent=t;
+  renderList();updateStats();
+}
+
+// === PERSISTENCE ===
+function saveGrades(){try{localStorage.setItem('moovanly_grades',JSON.stringify(grades));}catch(e){}}
+function loadGrades(){try{const r=localStorage.getItem('moovanly_grades');if(r)grades=JSON.parse(r);}catch(e){}}
+
+// === CSV EXPORT ===
+function exportCSV(){
+  if(!students.length){alert('אין נתונים לייצוא');return;}
+  const rows=[['שם סטודנט','מסמך','שלב אחרון','עימוד (15)','גילוי (25)','אריזה (20)','ארגון (15)','רפלקציה (15)','שלמות (10)','סה"כ','הערה כללית','הסכמה למחקר']];
+  students.forEach(s=>{
+    const g=grades[s.id]||{};
+    const total=totalScore(s.id);
+    const d=s.data;
+    rows.push([s.name,s.doc,STEP_NAMES[d.step||0]||d.step||0,g.c1||0,g.c2||0,g.c3||0,g.c4||0,g.c5||0,g.c6||0,total,g.overall||'',d.researchConsent||'לא ידוע']);
+  });
+  const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+  const b=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(b);
+  a.download=`ציונים_מובןלי_${new Date().toISOString().slice(0,10)}.csv`;a.click();
+}
+
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+
+// === PDF EXPORT PER STUDENT ===
+function exportStudentPDF(){
+  if(currentIdx<0)return;
+  const s=students[currentIdx];
+  const d=s.data;
+  const g=grades[s.id]||{};
+  const total=totalScore(s.id);
+  const date=new Date().toLocaleDateString('he-IL',{year:'numeric',month:'long',day:'numeric'});
+  const criteriaRows=CRITERIA.map(cr=>{
+    const score=g[cr.id]||0;
+    const bar=Math.round((score/cr.max)*100);
+    return `<tr>
+      <td style="padding:.6rem .8rem;border-bottom:1px solid #e8e0d6;font-weight:600;color:#5A3A4A">${cr.icon} ${cr.label}</td>
+      <td style="padding:.6rem .8rem;border-bottom:1px solid #e8e0d6;text-align:center;font-weight:700;color:#5A3A4A">${score}</td>
+      <td style="padding:.6rem .8rem;border-bottom:1px solid #e8e0d6;text-align:center;color:#888">/ ${cr.max}</td>
+      <td style="padding:.6rem .8rem;border-bottom:1px solid #e8e0d6;width:120px">
+        <div style="background:#e8e0d6;border-radius:4px;height:8px">
+          <div style="background:${score>=cr.max*0.85?'#4a8c6f':score>=cr.max*0.6?'#C48B9F':'#c45050'};width:${bar}%;height:8px;border-radius:4px"></div>
+        </div>
+      </td></tr>`;
+  }).join('');
+  const researchTxt=d.researchConsent==='yes'?'✓ מסכים/ה למחקר':'✗ ללא הסכמה למחקר';
+  const docTitle=d.doc||d.title||'';
+  const html=`<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8">
+<title>פירוט ציון — ${esc(s.name)}</title>
+<style>@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Heebo:wght@300;400;500;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}body{font-family:'Heebo',sans-serif;background:#fff;color:#2d2a26;padding:2.5rem;max-width:720px;margin:0 auto}
+h1,h2,h3{font-family:'Assistant',sans-serif}@media print{body{padding:1.5rem}button{display:none!important}}</style></head><body>
+<div style="background:linear-gradient(135deg,#5A3A4A,#3d2233);color:#fff;border-radius:10px;padding:1.8rem 2rem;margin-bottom:2rem">
+  <div style="font-size:.85rem;color:#f5e0e8;margin-bottom:.3rem">אוניברסיטת בר-אילן | ד״ר נאוה כהן | מובןלי — תנ״ך לעומק</div>
+  <h1 style="font-size:1.6rem;font-weight:800;margin-bottom:.3rem">פירוט ציון</h1>
+  <div style="font-size:.82rem;color:rgba(255,255,255,.7)">${date}</div>
+</div>
+<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:1.5rem;margin-bottom:2rem;flex-wrap:wrap">
+  <div>
+    <h2 style="font-size:1.4rem;color:#5A3A4A;margin-bottom:.3rem">${esc(s.name)}</h2>
+    ${docTitle?`<div style="color:#6b6560;font-size:.9rem;margin-bottom:.4rem">${esc(docTitle)}</div>`:''}
+    <div style="font-size:.8rem;color:#888">${researchTxt}</div>
+  </div>
+  <div style="background:#5A3A4A;color:#fff;border-radius:12px;padding:1rem 1.8rem;text-align:center;min-width:110px">
+    <div style="font-size:2.8rem;font-weight:800;line-height:1">${total}</div>
+    <div style="font-size:.8rem;color:#f5e0e8;margin-top:.2rem">/ 100</div>
+  </div>
+</div>
+<h3 style="color:#5A3A4A;margin-bottom:.8rem;font-size:1rem">פירוט קריטריונים</h3>
+<table style="width:100%;border-collapse:collapse;background:#fff;border-radius:8px;overflow:hidden;border:1px solid #e8e0d6;margin-bottom:2rem">
+  <thead><tr style="background:#F5EDE3"><th style="padding:.7rem .8rem;text-align:right;font-size:.82rem;color:#6b6560;font-weight:600">קריטריון</th>
+  <th style="padding:.7rem .8rem;text-align:center;font-size:.82rem;color:#6b6560;font-weight:600">ציון</th>
+  <th style="padding:.7rem .8rem;text-align:center;font-size:.82rem;color:#6b6560;font-weight:600">מקסימום</th>
+  <th style="padding:.7rem .8rem;font-size:.82rem;color:#6b6560;font-weight:600">רמה</th></tr></thead>
+  <tbody>${criteriaRows}</tbody>
+</table>
+${g.overall?`<div style="background:#fffbf2;border:2px solid #C48B9F;border-radius:10px;padding:1.2rem 1.5rem;margin-bottom:2rem">
+  <h3 style="color:#5A3A4A;margin-bottom:.7rem;font-size:1rem">הערה כללית</h3>
+  <p style="line-height:1.9;font-size:.95rem;color:#2d2a26;white-space:pre-wrap">${esc(g.overall)}</p>
+</div>`:''}
+<div style="text-align:center;margin-top:2rem">
+  <button onclick="window.print()" style="background:#5A3A4A;color:#fff;border:none;border-radius:8px;padding:.7rem 2rem;font-family:'Heebo',sans-serif;font-size:1rem;font-weight:600;cursor:pointer">שמירה כקובץ PDF / הדפסה</button>
+</div></body></html>`;
+  const w=window.open('','_blank');w.document.write(html);w.document.close();
+}
+
+// === INIT ===
+loadGrades();
+</script>
+</body>
+</html>

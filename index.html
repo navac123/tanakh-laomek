@@ -741,7 +741,8 @@ let S={doc:'psalms1',step:0,darkMode:false,
   hiddenDocs:[],
   notes:{0:'',1:'',2:'',3:'',4:''},
   showNotebook:false,nbTab:-1,
-  autoDetect:false,detectedGroups:[],detectedPairs:[],showAutoDetect:false,autoDetectMinCount:2
+  autoDetect:false,detectedGroups:[],detectedPairs:[],showAutoDetect:false,autoDetectMinCount:2,
+  studentName:''
 };
 
 // ===== SAVE / LOAD =====
@@ -752,7 +753,8 @@ function saveWork(){
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{}};
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      studentName:S.studentName||''};
     if(TEXTS.custom) data.customText=TEXTS.custom;
     localStorage.setItem('moovanly_save',JSON.stringify(data));
     localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
@@ -777,7 +779,7 @@ function loadWork(){
     });
     S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
     S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
-    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};
+    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.studentName=d.studentName||'';
     S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
     if(d.darkMode!==undefined)S.darkMode=d.darkMode;
     S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
@@ -1297,6 +1299,7 @@ function startAutoSave(){
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_save',JSON.stringify(data));
       localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
+      window._unsaved=false;
     }catch(e){}
   },60000);
 }
@@ -1977,7 +1980,13 @@ function sRead(){
       פתח מחברת
     </div>
     ${notesSummary}
-    <div class="sb-btn" style="margin-top:12px;background:var(--coral);color:#fff" onclick="S.showExport=true;R()">ייצוא התוצאה</div>`;
+    <div style="margin-top:12px">
+      <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:4px">שם סטודנט/ית</div>
+      <input type="text" value="${S.studentName||''}" placeholder="שם מלא..." oninput="S.studentName=this.value;saveWork()" style="width:100%;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:13px;background:${bgc()};color:${tc()}">
+    </div>
+    <div class="sb-btn" style="margin-top:8px;background:var(--teal);color:#fff" onclick="exportSubmissionJSON()">💾 גיבוי JSON להגשה</div>
+    <div style="font-size:10px;color:${tcm()};margin-top:4px;text-align:center">לייצוא PDF ואפשרויות נוספות ←</div>
+    <div class="sb-btn" style="margin-top:4px;background:var(--coral);color:#fff" onclick="S.showExport=true;R()">ייצוא התוצאה</div>`;
 }
 
 function mainContent(){return [mImud,mDisc,mPkg,mCanv,mRead][S.step]()}
@@ -3319,15 +3328,39 @@ function exportJSON(){
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
-      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
+      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
+      studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      timestamp:new Date().toISOString()};
     if(TEXTS.custom)data.customText=TEXTS.custom;
     const json=JSON.stringify(data,null,2);
     const blob=new Blob([json],{type:'application/json;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
-    a.download='tanakh-laomek-'+D().title+'.json';
+    const sname=(S.studentName||'').trim();a.download='moovanly_'+(sname?sname+'_':'')+D().title+'_'+new Date().toISOString().slice(0,10)+'.json';
     a.click();
     toast('קובץ JSON נשמר — ניתן לשתף עם אחרים!');
+  }catch(e){toast('שגיאה בייצוא JSON');}
+}
+function exportSubmissionJSON(){
+  S.showExport=false;R();
+  try{
+    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+      fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+      vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+      pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
+      studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      timestamp:new Date().toISOString()};
+    if(TEXTS.custom)data.customText=TEXTS.custom;
+    const json=JSON.stringify(data,null,2);
+    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
+    const a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    const sname=(S.studentName||'').trim();
+    a.download='moovanly_'+(sname?sname+'_':'')+D().title+'_'+new Date().toISOString().slice(0,10)+'.json';
+    a.click();
+    toast('קובץ גיבוי נוצר — העלו ל-Moodle עם ה-PDF!');
   }catch(e){toast('שגיאה בייצוא JSON');}
 }
 function importJSON(){
@@ -3756,6 +3789,12 @@ function checkConsent(){
     document.getElementById('consentOv').classList.add('show');
   }
 }
+
+// === BEFOREUNLOAD — אזהרת סגירה ===
+window._unsaved=false;
+document.addEventListener('input',function(){window._unsaved=true;});
+document.addEventListener('change',function(){window._unsaved=true;});
+window.addEventListener('beforeunload',function(e){if(window._unsaved){e.preventDefault();e.returnValue='עבודה לא נשמרה עדיין';}});
 
 R();
 checkConsent();
