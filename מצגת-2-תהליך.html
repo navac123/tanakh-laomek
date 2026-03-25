@@ -1,0 +1,82 @@
+<!DOCTYPE html><html lang="he" dir="rtl"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>מובןלי — תהליך</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;700;800&family=Heebo:wght@300;400;500;700&display=swap');
+:root{--p:#5A3A4A;--pl:#8B4A5E;--a:#C48B9F;--al:#f5e0e8;--bg:#f4f8f6;--c:#fff;--t:#2d2a26;--tl:#6b6560;--b:#d0ddd8}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Heebo',sans-serif;background:linear-gradient(135deg,#5A3A4A,#8B4A5E,#5A3A4A);min-height:100vh;overflow:hidden}
+h1,h2,h3{font-family:'Assistant',sans-serif}
+.pres{width:100%;height:100vh;display:flex;align-items:center;justify-content:center}
+.slide{display:none;width:88%;max-width:900px;min-height:500px;background:var(--c);color:var(--t);border-radius:16px;padding:3.5rem;box-shadow:0 20px 60px rgba(0,0,0,.3);animation:fi .5s ease;overflow-y:auto;max-height:88vh}
+.slide.active{display:flex;flex-direction:column;justify-content:center}
+@keyframes fi{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:scale(1)}}
+.nav{position:fixed;bottom:1.8rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;background:rgba(0,0,0,.6);padding:.5rem 1.2rem;border-radius:30px;z-index:10;backdrop-filter:blur(10px)}
+.nav button{background:var(--p);color:#fff;border:none;padding:.45rem 1rem;border-radius:20px;font-family:'Heebo',sans-serif;font-size:.85rem;cursor:pointer;transition:all .2s}
+.nav button:hover{background:var(--pl)}
+.nav button:disabled{opacity:.3;cursor:default}
+.nav .ct{color:rgba(255,255,255,.6);font-size:.8rem;min-width:50px;text-align:center}
+.prog{position:fixed;top:0;left:0;height:3px;background:var(--a);transition:width .3s;z-index:10}
+.slide h1{font-size:2.6rem;font-weight:800;color:var(--p);line-height:1.3}
+.slide h2{font-size:1.7rem;font-weight:800;color:var(--p);margin-bottom:.6rem}
+.slide .sub{font-size:1.05rem;color:var(--tl);line-height:1.8;margin-top:.3rem}
+.slide p{font-size:1rem;line-height:2;margin-bottom:.5rem}
+.center{text-align:center}
+.label{font-size:.82rem;color:var(--tl);margin-bottom:.5rem}
+.step-badge{display:inline-flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:50%;background:var(--p);color:#fff;font-size:1.6rem;font-weight:800;margin-bottom:.8rem}
+.wx{display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin:1rem 0}
+.wx-box{border-radius:12px;padding:1.2rem;border:1px solid var(--b)}
+.wx-box.what{background:linear-gradient(135deg,rgba(0,0,0,.02),rgba(0,0,0,.01))}
+.wx-box.why{background:linear-gradient(135deg,rgba(201,168,76,.08),rgba(201,168,76,.02))}
+.wx-box h3{font-size:1rem;margin-bottom:.5rem;display:flex;align-items:center;gap:.3rem}
+.wx-box ul{padding-right:1.2rem;font-size:.9rem;line-height:1.8}
+.wx-box p{font-size:.9rem;line-height:1.8;margin:0}
+.tip{background:#fff8e1;border:1px solid #ffc107;border-radius:10px;padding:.7rem 1rem;font-size:.88rem;margin:.8rem 0;display:flex;align-items:flex-start;gap:.5rem}
+.warn{background:#fce4ec;border:1px solid #e57373;border-radius:10px;padding:.7rem 1rem;font-size:.88rem;margin:.8rem 0;display:flex;align-items:flex-start;gap:.5rem}
+.pill{display:inline-block;background:var(--al);color:var(--p);padding:.4rem 1.2rem;border-radius:20px;font-size:.88rem;font-weight:600;margin:.3rem}
+.flow{display:flex;align-items:center;justify-content:center;gap:.3rem;flex-wrap:wrap;margin:1.5rem 0}
+.flow-item{background:var(--al);color:var(--p);padding:.5rem .8rem;border-radius:10px;font-size:.82rem;font-weight:600}
+.flow-arrow{color:var(--a);font-size:1.2rem;font-weight:800}
+.step-card{background:var(--al);border-radius:14px;padding:1.2rem 1.5rem;margin:.6rem 0;display:flex;align-items:flex-start;gap:1rem}
+.step-card .sc-num{background:var(--p);color:#fff;border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;font-weight:800;flex-shrink:0}
+.step-card .sc-body{flex:1}
+.step-card .sc-body strong{color:var(--p);display:block;margin-bottom:.2rem}
+.step-card .sc-body p{font-size:.88rem;color:var(--tl);margin:0}
+.check{display:flex;flex-direction:column;gap:.4rem;margin:.6rem 0}
+.check-item{display:flex;align-items:center;gap:.5rem;font-size:.9rem;padding:.4rem .6rem;background:var(--al);border-radius:6px}
+.faq{background:var(--al);border-radius:10px;padding:.8rem 1rem;margin:.5rem 0}
+.faq strong{display:block;color:var(--p);margin-bottom:.2rem;font-size:.9rem}
+.faq p{font-size:.85rem;color:var(--tl);margin:0;line-height:1.6}
+.mock-btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:10px;font-size:.95rem;font-weight:700;font-family:'Assistant',sans-serif;border:none;margin:.3rem;color:#fff}
+.quote-box{border-right:4px solid var(--a);padding:1.2rem 1.5rem;border-radius:12px;background:linear-gradient(135deg,rgba(0,0,0,.02),rgba(0,0,0,.01));margin:1rem 0;font-style:italic;font-size:1.1rem;line-height:2;color:var(--p)}
+.quote-box .src{font-style:normal;font-size:.82rem;color:var(--tl);margin-top:.4rem;display:block}
+@media(max-width:700px){.slide{padding:2rem 1.5rem}.slide h1{font-size:1.8rem}.wx{grid-template-columns:1fr}}
+</style>
+</head><body>
+<div class="prog" id="prog"></div>
+<div class="pres">
+
+<div class="slide active center"><div style="font-size:3rem;margin-bottom:.5rem">📐</div><h1>תהליך העבודה</h1><div class="sub">מה עושים בכל שלב</div><div class="flow" style="margin-top:2rem"><span class="flow-item">📐 עימוד</span><span class="flow-arrow">←</span><span class="flow-item">🔍 גילוי</span><span class="flow-arrow">←</span><span class="flow-item">📦 אריזה</span><span class="flow-arrow">←</span><span class="flow-item">🗺️ ארגון</span><span class="flow-arrow">←</span><span class="flow-item">💭 קריאה</span></div><p style="margin-top:1rem;color:var(--tl);font-size:.88rem">מצגת 2 מתוך 4</p></div>
+<div class="slide"><div class="center"><span class="step-badge">1</span></div><h2 class="center">📐 עימוד</h2><div class="wx"><div class="wx-box what"><h3>📝 מה עושים?</h3><ul><li>מפרקים את הטקסט לשורות קצרות</li><li>מזיחים שורות פנימה והחוצה</li><li>מחלקים לפסקאות לפי נושאים</li><li>משנים גופן וגודל כרצונכם</li></ul></div><div class="wx-box why"><h3>💡 למה?</h3><p>טקסט לינארי מכביד על הקורא הדיגיטלי. העימוד מרווח, מאט, ומכריח התבוננות. שימו לב למעברי דוברים, גופים, זמנים, תקבולות.</p></div></div></div>
+<div class="slide"><div class="center"><span class="step-badge">2</span></div><h2 class="center">🔍 גילוי</h2><div class="wx"><div class="wx-box what"><h3>📝 מה עושים?</h3><ul><li>מחפשים חזרות, מילים מנחות</li><li>מסמנים גופים, זמנים, רגשות</li><li>צובעים כל תופעה בצבע אחיד</li><li>עוקבים אחרי כל אלמנט עד הסוף</li></ul></div><div class="wx-box why"><h3>💡 למה?</h3><p>אם העימוד הוא מפת כבישים — הגילוי הוא המפה הטופוגרפית. הוא חושף גובה, עומק וחספוס. הצבעים הופכים דפוסים נסתרים לנראים.</p></div></div><div class="tip"><span>💡</span> <span>אל תסמנו סתם — שאלו <em>למה</em> זה חשוב להבנת הכתוב.</span></div></div>
+<div class="slide"><div class="center"><span class="step-badge">3</span></div><h2 class="center">📦 אריזה</h2><div class="wx"><div class="wx-box what"><h3>📝 מה עושים?</h3><ul><li>אורזים קטעי טקסט ב"קופסאות"</li><li>נותנים לכל קופסה כותרת</li><li>מוסיפים אימוג׳י מזהה</li><li>אפשר ליצור היררכיה</li></ul></div><div class="wx-box why"><h3>💡 למה?</h3><p>האריזה מאפשרת לזהות רעיונות, לתמצת תוכן, ולקרוא במנות קטנות. ההפחתה לכותרות מאפשרת הבנת קונספטים.</p></div></div></div>
+<div class="slide"><div class="center"><span class="step-badge">4</span></div><h2 class="center">🗺️ ארגון וקישור</h2><div class="wx"><div class="wx-box what"><h3>📝 מה עושים?</h3><ul><li>פורשים אריזות על קנבס</li><li>מזיזים, מגדילים, מקטינים</li><li>מציירים חצים וקשרים</li><li>מוסיפים תוויות לקשרים</li></ul></div><div class="wx-box why"><h3>💡 למה?</h3><p>מפת ההבנה מסייעת לראות תמונה כללית, להפריד עיקר מטפל, ולהבין איך החלקים תורמים למכלול.</p></div></div></div>
+<div class="slide"><div class="center"><span class="step-badge">5</span></div><h2 class="center">💭 קריאה</h2><div class="wx"><div class="wx-box what"><h3>📝 מה עושים?</h3><ul><li>רואים סיכום של כל השלבים</li><li>כותבים במחברת האישית</li><li>מנסחים פרשנות</li><li>מזינים שם ומייצאים</li></ul></div><div class="wx-box why"><h3>💡 למה?</h3><p>לאורך כל השלבים הבעתם הבנות דרך בחירות. עכשיו הגיע הזמן לתרגם הכל למילים — מה גיליתם?</p></div></div></div>
+<div class="slide center"><h2>בחלק הבא</h2><div class="sub">איך נכנסים ומתחילים לעבוד</div><div class="pill" style="font-size:1rem;padding:.6rem 1.5rem;margin-top:1rem">המשיכו למצגת הבאה →</div><p style="margin-top:1.5rem;color:var(--tl);font-size:.85rem">ד״ר נאוה כהן | אוניברסיטת בר-אילן | 2026</p></div>
+
+</div>
+<div class="nav">
+<button id="nb" onclick="nv(1)">→ הבא</button>
+<span class="ct" id="ct"></span>
+<button id="pb" onclick="nv(-1)">הקודם ←</button>
+</div>
+<script>
+let c=0;const sl=document.querySelectorAll('.slide'),t=sl.length;
+function sh(n){if(n<0||n>=t)return;sl[c].classList.remove('active');c=n;sl[c].classList.add('active');
+document.getElementById('ct').textContent=(c+1)+' / '+t;
+document.getElementById('pb').disabled=c===0;document.getElementById('nb').disabled=c===t-1;
+document.getElementById('prog').style.width=((c+1)/t*100)+'%';}
+function nv(d){sh(c+d);}
+document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft'||e.key===' '){e.preventDefault();nv(1);}if(e.key==='ArrowRight')nv(-1);});
+sh(0);
+</script>
+</body></html>
