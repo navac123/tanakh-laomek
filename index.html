@@ -764,9 +764,20 @@ function saveWork(){
 }
 function loadWork(){
   try{
-    const raw=localStorage.getItem('moovanly_save');
+    let raw=localStorage.getItem('moovanly_save');
+    let fromBackup=false;
+    if(!raw){
+      raw=localStorage.getItem('moovanly_backup');
+      fromBackup=true;
+    }
     if(!raw){toast('אין עבודה שמורה');return false;}
-    const d=JSON.parse(raw);
+    let d;
+    try{d=JSON.parse(raw);}catch(parseErr){
+      raw=localStorage.getItem('moovanly_backup');
+      if(!raw){toast('שמירה פגומה ואין גיבוי');return false;}
+      d=JSON.parse(raw);
+      fromBackup=true;
+    }
     if(d.customText)TEXTS.custom=d.customText;
     S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
     S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
@@ -784,12 +795,12 @@ function loadWork(){
     S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
     if(d.darkMode!==undefined)S.darkMode=d.darkMode;
     S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
-    S.splash=false;R();toast('עבודה נטענה');return true;
+    S.splash=false;R();toast(fromBackup?'עבודה שוחזרה מגיבוי':'עבודה נטענה');return true;
   }catch(e){toast('שגיאה בטעינה');return false;}
 }
-function hasSavedWork(){return !!localStorage.getItem('moovanly_save');}
+function hasSavedWork(){return !!(localStorage.getItem('moovanly_save')||localStorage.getItem('moovanly_backup'));}
 function getSaveTime(){return localStorage.getItem('moovanly_time')||'';}
-function clearSave(){localStorage.removeItem('moovanly_save');localStorage.removeItem('moovanly_time');toast('שמירה נמחקה');}
+function clearSave(){localStorage.removeItem('moovanly_save');localStorage.removeItem('moovanly_time');localStorage.removeItem('moovanly_backup');localStorage.removeItem('moovanly_backup_time');toast('שמירה נמחקה');}
 
 const undoStack=[];
 const redoStack=[];
@@ -1303,7 +1314,22 @@ function startAutoSave(){
       localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
       window._unsaved=false;
     }catch(e){}
-  },60000);
+  },30000);
+  // Backup save every 5 minutes
+  setInterval(()=>{
+    try{
+      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+        fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+        vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+        cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
+        pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+        studentName:S.studentName||''};
+      if(TEXTS.custom) data.customText=TEXTS.custom;
+      localStorage.setItem('moovanly_backup',JSON.stringify(data));
+      localStorage.setItem('moovanly_backup_time',new Date().toLocaleString('he-IL'));
+    }catch(e){}
+  },300000);
 }
 function startApp(){
   const el=document.getElementById('splashEl');
