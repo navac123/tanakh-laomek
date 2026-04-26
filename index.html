@@ -3173,7 +3173,8 @@ function exportModal(){
       <h3>ייצוא ושיתוף</h3>
       <p>בחר את פורמט הייצוא הרצוי</p>
       <div class="export-opt">
-        <div class="export-btn" onclick="exportPrint()"><span style="font-size:18px;color:${tc()}">📄 PDF</span><br><span style="font-size:11px">הדפסה / PDF</span></div>
+        <div class="export-btn" onclick="exportFullPDF()" style="border:2px solid var(--earth)"><span style="font-size:18px;color:${tc()}">📄 PDF מלא</span><br><span style="font-size:11px">כל 5 השלבים</span></div>
+        <div class="export-btn" onclick="exportPrint()"><span style="font-size:18px;color:${tc()}">📄 PDF</span><br><span style="font-size:11px">שלב נוכחי</span></div>
         <div class="export-btn" onclick="exportImage()"><span style="font-size:18px;color:${tc()}">🖼️ PNG</span><br><span style="font-size:11px">תמונה</span></div>
         <div class="export-btn" onclick="exportHTML()"><span style="font-size:18px;color:${tc()}">💾 HTML</span><br><span style="font-size:11px">שמירה</span></div>
         <div class="export-btn" onclick="exportJSON()"><span style="font-size:18px;color:${tc()}">📋 JSON</span><br><span style="font-size:11px">שיתוף עבודה</span></div>
@@ -3269,6 +3270,237 @@ window.onload=function(){setTimeout(function(){window.print()},600)}
         toast('חלון הדפסה נפתח — בחר "שמור כ-PDF"');
       }else{
         toast('חסום חלון קופץ — אפשר חלונות קופצים ונסה שוב');
+      }
+    }catch(e){toast('שגיאה בייצוא: '+e.message);}
+  },200);
+}
+
+function exportFullPDF(){
+  S.showExport=false;R();
+  toast('מכין PDF מלא...');
+  setTimeout(()=>{
+    try{
+      const title=D().title;
+      const sname=(S.studentName||'').trim();
+      const vv=D().verses;
+
+      // Gather all CSS from current document
+      let allCSS='';
+      for(const sheet of document.styleSheets){
+        try{for(const rule of sheet.cssRules){allCSS+=rule.cssText+'\n'}}catch(e){}
+      }
+
+      // Save current state and build all steps
+      const origStep=S.step;
+      const origVf=S.vf;
+      S.vf='all'; // show all categories
+
+      // --- Step 0: Imud ---
+      S.step=0;
+      const imudHTML=renderWithLayout((w,vi,wi)=>{
+        const k=vi+'-'+wi;
+        const fs=S.fs;
+        let st='font-family:'+fontCSS()+';font-size:'+fs+'px;line-height:'+S.lh+';';
+        return '<span style="'+st+'">'+w+'</span>';
+      });
+
+      // --- Step 1: Discovery (with markings) ---
+      S.step=1;
+      const discHTML=renderWithLayout((w,vi,wi)=>wrd(w,vi,wi,'read'));
+
+      // Categories legend
+      let legendHTML='';
+      if(S.cats.length){
+        legendHTML='<div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:10px">';
+        S.cats.forEach(cat=>{
+          ensureSubs(cat);
+          const style=getStyleById(cat.styleId);
+          cat.subs.forEach(sub=>{
+            const col=C[sub.ci]||C[0];
+            const cnt=Object.values(S.marks).filter(m=>m.catId===cat.id&&m.subId===sub.id).length;
+            if(!cnt)return;
+            legendHTML+='<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:#F5EDE3;border:1px solid #D4C4CC">';
+            legendHTML+='<span style="display:inline-block;'+style.apply(col)+'">abc</span>';
+            legendHTML+='<span style="font-size:12px;font-weight:600">'+sub.name+'</span>';
+            legendHTML+='<span style="font-size:10px;color:#7A6070">'+cat.name+' ('+cnt+')</span>';
+            legendHTML+='</div>';
+          });
+        });
+        legendHTML+='</div>';
+      }
+
+      // --- Step 2: Packages ---
+      S.step=2;
+      let pkgsListHTML='';
+      if(S.pkgs.length){
+        pkgsListHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">';
+        S.pkgs.forEach(p=>{
+          const c=C[p.ci];
+          const pkgWords=p.words.map(k=>{const[vi,wi]=k.split('-').map(Number);const wds=vv[vi]?.t.split(/\s+/);return wds?wds[wi]:'';}).filter(Boolean);
+          pkgsListHTML+='<div style="background:'+c.b+';border:2px solid '+c.c+';border-radius:14px;padding:14px">';
+          pkgsListHTML+='<div style="font-weight:800;color:'+c.c+';margin-bottom:6px">'+(p.emoji||'')+' '+p.name+'</div>';
+          pkgsListHTML+='<div style="font-size:11px;color:'+c.c+';opacity:.7;margin-bottom:4px">'+p.words.length+' מילים</div>';
+          pkgsListHTML+='<div style="display:flex;flex-wrap:wrap;gap:3px">'+pkgWords.slice(0,12).map(w=>'<span style="background:#F5EDE3;padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid '+c.c+'">'+w+'</span>').join('')+'</div>';
+          pkgsListHTML+='</div>';
+        });
+        pkgsListHTML+='</div>';
+      }
+
+      // Text with package annotations
+      const pkgTextHTML=mPkg();
+
+      // --- Step 3: Canvas (static) ---
+      S.step=3;
+      let canvasHTML='';
+      let connsListHTML='';
+      if(S.nodes.length&&S.pkgs.length){
+        canvasHTML=mCanv();
+        // Strip interactive handlers for static view
+        canvasHTML=canvasHTML.replace(/onmousedown="[^"]*"/g,'')
+          .replace(/ontouchstart="[^"]*"/g,'')
+          .replace(/onmouseenter="[^"]*"/g,'')
+          .replace(/onclick="[^"]*"/g,'')
+          .replace(/onmouseover="[^"]*"/g,'')
+          .replace(/onmouseout="[^"]*"/g,'')
+          .replace(/style="([^"]*)cursor:\s*\w+/g,'style="$1cursor:default');
+        // Connections list
+        const labeledConns=S.conns.filter(cn=>cn.label);
+        if(labeledConns.length){
+          connsListHTML='<div style="display:flex;flex-direction:column;gap:8px;margin-top:14px">';
+          labeledConns.forEach(cn=>{
+            const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
+            if(!fp||!tp)return;
+            const fc=C[fp.ci],tpc=C[tp.ci];
+            connsListHTML+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(90,58,74,.04);border:1px solid #D4C4CC">';
+            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+fc.c+'">'+fp.name+'</span>';
+            connsListHTML+='<span style="color:#5A3A4A;font-size:14px">&rarr;</span>';
+            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+tpc.c+'">'+tp.name+'</span>';
+            connsListHTML+='<span style="font-size:11px;color:#7A6070;margin-right:auto;font-style:italic">'+cn.label+'</span>';
+            connsListHTML+='</div>';
+          });
+          connsListHTML+='</div>';
+        }
+      }
+
+      // --- Step 4: Reading summary ---
+      S.step=4;
+      // We reuse elements from mRead but pick selectively
+
+      // --- Notes ---
+      const notesHTML=notesExportHTML();
+
+      // Restore state
+      S.step=origStep;
+      S.vf=origVf;
+
+      // Build the full PDF document
+      const stepNames=['עימוד','גילוי','אריזה','ארגון','קריאה'];
+      const printHTML=`<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>תנ״ך לעומק - ${title} - ניתוח מלא</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700&family=David+Libre:wght@400;500;700&family=Noto+Serif+Hebrew:wght@400;500;700&family=Secular+One&family=Rubik:wght@400;500;700&family=Assistant:wght@400;600;700&family=Miriam+Libre:wght@400;700&display=swap" rel="stylesheet">
+<style>
+${allCSS}
+/* Full PDF overrides */
+body{background:#fff!important;margin:0;padding:20px 30px;font-family:'Heebo',sans-serif;color:#5A3A4A;direction:rtl}
+.topbar,.steps,.side,.splash,.toast,.modal-bg,.export-bg,.cv-toolbar,.cv-zoom,
+.shp-del,.shp-rsz,.c-sticky-del,.c-label-del,.c-label-drag,.c-rsz,.c-conn-dot,.c-node-tgl,
+.disc-indicator,.minimap,.imud-toolbar,.tb-btn,.tb-sep{display:none!important}
+.wrap{display:block!important;height:auto!important;overflow:visible!important}
+.main{padding:10px!important;overflow:visible!important;height:auto!important}
+.canvas{overflow:visible!important;min-height:auto!important;height:auto!important;background-image:none!important;border:1px solid #ddd!important;border-radius:12px}
+.canvas>div,#cvInner{transform:none!important;min-height:auto!important;min-width:auto!important}
+.text-area{box-shadow:none!important;border:none!important;background:transparent!important}
+*{animation:none!important;transition:none!important}
+-webkit-print-color-adjust:exact;print-color-adjust:exact;color-adjust:exact;
+.c-node{box-shadow:0 1px 3px rgba(0,0,0,.1)!important}
+.c-frame-wrap{box-shadow:none!important}
+.c-shape-wrap{filter:none!important}
+
+.pdf-cover{text-align:center;padding:60px 20px 40px;page-break-after:always}
+.pdf-cover h1{font-size:32px;font-weight:900;color:#5A3A4A;margin-bottom:12px}
+.pdf-cover h2{font-size:22px;font-weight:600;color:#7A6070;margin-bottom:8px}
+.pdf-cover .student-name{font-size:18px;color:#8B4A5E;font-weight:700;margin-top:24px}
+.pdf-cover .date-line{font-size:14px;color:#9A8A92;margin-top:8px}
+
+.pdf-section{page-break-after:always;margin-bottom:30px}
+.pdf-section:last-child{page-break-after:avoid}
+.pdf-section-header{font-size:22px;font-weight:800;color:#8B4A5E;margin-bottom:16px;padding-bottom:8px;border-bottom:3px solid #EACDD8;display:flex;align-items:center;gap:10px}
+.pdf-section-header .step-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:#8B4A5E;color:#fff;font-size:16px;font-weight:800;flex-shrink:0}
+.pdf-sub-header{font-size:16px;font-weight:700;color:#5A3A4A;margin:18px 0 10px;padding-bottom:4px;border-bottom:1px solid #D4C4CC}
+
+.pkg-box{page-break-inside:avoid}
+.imud-line{page-break-inside:avoid}
+
+@media print{
+  body{margin:0;padding:10mm 15mm}
+  *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;color-adjust:exact!important}
+  .pdf-section{page-break-after:always}
+  .pdf-section:last-child{page-break-after:avoid}
+}
+</style>
+</head>
+<body>
+<!-- Cover page -->
+<div class="pdf-cover">
+  <div style="font-size:60px;margin-bottom:16px;opacity:.7">&#x1f4d6;</div>
+  <h1>תנ״ך לעומק - ניתוח מלא</h1>
+  <h2>${title}</h2>
+  ${sname?'<div class="student-name">'+sname+'</div>':''}
+  <div class="date-line">${new Date().toLocaleDateString('he-IL',{year:'numeric',month:'long',day:'numeric'})}</div>
+</div>
+
+<!-- Step 0: Imud -->
+<div class="pdf-section">
+  <div class="pdf-section-header"><span class="step-num">0</span> ${stepNames[0]} - עיצוב הטקסט</div>
+  ${imudHTML}
+</div>
+
+<!-- Step 1: Discovery -->
+<div class="pdf-section">
+  <div class="pdf-section-header"><span class="step-num">1</span> ${stepNames[1]} - סימון מילים</div>
+  ${discHTML}
+  ${legendHTML?'<div class="pdf-sub-header">מקרא סימונים</div>'+legendHTML:''}
+</div>
+
+<!-- Step 2: Packages -->
+${S.pkgs.length?`<div class="pdf-section">
+  <div class="pdf-section-header"><span class="step-num">2</span> ${stepNames[2]} - חבילות</div>
+  <div class="pdf-sub-header">רשימת חבילות</div>
+  ${pkgsListHTML}
+  <div class="pdf-sub-header" style="margin-top:24px">טקסט עם חבילות</div>
+  ${pkgTextHTML}
+</div>`:''}
+
+<!-- Step 3: Canvas -->
+${canvasHTML?`<div class="pdf-section">
+  <div class="pdf-section-header"><span class="step-num">3</span> ${stepNames[3]} - מפת ארגון</div>
+  <div style="overflow:visible;border:1px solid #D4C4CC;border-radius:12px;background:rgba(245,237,227,.5);padding:10px">
+    ${canvasHTML}
+  </div>
+  ${connsListHTML?'<div class="pdf-sub-header">קשרים בין חבילות</div>'+connsListHTML:''}
+</div>`:''}
+
+<!-- Notes -->
+${notesHTML?`<div class="pdf-section">
+  ${notesHTML}
+</div>`:''}
+
+<script>
+window.onload=function(){setTimeout(function(){window.print()},800)}
+<\/script>
+</body>
+</html>`;
+
+      const printWin=window.open('','_blank','width=900,height=700');
+      if(printWin){
+        printWin.document.write(printHTML);
+        printWin.document.close();
+        toast('חלון הדפסה נפתח - בחר "שמור כ-PDF"');
+      }else{
+        toast('חסום חלון קופץ - אפשר חלונות קופצים ונסה שוב');
       }
     }catch(e){toast('שגיאה בייצוא: '+e.message);}
   },200);
