@@ -3270,10 +3270,10 @@ h2{text-align:center;margin-bottom:16px;font-size:22px}
 <h2>תנ״ך לעומק — ${title}</h2>
 ${mainContent}
 ${notesExportHTML()}
-<script>
+<scr`+`ipt>
 // Auto-print when loaded
 window.onload=function(){setTimeout(function(){window.print()},600)}
-<\/script>
+</scr`+`ipt>
 </body>
 </html>`;
       const printWin=window.open('','_blank','width=900,height=700');
@@ -3501,9 +3501,9 @@ ${notesHTML?`<div class="pdf-section">
   ${notesHTML}
 </div>`:''}
 
-<script>
+<scr`+`ipt>
 window.onload=function(){setTimeout(function(){window.print()},800)}
-<\/script>
+</scr`+`ipt>
 </body>
 </html>`;
 
