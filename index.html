@@ -1296,7 +1296,8 @@ function startAutoSave(){
         vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
         pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{}};
+        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+        studentName:S.studentName||''};
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_save',JSON.stringify(data));
       localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
