@@ -3610,6 +3610,7 @@ function exportJSON(){
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
+    try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
     const json=JSON.stringify(data,null,2);
     const blob=new Blob([json],{type:'application/json;charset=utf-8'});
@@ -3631,6 +3632,7 @@ function exportSubmissionJSON(){
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
+    try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
     const json=JSON.stringify(data,null,2);
     const blob=new Blob([json],{type:'application/json;charset=utf-8'});
@@ -3653,6 +3655,7 @@ function exportSubmission(){
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
+    try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
     const json=JSON.stringify(data,null,2);
     const blob=new Blob([json],{type:'application/json;charset=utf-8'});
@@ -4104,6 +4107,34 @@ window.addEventListener('beforeunload',function(e){if(window._unsaved){e.prevent
 R();
 checkConsent();
 
+</script>
+
+<!-- ===== מדד יושרה (process-integrity) · © ד״ר נאוה כהן ===== -->
+<script>
+(function(){
+  var LS='moovanly_pmeta';
+  function now(){return Date.now();}
+  function load(){
+    try{var r=localStorage.getItem(LS);if(r){var p=JSON.parse(r);p._last=now();p.sessions=(p.sessions||1)+1;return p;}}catch(e){}
+    return {v:1,startedAt:now(),edits:0,keys:0,pastes:0,pasteChars:0,activeMs:0,steps:{},sessions:1,_last:now()};
+  }
+  var P=load(); window.__PMETA=P;
+  function persist(){try{localStorage.setItem(LS,JSON.stringify(P));}catch(e){}}
+  function tick(){var t=now(),g=t-P._last;if(g>0&&g<30000)P.activeMs+=g;P._last=t;}
+  function step(){try{if(typeof S!=='undefined'&&S&&S.step!=null){var k=''+S.step;if(!P.steps[k])P.steps[k]=new Date().toISOString();}}catch(e){}}
+  document.addEventListener('keydown',function(){P.keys++;tick();},true);
+  document.addEventListener('pointerdown',function(){tick();},true);
+  document.addEventListener('input',function(){tick();},true);
+  document.addEventListener('paste',function(e){P.pastes++;try{P.pasteChars+=(((e.clipboardData||window.clipboardData).getData('text'))||'').length;}catch(_){}tick();},true);
+  document.addEventListener('visibilitychange',function(){if(document.visibilityState==='visible'){P._last=now();}else{persist();}});
+  function wrap(){
+    if(typeof window.saveUndo==='function'&&!window.saveUndo.__pw){var _s=window.saveUndo;window.saveUndo=function(){P.edits++;tick();return _s.apply(this,arguments);};window.saveUndo.__pw=1;}
+    if(typeof window.R==='function'&&!window.R.__pw){var _R=window.R;window.R=function(){step();return _R.apply(this,arguments);};window.R.__pw=1;}
+  }
+  wrap();setTimeout(wrap,0);setTimeout(wrap,2000);
+  step();setInterval(persist,10000);window.addEventListener('beforeunload',persist);
+  window.__buildPMeta=function(){tick();persist();return {v:1,startedAt:new Date(P.startedAt).toISOString(),exportedAt:new Date().toISOString(),activeSeconds:Math.round(P.activeMs/1000),totalSeconds:Math.round((now()-P.startedAt)/1000),edits:P.edits,keystrokes:P.keys,pastes:P.pastes,pasteChars:P.pasteChars,sessions:P.sessions,stepsReached:Object.keys(P.steps).length,stepTimes:P.steps};};
+})();
 </script>
 </body>
 </html>
