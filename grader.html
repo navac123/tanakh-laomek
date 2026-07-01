@@ -248,6 +248,30 @@ function updateStats(){
 }
 
 // === GRADE RENDER ===
+function fmtDur(sec){if(sec==null)return '—';sec=Math.round(sec);if(sec<60)return sec+' שנ׳';var m=Math.floor(sec/60),s=sec%60;if(m<60)return m+' דק׳'+(s?(' '+s+' שנ׳'):'');var h=Math.floor(m/60);m=m%60;return h+' שע׳ '+m+' דק׳';}
+function integrityPanel(d){
+  var COL={green:{bg:'#eef7ee',bd:'#7bbf7b',fg:'#2e6b2e'},amber:{bg:'#fdf6e3',bd:'#e0b34a',fg:'#8a6d1a'},red:{bg:'#fbeaea',bd:'#d17070',fg:'#9a2c2c'}};
+  var m=d._meta,level,head,body,statsH='';
+  if(!m){
+    level='red';head='⚠️ מדד יושרה: אין נתוני תהליך';
+    body='<div style="font-size:.85rem;line-height:1.6">הקובץ הוגש <b>ללא חותמת תהליך</b>. ייתכן שנוצר מחוץ לאפליקציה (למשל ע״י סוכן/סקריפט אוטומטי) או יוצא מגרסה ישנה של הכלי. מומלץ לבדוק ידנית מול הסטודנט.</div>';
+  } else {
+    var active=m.activeSeconds||0,total=m.totalSeconds||0,edits=m.edits||0,keys=m.keystrokes||0,pastes=m.pastes||0,steps=m.stepsReached||0;
+    var flags=[];
+    if(active<120)flags.push('זמן עבודה פעיל קצר מאוד ('+fmtDur(active)+')');
+    if(edits<5)flags.push('מעט מאוד עריכות ('+edits+')');
+    if(keys<20)flags.push('כמעט ללא הקלדה ('+keys+' תווים)');
+    if(pastes>0&&keys<50)flags.push('רוב התוכן הודבק, עם מעט הקלדה');
+    level=flags.length>=2?'red':(flags.length===1?'amber':'green');
+    head=level==='green'?'✅ מדד יושרה: תקין':(level==='amber'?'⚠️ מדד יושרה: לבדיקה':'⛔ מדד יושרה: חשד לאוטומציה');
+    var cell=function(v,l){return '<div style="text-align:center;min-width:66px"><div style="font-size:1.12rem;font-weight:800">'+v+'</div><div style="font-size:.68rem;opacity:.75">'+l+'</div></div>';};
+    statsH='<div style="display:flex;flex-wrap:wrap;gap:.7rem 1.3rem;margin:.7rem 0">'+cell(fmtDur(active),'עבודה פעילה')+cell(fmtDur(total),'משך כולל')+cell(edits,'עריכות')+cell(keys,'הקלדות')+cell(pastes,'הדבקות')+cell(steps+'/5','שלבים')+cell(m.sessions||1,'מפגשים')+'</div>';
+    body=flags.length?('<ul style="margin:.3rem 1.1rem 0;font-size:.85rem;line-height:1.7">'+flags.map(function(f){return '<li>'+esc(f)+'</li>';}).join('')+'</ul>'):'<div style="font-size:.85rem;opacity:.85">לא נמצאו סימני אזהרה — דפוס עבודה אנושי סביר.</div>';
+  }
+  var c=COL[level];
+  return '<div style="background:'+c.bg+';border:1.5px solid '+c.bd+';border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1rem;color:'+c.fg+'"><div style="font-weight:800;font-size:1rem">'+head+'</div>'+statsH+body+'</div>';
+}
+
 function renderGrade(){
   if(currentIdx<0||currentIdx>=students.length){
     document.getElementById('mainArea').innerHTML='<div class="empty-state"><div class="es-icon">👆</div><div>בחרו סטודנט מהרשימה</div></div>';
@@ -379,6 +403,7 @@ function renderGrade(){
       </div>
       <button onclick="exportStudentPDF()" style="background:linear-gradient(135deg,var(--p),#2d1a26);color:#fff;border:none;border-radius:8px;padding:.6rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;white-space:nowrap">📄 ייצוא PDF לסטודנט</button>
     </div>
+    ${integrityPanel(d)}
     ${critH}
     <div class="overall-card">
       <h3>📝 הערה כללית</h3>
