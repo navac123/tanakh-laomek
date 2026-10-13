@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>תנ״ך לעומק — איך מתחילים</title>
+<style>
+  :root { --d:#1F3D3A; --g:#2E6B5E; --l:#3D8B7A; --gold:#C9A84C; --bg:#F5F7F4; --ink:#222B29; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font-family:'Assistant','Arial',sans-serif; line-height:1.6; }
+  .page { max-width:860px; margin:0 auto; padding:32px 24px 56px; }
+  header { background:var(--d); color:#fff; border-radius:14px; padding:26px 28px;
+           display:flex; gap:26px; align-items:center; flex-wrap:wrap; }
+  header .txt { flex:1; min-width:260px; }
+  h1 { margin:0 0 6px; font-size:30px; letter-spacing:-.5px; }
+  header p { margin:0; color:#CFE0DB; font-size:16px; }
+  .qr { background:#fff; border-radius:12px; padding:10px; line-height:0; }
+  .qr img { width:132px; height:132px; display:block; }
+  .link { display:block; margin:18px 0 0; background:#fff; border:2px solid var(--l);
+          border-radius:12px; padding:14px 18px; text-align:center;
+          font-size:19px; font-weight:700; color:var(--g); text-decoration:none; direction:ltr; }
+  h2 { font-size:20px; color:var(--d); margin:30px 0 10px;
+       border-bottom:3px solid var(--gold); display:inline-block; padding-bottom:3px; }
+  .steps { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin:6px 0 0; }
+  .step { background:#fff; border-radius:10px; padding:12px 14px; border-right:4px solid var(--l); }
+  .step b { display:block; color:var(--g); font-size:15px; }
+  .step span { font-size:13.5px; color:#55605D; }
+  .rule { background:#fff; border-radius:10px; padding:14px 16px; margin:10px 0;
+          border-right:4px solid var(--gold); }
+  .rule b { color:var(--d); }
+  .warn { background:#FFF8E8; border:1px solid var(--gold); border-radius:10px; padding:14px 16px; margin:12px 0; }
+  ol,ul { margin:8px 0; padding-inline-start:22px; }
+  li { margin:5px 0; }
+  code { background:#E8EFEC; border-radius:5px; padding:2px 7px; font-size:14px; direction:ltr; display:inline-block; }
+  .links a { color:var(--g); font-weight:600; }
+  footer { margin-top:34px; padding-top:14px; border-top:1px solid #D4DCD9;
+           font-size:13px; color:#6B7773; text-align:center; }
+  @media print {
+    body { background:#fff; }
+    .page { max-width:100%; padding:0; }
+    header { background:#fff; color:var(--d); border:2px solid var(--d); }
+    header p { color:#444; }
+    .step,.rule,.warn { border:1px solid #CCC; }
+    @page { size:A4; margin:14mm; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <header>
+    <div class="txt">
+      <h1>תנ״ך לעומק</h1>
+      <p>הכלי שבו נלמד את המזמורים השנה — סרקו או היכנסו בקישור</p>
+    </div>
+    <div class="qr"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAgQAAAIEAQMAAABczKTVAAAABlBMVEUfPTr///+RfkthAAACh0lEQVR42u2dYWrDMAyFxS6Q+9/SN/Bok1hPcsYY/TOkL4zRdO43MHlIz5Jdmx9ewyBAgAABAgQIEPoShq3L3zmu99d/eb1Og1+3X/bpBQHCfyNY0NewIJZjnupQUWyDmUkIdXWxQoOKwlwa/lcdjC4gNNHFOzSoRs4xHjvQBYSW8eL1/N9p0imHJY1dROgCQhN/4QHCgtEIiRb+AkIDXfjt+P0nfpaZhFBUF3Hl9ooXZr4kpelTHs9MQiiui3V7/e1eksolj6ErV8wkhMp5lDvrufnuY+r4IBZ0AaFuvPA6xRFseNDCbUA80UIXEDrkUdu6kwthLeEOT7HQBYTaeZQ/89L4cT3/hydaa6SHFXQBobQuvGYxTGt5mmKpUvAXEFr4CwtRI71YwgllPnQBobYuYrXijAtLLybd5mlFF11AqK2LkFZNDxOmNXHprSVeQCivi5QyLR/h8UKcOPVuCL10EVvKL3XIyODTWY+C0COP0j6oYCuknKG+A11AqKyLXJIw9dcrcbLYfEseBaG8LsK2o3vl1lunhu2ttugCQn1djPDAmz3s+HbrodJAFxAK51GW25+yoZBNfCGyoAsIdX133oun27pjEPF690EeBaGB74495/ZDf9QWNZhJCMV9t2dTajHmTOfn0B8FoY8uQiFDd3ZrojVnPp8TXUAorItVlVj5ktpwC8W+aEyYSQh1fXfa1m3x9wirUvGcEGYSQl3fLbfhbBzO4YSAv0iP/drWms86YH83hEb+4nE36/On6KeF0FAXshiladVDbyG6gNAtXpzX8XCGM/ECQi9/sb3w6nY+gRNdQCiuiz187F8rFo47QBcQyuuC79+EAAECBAgQIED4M+EbZoGsBSrGlDUAAAAASUVORK5CYII=" alt="QR לאפליקציה"></div>
+  </header>
+
+  <a class="link" href="https://navac123.github.io/tanakh-laomek/">navac123.github.io/tanakh-laomek</a>
+
+  <h2>חמשת השלבים</h2>
+  <div class="steps">
+    <div class="step"><b>1 · עימוד</b><span>מסדרים את הטקסט</span></div>
+    <div class="step"><b>2 · גילוי</b><span>מסמנים מה חוזר ומה בולט</span></div>
+    <div class="step"><b>3 · אריזה</b><span>מקבצים לקטגוריות</span></div>
+    <div class="step"><b>4 · ארגון וקישור</b><span>בונים את התמונה</span></div>
+    <div class="step"><b>5 · קריאה</b><span>מנסחים את הפרשנות</span></div>
+  </div>
+
+  <h2>שלושה כללים שיחסכו לכם עוגמת נפש</h2>
+
+  <div class="rule">
+    <b>1. העבודה נשמרת בדפדפן הזה ובמחשב הזה בלבד.</b><br>
+    לא בענן, ולא בחשבון שלכם. מסיימים כל מפגש עבודה ב<b>הורדת גיבוי JSON</b>.
+  </div>
+
+  <div class="rule">
+    <b>2. עוברים מכשיר? קודם מורידים גיבוי, ואז טוענים אותו במכשיר החדש</b>
+    דרך <code>ייצוא ← ייבוא JSON</code>. בלי זה — העבודה פשוט לא תהיה שם.
+  </div>
+
+  <div class="rule">
+    <b>3. לפני כל ייצוא — הזינו שם מלא</b> בשדה "שם סטודנט/ית" בשלב 5 (קריאה).
+    בלי שם, ההגשה לא מזוהה.
+  </div>
+
+  <h2>מה מגישים</h2>
+  <p><b>שני קבצים</b>, לאותה מטלה ב-Moodle:</p>
+  <ol>
+    <li><b>PDF</b> — לקריאה ולתיעוד</li>
+    <li><b>גיבוי JSON</b> — לבדיקה. נראה כמו שורות קוד, וזה תקין. לא צריך לפתוח אותו.</li>
+  </ol>
+  <p>שמות הקבצים: <code>שם_משפחה_מזמור.pdf</code> · <code>שם_משפחה_מזמור.json</code></p>
+  <p>שני הכפתורים נמצאים בלוח הצד, <b>בשלב 5 בלבד</b>.</p>
+
+  <div class="warn">
+    <b>והערה אחת בשקיפות:</b> הכלי מתעד את תהליך העבודה עצמו — כמה סימונים נעשו, מתי, ולאורך כמה זמן.
+    זה לא נועד לתפוס אף אחד; זה נועד להבדיל בין עבודה שנעשתה לבין קובץ שנוצר במכה אחת.
+    העבודה שלכם מעניינת אותי יותר מהתוצאה שלה.
+  </div>
+
+  <h2>אם נתקעתם</h2>
+  <ul class="links">
+    <li><a href="https://navac123.github.io/tanakh-laomek/%D7%93%D7%A3-%D7%9C%D7%A1%D7%98%D7%95%D7%93%D7%A0%D7%98%D7%99%D7%9D.html">דף לסטודנטים</a> — הסבר מלא על השלבים, על הייצוא ושאלות נפוצות</li>
+    <li><a href="https://navac123.github.io/tanakh-laomek/guide-tanakh-laomek.html">מדריך לכלי</a></li>
+    <li>ואם זה לא נפתר — כתבו לי. לא להישאר תקועים שבוע.</li>
+  </ul>
+
+  <footer>
+    תנ״ך לעומק · © ד״ר נאוה כהן, אוניברסיטת בר־אילן · רישיון CC BY-NC-ND 4.0
+  </footer>
+
+</div>
+</body>
+</html>
