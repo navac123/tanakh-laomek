@@ -234,9 +234,12 @@ async function loadFiles(files){
       if(addStudent(d,f.name))added++;else skipped.push(f.name);
     }
   }
+  // Sorting moves students around: keep the one on screen selected by id, not by its old position
+  const curId=currentIdx>=0&&students[currentIdx]?students[currentIdx].id:null;
   students.sort((a,b)=>a.name.localeCompare(b.name,'he'));
+  if(curId)currentIdx=students.findIndex(s=>s.id===curId);
   saveGrades();filterList();
-  if(currentIdx===-1&&students.length>0)selectStudent(0);
+  if(currentIdx===-1&&students.length>0)selectStudent(0);else if(currentIdx>=0)renderGrade();
   updateStats();
   const dz=document.getElementById('dropZone');if(dz)dz.style.display='none';
   if(skipped.length)alert(`נטענו ${added} עבודות.\n\n${skipped.length} קבצים לא נקראו, כי אין בהם נתוני עבודה. כנראה הוגשו בגרסה ישנה של האפליקציה, לפני 8.11.2026:\n`+skipped.slice(0,15).join('\n')+(skipped.length>15?'\n...':''));

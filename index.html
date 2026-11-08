@@ -859,6 +859,16 @@ function buildSaveData(){
   if(TEXTS.custom) data.customText=TEXTS.custom;
   return data;
 }
+// Process data (the integrity panel in the grader) belongs to the work, not the browser:
+// a new text starts fresh counters, and an imported work brings its own history with it.
+function pmetaReset(){const P=window.__PMETA;if(!P)return;const t=Date.now();Object.assign(P,{startedAt:t,edits:0,keys:0,pastes:0,pasteChars:0,activeMs:0,steps:{},sessions:1,_last:t});}
+function pmetaMerge(m){
+  const P=window.__PMETA;if(!P||!m)return;
+  P.edits+=m.edits||0;P.keys+=m.keystrokes||0;P.pastes+=m.pastes||0;P.pasteChars+=m.pasteChars||0;
+  P.activeMs+=(m.activeSeconds||0)*1000;P.sessions+=m.sessions||0;
+  const st=Date.parse(m.startedAt);if(st&&st<P.startedAt)P.startedAt=st;
+  if(m.stepTimes)Object.keys(m.stepTimes).forEach(k=>{if(!P.steps[k]||m.stepTimes[k]<P.steps[k])P.steps[k]=m.stepTimes[k];});
+}
 function workIsEmpty(d){
   if(!d)return true;
   const has=o=>o&&Object.keys(o).length>0;
@@ -946,7 +956,7 @@ const redoStack=[];
 const MAX_UNDO=50;
 
 function undoSnapshot(){return JSON.stringify({brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes,stickies:S.stickies,labels:S.labels,shapes:S.shapes})}
-function restoreSnapshot(s){const p=JSON.parse(s);S.brks=p.brks;S.indents=p.indents;S.gaps=p.gaps||{};S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
+function restoreSnapshot(s){const p=JSON.parse(s);S.connEdit=null;S.brks=p.brks;S.indents=p.indents;S.gaps=p.gaps||{};S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
 function saveUndo(){
   window.__dirty=true;window._unsaved=true;
   undoStack.push(undoSnapshot());
@@ -1691,7 +1701,7 @@ function topBar(){
         <div style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${S.searchOpen?'var(--earth-glass-hover)':glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleSearch()" title="חיפוש (Ctrl+F)">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
-        <input type="text" class="search-input ${S.searchOpen?'open':''}" id="searchInput" placeholder="חיפוש..." value="${S.searchQuery}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
+        <input type="text" class="search-input ${S.searchOpen?'open':''}" id="searchInput" placeholder="חיפוש..." value="${escH(S.searchQuery).replace(/"/g,'&quot;')}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
         ${S.searchQuery?`<span class="search-count">${countSearchMatches()} תוצאות</span>`:''}
       </div>
       <div id="micBtn" style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleDictation()" title="דיקטציה קולית">
@@ -1898,7 +1908,7 @@ function sDisc(){
       html+=`<div class="cat-card ${S.activeCat===i?'a':''}" onclick="S.activeCat=${i};S.activeSub=0;R()">
         <div class="cat-swatch" style="${style.apply(col)}background:${col.b};border-color:${col.c}"></div>
         <div style="flex:1;min-width:0">
-          <input type="text" value="${c.name}" onclick="event.stopPropagation()" onchange="S.cats[${i}].name=this.value.trim()||'קטגוריה';R()" style="border:none;background:transparent;font-size:12px;font-weight:700;font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl;width:100%">
+          <input type="text" id="catName_${i}" value="${escH(c.name).replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" onkeydown="if(event.key==='Enter')this.blur()" onchange="S.cats[${i}].name=this.value.trim()||'קטגוריה';R()" style="border:none;background:transparent;font-size:12px;font-weight:700;font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl;width:100%">
         </div>
         <span class="cat-cnt">${cnt}</span>
         <span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:15px;padding:0 2px;opacity:.5;transition:opacity .2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.5" onclick="event.stopPropagation();deleteCat(${i})" title="מחק קטגוריה">×</span>
@@ -1919,7 +1929,7 @@ function sDisc(){
         const subCnt=Object.values(S.marks).filter(m=>m.catId===cat.id&&m.subId===sub.id).length;
         return `<div style="display:flex;align-items:center;gap:6px;padding:5px 7px;margin-bottom:3px;border-radius:8px;border:1.5px solid ${isActive?subCol.c:brd()};background:${isActive?subCol.b:cv('transparent','transparent')};cursor:pointer;transition:all .15s;font-size:11px;margin-top:4px" onclick="S.activeSub=${si};R()">
           <div style="width:16px;height:12px;border-radius:3px;flex-shrink:0;${style.apply(subCol)}"></div>
-          <input type="text" value="${sub.name}" onclick="event.stopPropagation()" onchange="renameSub(${S.activeCat},${si},this.value)" style="flex:1;border:none;background:transparent;font-size:11px;font-weight:${isActive?'700':'500'};font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl">
+          <input type="text" value="${escH(sub.name).replace(/"/g,'&quot;')}" onclick="event.stopPropagation()" onchange="renameSub(${S.activeCat},${si},this.value)" style="flex:1;border:none;background:transparent;font-size:11px;font-weight:${isActive?'700':'500'};font-family:'Heebo';color:${tc()};outline:none;padding:0;min-width:0;direction:rtl">
           <span style="font-size:9px;color:${tcm()}">(${subCnt})</span>
           ${cat.subs.length>1?`<span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:13px" onclick="event.stopPropagation();delSub(${S.activeCat},${si})">×</span>`:''}
         </div>`;
@@ -1945,7 +1955,7 @@ function sDisc(){
         const isActive=S.vf===fKey;const isDimmed=S.vf!=='all'&&!isActive;
         html+=`<div class="legend-item ${isActive?'active':''} ${isDimmed?'dimmed':''}" onclick="S.vf=S.vf==='${fKey}'?'all':'${fKey}';R()">
           <div class="legend-swatch" style="${style.apply(col)}"></div>
-          <span style="font-size:11px">${sub.name}</span><span style="font-size:9px;color:${tcm()}">${c.name}</span><span style="font-size:10px;color:${tcm()};margin-right:auto">(${cnt})</span></div>`;
+          <span style="font-size:11px">${escH(sub.name)}</span><span style="font-size:9px;color:${tcm()}">${escH(c.name)}</span><span style="font-size:10px;color:${tcm()};margin-right:auto">(${cnt})</span></div>`;
       });
     });
     html+=`</div>`;
@@ -2097,7 +2107,7 @@ function sCanv(){
     ${S.pkgs.map((p,i)=>{const c=C[p.ci];const sel=cm&&cm.from===p.id;
       return `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${c.b};border:1.5px solid ${sel?cv('#8B4A5E','#8B4A5E'):c.c+'44'};cursor:pointer" onclick="focusNode(${i})">
         <div style="width:10px;height:10px;border-radius:4px;background:${c.c}"></div>
-        <span style="font-size:12px;font-weight:700;color:${c.c};flex:1">${p.emoji||''} ${p.name}</span>
+        <span style="font-size:12px;font-weight:700;color:${c.c};flex:1">${p.emoji||''} ${escH(p.name)}</span>
         <span style="font-size:10px;color:${tcm()}">${p.words.length} מ׳</span>
       </div>`}).join('')}
     <div class="sb-sub" style="margin-top:14px">חצים (${S.conns.length})</div>
@@ -2126,7 +2136,7 @@ function sRead(){
       if(!txt||!txt.trim())return '';
       return `<div style="background:${cv('rgba(90,58,74,.04)','rgba(122,157,196,.06)')};border-radius:8px;padding:8px 10px;margin-bottom:6px">
         <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:3px">${n}</div>
-        <div style="font-size:12px;line-height:1.6;white-space:pre-wrap;color:${tc()}">${txt.trim()}</div>
+        <div style="font-size:12px;line-height:1.6;white-space:pre-wrap;color:${tc()}">${escH(txt.trim())}</div>
       </div>`;
     }).join('')}
   `:'';
@@ -2286,11 +2296,11 @@ function mDisc(){
     const style=getStyleById(cat.styleId);
     indicator=`<div class="disc-indicator">
       <span style="display:inline-block;width:18px;height:14px;border-radius:4px;${style.apply(col)}"></span>
-      <span style="color:${col.c}">${cat.name}</span>
+      <span style="color:${col.c}">${escH(cat.name)}</span>
       <span style="font-weight:400;color:${tcm()};font-size:11px">· לחץ על מילים לסימון</span>
     </div>`;
   }else{
-    indicator=`<div class="disc-indicator"><span style="color:${tcm()}">👈 בחר צבע בסרגל הצד כדי להתחיל לסמן</span></div>`;
+    indicator=`<div class="disc-indicator"><span style="color:${tcm()}">👉 בחר צבע בסרגל הצד כדי להתחיל לסמן</span></div>`;
   }
   const layout=renderWithLayout((w,vi,wi)=>wrd(w,vi,wi,'disc'));
   // Insert indicator inside text-area
@@ -2376,8 +2386,11 @@ function mPkg(){
 
 function mCanv(){
   if(!S.pkgs.length)return `<div class="canvas" style="display:flex;align-items:center;justify-content:center;min-height:400px"><div style="text-align:center;color:${cv('#8A96AA','#6A7590')}">${decoCircle(48,cv('#D9DFF2','#2A3060'))}<div style="font-size:14px;margin-top:8px">אין חבילות עדיין — חזור לשלב האריזה</div></div></div>`;
-  if(S.nodes.length!==S.pkgs.length){
+  if(!S.nodes.length){
     S.nodes=S.pkgs.map((_,i)=>({x:60+(i%3)*240,y:50+Math.floor(i/3)*180,w:220,h:0}));
+  }else if(S.nodes.length!==S.pkgs.length){  // keep existing positions; add spots for new boxes or drop extras
+    while(S.nodes.length<S.pkgs.length)S.nodes.push(freeNodeSpot());
+    S.nodes.length=S.pkgs.length;
   }
   S.nodes.forEach(n=>{if(!n.w)n.w=220;});
   if(S.cvTool==='conn'&&!S.connMode)S.connMode={from:null};
@@ -2433,7 +2446,7 @@ function mCanv(){
     return `<div class="c-child-inner${selClass}" id="nd${ci}" style="${childStl}" onclick="event.stopPropagation();nodeClick(event,${ci})">
       <div style="display:flex;align-items:center;gap:4px;margin-bottom:2px">
         <span onclick="event.stopPropagation();tglExp('${cp.id}')" style="cursor:pointer;font-size:10px">${exp?'▾':'▸'}</span>
-        <span class="c-node-t" style="color:${c.c};margin-bottom:0">${cp.emoji||''} ${cp.name}</span>
+        <span class="c-node-t" style="color:${c.c};margin-bottom:0">${cp.emoji||''} ${escH(cp.name)}</span>
       </div>
       <div class="c-node-w${exp?'':' collapsed'}" style="font-family:${fontCSS()};${exp?'font-size:14px;line-height:'+S.lh:''}">${txt}</div>
       <div class="c-conn-dot" onmousedown="event.stopPropagation();startConn('${cp.id}')" title="גרור ליצירת קישור"></div>
@@ -2458,7 +2471,7 @@ function mCanv(){
     }
     return `<div class="c-node${selClass}" id="nd${i}" style="left:${nd.x}px;top:${nd.y}px;width:${nodeW}px;${nd.h?`min-height:${nd.h}px;`:''}${stl}" onmousedown="ds(event,${i})" ontouchstart="dts(event,${i})" onclick="nodeClick(event,${i})">
       <div class="c-node-tgl" onclick="event.stopPropagation();tglExp('${p.id}')">${exp?'▾':'▸'}</div>
-      <div class="c-node-t" style="color:${c.c}">${p.emoji||''} ${p.name}</div>
+      <div class="c-node-t" style="color:${c.c}">${p.emoji||''} ${escH(p.name)}</div>
       <div class="c-node-w${exp?'':' collapsed'}" style="font-family:${fontCSS()};${exp?'font-size:14px;line-height:'+S.lh:''}">${txt}</div>
       ${verseNums.length&&!exp?`<div style="font-size:10px;color:${c.c};opacity:.5;margin-top:3px">פס׳ ${verseNums.join(',')}</div>`:''}
       ${childrenHtml}
@@ -2668,7 +2681,7 @@ function mRead(){
       ${S.pkgs.map(p=>{const c=C[p.ci];const vv=D().verses;
         const pkgWords=p.words.map(k=>{const[vi,wi]=k.split('-').map(Number);const wds=vv[vi]?.t.split(/\s+/);return wds?wds[wi]:'';}).filter(Boolean);
         return `<div style="background:${c.b};border:2px solid ${c.c};border-radius:14px;padding:14px">
-        <div style="font-weight:800;color:${c.c};margin-bottom:6px">${p.emoji||''} ${p.name}</div>
+        <div style="font-weight:800;color:${c.c};margin-bottom:6px">${p.emoji||''} ${escH(p.name)}</div>
         <div style="font-size:11px;color:${c.c};opacity:.7;margin-bottom:4px">${p.words.length} מילים</div>
         <div style="display:flex;flex-wrap:wrap;gap:3px">${pkgWords.slice(0,8).map(w=>`<span style="background:${bgc()};padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid ${c.c}">${w}</span>`).join('')}</div>
       </div>`}).join('')}
@@ -2698,10 +2711,10 @@ function mRead(){
         if(!fp||!tp)return '';
         const fc=C[fp.ci],tpc=C[tp.ci];
         return `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:${cv('rgba(90,58,74,.04)','rgba(196,139,159,.08)')};border:1px solid ${brd()}">
-          <span style="font-size:12px;font-weight:700;color:${fc.c}">${fp.name}</span>
+          <span style="font-size:12px;font-weight:700;color:${fc.c}">${escH(fp.name)}</span>
           <span style="color:${tc()};font-size:14px">←</span>
-          <span style="font-size:12px;font-weight:700;color:${tpc.c}">${tp.name}</span>
-          <span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${cn.label}</span>
+          <span style="font-size:12px;font-weight:700;color:${tpc.c}">${escH(tp.name)}</span>
+          <span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${escH(cn.label)}</span>
         </div>`;
       }).join('')}
     </div>
@@ -2717,8 +2730,8 @@ function mRead(){
           if(!cnt)return '';
           return `<div style="display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:8px;background:${cv('rgba(90,58,74,.05)','rgba(122,157,196,.1)')};border:1px solid ${brd()}">
             <span class="style-preview" style="${style.apply(col)}">דוגמה</span>
-            <span style="font-size:12px;font-weight:600">${sub.name}</span>
-            <span style="font-size:10px;color:${tcm()}">${c.name} (${cnt})</span>
+            <span style="font-size:12px;font-weight:600">${escH(sub.name)}</span>
+            <span style="font-size:10px;color:${tcm()}">${escH(c.name)} (${cnt})</span>
           </div>`;
         }).join('');
       }).join('')}
@@ -2735,7 +2748,7 @@ function mRead(){
         if(!txt||!txt.trim())return '';
         return `<div style="margin-bottom:12px;padding:10px 14px;background:${cv('rgba(90,58,74,.03)','rgba(122,157,196,.06)')};border-radius:10px;border-right:4px solid ${cv('#8B4A5E','#5A8AB0')}">
           <div style="font-size:12px;font-weight:700;color:${tcm()};margin-bottom:4px">שלב ${i+1}: ${n}</div>
-          <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:${tc()}">${txt.trim()}</div>
+          <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:${tc()}">${escH(txt.trim())}</div>
         </div>`;
       }).join('')}
     </div>`;
@@ -2808,8 +2821,8 @@ function imudAction(action){
 }
 
 document.addEventListener('keydown',function(e){
-  if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();toggleSearch();return;}
   if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA'||e.target.tagName==='SELECT')return;
+  if((e.ctrlKey||e.metaKey)&&e.key==='f'){e.preventDefault();toggleSearch();return;}
   if(e.key==='?'||e.key==='/'){S.showKeys=!S.showKeys;R();return;}
   if(e.key==='Escape'){
     if(S.showKeys){S.showKeys=false;R();return;}
@@ -2837,6 +2850,10 @@ function quickMark(ci){
     const names=['בורגנדי','ורוד','כתום','זהב','ירוק כהה','מרווה','כחול','תכלת','סגול','לילך','חלודה','חום','ים','ברונזה'];
     S.cats.push({id,name:names[ci]||'צבע '+(ci+1),icon:'',styleId:'highlight',ci,desc:'',subs:[{id:id+'_s1',name:'קבוצה 1',ci}]});
     idx=S.cats.length-1;
+    S.activeCat=idx;S.activeSub=0;R();
+    // A new category is named after its color; invite the student to name what it marks
+    setTimeout(()=>{const inp=document.getElementById('catName_'+idx);if(inp){inp.focus({preventScroll:false});inp.select();toast('תנו שם לקטגוריה: מה הצבע הזה מסמן?');}},60);
+    return;
   }
   S.activeCat=idx;S.activeSub=0;R();
 }
@@ -2921,7 +2938,7 @@ function sw(k){
   if(k===S.doc)return;
   if(window.__demoMode){if(confirm('זו הדוגמה, ושום דבר בה לא נשמר. לצאת ממנה ולעבוד על מזמור משלך?'))exitDemo();return;}
   if(!workIsEmpty(buildSaveData())&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית, כולל המחברת ודף המסקנות. כדאי לשמור קודם גיבוי. להמשיך?'))return;
-  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.pkgEdit=null;S.gaps={};window.__dirty=true;R();toast(D().title)}
+  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.pkgEdit=null;S.gaps={};window.__dirty=true;pmetaReset();R();toast(D().title)}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
@@ -3002,7 +3019,7 @@ function mkPkg(){
   saveUndo();
   S.pkgs.push({id:'pkg_'+Date.now(),name:S.pkgNewName,emoji:S.pkgNewEmoji,ci:S.pkgNewCi,style:S.pkgNewStyle,words:[...S.pkgSel],parentId:null});
   // Keep the canvas layout: give only the new box a free spot below everything else
-  if(S.nodes.length===S.pkgs.length-1)S.nodes.push(freeNodeSpot());else S.nodes=[];
+  if(S.nodes.length)S.nodes.push(freeNodeSpot());
   S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];S.pkgNewCi=nextFreeColor();
   R();toast('אריזה נוצרה');
 }
@@ -3029,7 +3046,7 @@ function movePkg(idx,dir){
 function deletePkg(idx){
   saveUndo();const pkg=S.pkgs[idx];
   S.pkgs.forEach(p=>{if(p.parentId===pkg.id)p.parentId=null});
-  if(S.nodes.length===S.pkgs.length)S.nodes.splice(idx,1);else S.nodes=[];
+  if(S.nodes.length>idx)S.nodes.splice(idx,1);
   S.conns=S.conns.filter(c=>c.from!==pkg.id&&c.to!==pkg.id);
   S.pkgs.splice(idx,1);if(S.pkgEdit===pkg.id)S.pkgEdit=null;R();toast('אריזה נמחקה. אפשר לבטל ב־Ctrl+Z');
 }
@@ -3324,7 +3341,7 @@ function renderShapes(){
     const txStyle=`border:none;background:transparent;font-family:'Heebo';font-size:14px;font-weight:700;color:${col.c};resize:none;outline:none;direction:rtl;width:90%;padding:0`;
     html+=`<div class="c-frame-wrap" id="shp${i}" style="left:${sh.x}px;top:${sh.y}px;width:${w}px;height:${h}px;border:2.5px dashed ${col.c};border-radius:14px;background:${col.b}30" onmousedown="sds(event,${i},'shape')" ontouchstart="sdts(event,${i},'shape')">
       <div class="c-frame-header" style="border-bottom:1.5px dashed ${col.c}30;background:${col.b}50">
-        <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle}" rows="1">${sh.text||''}</textarea>
+        <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle}" rows="1">${sh.text||''}</textarea>
       </div>
       <div class="shp-del" onclick="event.stopPropagation();delShape(${i})" title="מחיקה">×</div>
       <div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
@@ -3335,9 +3352,9 @@ function renderShapes(){
     const col=C[sh.ci||0];
     let shapeEl='';const txStyle=`border:none;background:transparent;text-align:center;font-family:'Heebo';font-size:12px;font-weight:600;color:${col.c};resize:none;outline:none;direction:rtl`;
     const w=sh.w||120,h=sh.h||80;
-    if(sh.type==='rect')shapeEl=`<div class="shp-inner" style="width:${w}px;height:${h}px;border:2.5px solid ${col.c};border-radius:10px;background:${col.b}60;display:flex;align-items:center;justify-content:center"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:90%;height:80%">${sh.text||''}</textarea></div>`;
-    else if(sh.type==='circle'){const s=Math.max(w,h);shapeEl=`<div class="shp-inner" style="width:${s}px;height:${s}px;border:2.5px solid ${col.c};border-radius:50%;background:${col.b}60;display:flex;align-items:center;justify-content:center"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:70%;height:60%">${sh.text||''}</textarea></div>`;}
-    else if(sh.type==='diamond')shapeEl=`<div class="shp-inner" style="width:${w}px;height:${h}px;transform:rotate(45deg);border:2.5px solid ${col.c};border-radius:4px;background:${col.b}60;display:flex;align-items:center;justify-content:center"><div style="transform:rotate(-45deg)"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:70px">${sh.text||''}</textarea></div></div>`;
+    if(sh.type==='rect')shapeEl=`<div class="shp-inner" style="width:${w}px;height:${h}px;border:2.5px solid ${col.c};border-radius:10px;background:${col.b}60;display:flex;align-items:center;justify-content:center"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:90%;height:80%">${sh.text||''}</textarea></div>`;
+    else if(sh.type==='circle'){const s=Math.max(w,h);shapeEl=`<div class="shp-inner" style="width:${s}px;height:${s}px;border:2.5px solid ${col.c};border-radius:50%;background:${col.b}60;display:flex;align-items:center;justify-content:center"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:70%;height:60%">${sh.text||''}</textarea></div>`;}
+    else if(sh.type==='diamond')shapeEl=`<div class="shp-inner" style="width:${w}px;height:${h}px;transform:rotate(45deg);border:2.5px solid ${col.c};border-radius:4px;background:${col.b}60;display:flex;align-items:center;justify-content:center"><div style="transform:rotate(-45deg)"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:70px">${sh.text||''}</textarea></div></div>`;
     else if(sh.type==='line-h')shapeEl=`<div class="shp-inner" style="width:${w}px;height:3px;background:${col.c};border-radius:2px;margin-top:${h/2}px"></div>`;
     const delBtn=`<div class="shp-del" onclick="event.stopPropagation();delShape(${i})" title="מחיקה">×</div>`;
     const rszHandle=sh.type!=='line-h'?`<div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>`:'';
@@ -3438,7 +3455,7 @@ function renderStickies(){
     const col=STICKY_COLORS[s.ci||0];
     return `<div class="c-sticky" id="sty${i}" style="left:${s.x}px;top:${s.y}px;width:${s.w||180}px;background:${col.bg};color:${col.text}" onmousedown="sds(event,${i},'sticky')" ontouchstart="sdts(event,${i},'sticky')">
       <div class="c-sticky-del" onclick="event.stopPropagation();delSticky(${i})">×</div>
-      <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateStickyText(${i},this.value)" style="color:${col.text}">${s.text||''}</textarea>
+      <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateStickyText(${i},this.value)" style="color:${col.text}">${s.text||''}</textarea>
     </div>`;
   }).join('');
 }
@@ -3448,7 +3465,7 @@ function renderLabels(){
     return `<div class="c-label" id="lbl${i}" style="left:${lb.x}px;top:${lb.y}px" onmousedown="sds(event,${i},'label')" ontouchstart="sdts(event,${i},'label')">
       <div class="c-label-del" onclick="event.stopPropagation();delLabel(${i})">×</div>
       <div class="c-label-drag" onmousedown="sds(event,${i},'label')" ontouchstart="sdts(event,${i},'label')">⋮⋮ גרור</div>
-      <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" oninput="updateLabelText(${i},this.value)" style="font-size:${lb.size||16}px">${lb.text||''}</textarea>
+      <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateLabelText(${i},this.value)" style="font-size:${lb.size||16}px">${lb.text||''}</textarea>
     </div>`;
   }).join('');
 }
@@ -3503,7 +3520,7 @@ function loadPaste(){
   });
   if(!workIsEmpty(buildSaveData())&&!confirm('טעינת טקסט חדש תמחק את כל העבודה הנוכחית. כדאי לשמור קודם גיבוי. להמשיך?'))return;
   TEXTS.custom={title:customName,verses};
-  clearUndo();S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.stickies=[];S.labels=[];S.shapes=[];S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.pkgEdit=null;S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
+  pmetaReset();clearUndo();S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.stickies=[];S.labels=[];S.shapes=[];S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.pkgEdit=null;S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נטען: '+customName);
 }
 function handleFile(input){
@@ -3537,7 +3554,7 @@ function notesExportHTML(){
     if(!txt||!txt.trim())return;
     html+=`<div style="margin-bottom:14px;padding:12px 16px;background:#F5EDE3;border-radius:10px;border-right:4px solid #8B4A5E">
       <div style="font-size:13px;font-weight:700;color:#7A6070;margin-bottom:6px">שלב ${i+1}: ${name}</div>
-      <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:#5A3A4A">${txt.trim()}</div>
+      <div style="font-size:14px;line-height:1.8;white-space:pre-wrap;color:#5A3A4A">${escH(txt.trim())}</div>
     </div>`;
   });
   html+='</div>';
@@ -3582,7 +3599,7 @@ function exportModal(){
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">אפשרויות ייצוא נוספות:</p>
       <div class="export-opt">
         <div class="export-btn conc-lock ${concComplete()?'':'locked'}" onclick="exportSubmission()" style="border:2px solid var(--earth)"><span style="font-size:18px;color:${tc()}">📄 PDF מלא</span><br><span style="font-size:11px">כל 5 השלבים</span></div>
-        <div class="export-btn" onclick="exportPrint()"><span style="font-size:18px;color:${tc()}">📄 PDF</span><br><span style="font-size:11px">שלב נוכחי</span></div>
+        <div class="export-btn" onclick="exportPrint()" title="הדפסה של השלב שעל המסך בלבד. להגשה משתמשים בכפתור ההגשה"><span style="font-size:18px;color:${tc()}">🖨️ הדפסה</span><br><span style="font-size:11px">השלב הנוכחי, לא להגשה</span></div>
         <div class="export-btn" onclick="exportImage()"><span style="font-size:18px;color:${tc()}">🖼️ PNG</span><br><span style="font-size:11px">תמונה</span></div>
         <div class="export-btn" onclick="exportHTML()"><span style="font-size:18px;color:${tc()}">💾 HTML</span><br><span style="font-size:11px">שמירה</span></div>
         <div class="export-btn" onclick="exportJSON()"><span style="font-size:18px;color:${tc()}">📋 JSON</span><br><span style="font-size:11px">שיתוף עבודה</span></div>
@@ -3750,7 +3767,7 @@ function exportFullPDF(mode){
           const c=C[p.ci];
           const pkgWords=p.words.map(k=>{const[vi,wi]=k.split('-').map(Number);const wds=vv[vi]?.t.split(/\s+/);return wds?wds[wi]:'';}).filter(Boolean);
           pkgsListHTML+='<div style="background:'+c.b+';border:2px solid '+c.c+';border-radius:14px;padding:14px">';
-          pkgsListHTML+='<div style="font-weight:800;color:'+c.c+';margin-bottom:6px">'+(p.emoji||'')+' '+p.name+'</div>';
+          pkgsListHTML+='<div style="font-weight:800;color:'+c.c+';margin-bottom:6px">'+(p.emoji||'')+' '+escH(p.name)+'</div>';
           pkgsListHTML+='<div style="font-size:11px;color:'+c.c+';opacity:.7;margin-bottom:4px">'+p.words.length+' מילים</div>';
           pkgsListHTML+='<div style="display:flex;flex-wrap:wrap;gap:3px">'+pkgWords.slice(0,12).map(w=>'<span style="background:#F5EDE3;padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid '+c.c+'">'+w+'</span>').join('')+'</div>';
           pkgsListHTML+='</div>';
@@ -3784,10 +3801,10 @@ function exportFullPDF(mode){
             if(!fp||!tp)return;
             const fc=C[fp.ci],tpc=C[tp.ci];
             connsListHTML+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(90,58,74,.04);border:1px solid #D4C4CC">';
-            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+fc.c+'">'+fp.name+'</span>';
+            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+fc.c+'">'+escH(fp.name)+'</span>';
             connsListHTML+='<span style="color:#5A3A4A;font-size:14px">&larr;</span>';
-            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+tpc.c+'">'+tp.name+'</span>';
-            connsListHTML+='<span style="font-size:11px;color:#7A6070;margin-right:auto;font-style:italic">'+cn.label+'</span>';
+            connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+tpc.c+'">'+escH(tp.name)+'</span>';
+            connsListHTML+='<span style="font-size:11px;color:#7A6070;margin-right:auto;font-style:italic">'+escH(cn.label)+'</span>';
             connsListHTML+='</div>';
           });
           connsListHTML+='</div>';
@@ -3922,7 +3939,7 @@ window.onload=function(){setTimeout(function(){window.print()},800)}
       }else{
         toast('חסום חלון קופץ - אפשר חלונות קופצים ונסה שוב');
       }
-    }catch(e){toast('שגיאה בייצוא: '+e.message);}
+    }catch(e){pdfBusy=false;toast('שגיאה בייצוא: '+e.message);}
   },200);
 }
 
@@ -4028,7 +4045,9 @@ function focusSideInput(id){
   setTimeout(()=>{const inp=document.getElementById(id),side=document.querySelector('.side');
     if(inp&&side){side.scrollTop=Math.max(0,side.scrollTop+inp.getBoundingClientRect().top-side.getBoundingClientRect().top-120);inp.focus({preventScroll:true});}},120);
 }
+let pdfBusy=false;
 function exportSubmission(){
+  if(pdfBusy){toast('הקובץ כבר בהכנה...');return;}
   if(!String(S.chavruta||'').trim()){toast('לפני ההגשה כתבו את מספר החברותא');focusSideInput('chavrutaInput');return;}
   if(!(S.studentName||'').trim()){
     toast('לפני ההגשה כתבו את השם בשדה "שם מלא"');
@@ -4038,7 +4057,7 @@ function exportSubmission(){
     return;
   }
   if(!concGate())return;
-  exportFullPDF('download');
+  pdfBusy=true;exportFullPDF('download');
 }
 function buildWorkData(){
   const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
@@ -4123,6 +4142,7 @@ function pdfFileName(){
   return `תנך לעומק - ${S.chavruta?'חברותא '+clean(S.chavruta)+' - ':''}${clean(workNames())||'עבודה'} - ${clean(D().title)}.pdf`;
 }
 async function downloadReportPDF(html){
+  pdfBusy=true;
   busyOverlay('מכינים את קובץ ה־PDF... זה לוקח כמה שניות');
   let ifr=null;
   try{
@@ -4171,7 +4191,7 @@ async function downloadReportPDF(html){
     toast('לא הצלחנו ליצור את הקובץ. בדקו חיבור לאינטרנט ונסו שוב');
   }finally{
     if(ifr)ifr.remove();
-    busyOverlay(null);
+    busyOverlay(null);pdfBusy=false;
   }
 }
 function importJSON(){
@@ -4201,6 +4221,7 @@ function importJSON(){
         (S.cats||[]).forEach(c=>ensureSubs(c));
         Object.keys(S.marks).forEach(k=>{const m=S.marks[k];if(m&&!m.subId){const cat=S.cats.find(c=>c.id===m.catId);if(cat)m.subId=cat.subs[0].id;}});
         window.__dirty=true;window.__demoMode=false;window.__otherTab=false;
+        pmetaReset();if(d._meta)pmetaMerge(d._meta);
         S.splash=false;
         document.documentElement.classList.toggle('dark',S.darkMode);
         R();toast('עבודה יובאה בהצלחה!');startAutoSave();
