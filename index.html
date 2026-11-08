@@ -2678,7 +2678,7 @@ function concCard(){
   const c=normConc(S.conclusions);
   return `<div class="read-card conc-card" id="concCard">
     <div class="read-title">📝 דף מסקנות</div>
-    <div class="conc-intro">עברו על הניתוח שעשיתם, ונסחו מה למדתם ממנו. אפשר להגיש רק אחרי שכל תשובה כוללת לפחות ${CONC_MIN_WORDS} מילים.</div>
+    <div class="conc-intro">עברו על הניתוח שעשיתם, ונסחו מה למדתם ממנו. אפשר להגיש רק אחרי שכל תשובה כוללת לפחות ${CONC_MIN_WORDS} מילים. דף המסקנות שווה 15 נקודות מתוך 100 בציון העבודה. בודקים בו טענה ברורה על המזמור, מסקנה שנשענת על הניתוח, ושאלה או משמעות שהלימוד פתח.</div>
     ${CONC_QS.map((q,i)=>{const n=concWords(c[q.id]);return `<div class="conc-q">
       <div class="conc-q-title">${i+1}. ${q.title}</div>
       <div class="conc-q-hint">${q.hint}</div>
