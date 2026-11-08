@@ -387,7 +387,7 @@ html,body{overflow-x:hidden}
 /* Reading */
 .read-card{background:var(--bg-glass);backdrop-filter:var(--glass-blur-sm);border-radius:16px;padding:24px 32px;margin-bottom:14px;box-shadow:0 4px 20px rgba(90,58,74,.06);border:1px solid var(--teal-border);animation:slideUp .4s cubic-bezier(.22,1,.36,1)}
 .read-title{font-size:20px;font-weight:800;margin-bottom:14px;letter-spacing:-.3px}
-.gal-ov{position:fixed;inset:0;z-index:5000;background:var(--bg);display:flex;flex-direction:column;direction:rtl;font-family:'Heebo'}
+.gal-ov{position:fixed;inset:0;z-index:10001;background:var(--bg);display:flex;flex-direction:column;direction:rtl;font-family:'Heebo'}
 .gal-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-warm)}
 .gal-title{font-size:18px;font-weight:800;color:var(--earth);margin-left:6px}
 .gal-sel{font-family:'Heebo';font-size:13px;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
@@ -402,7 +402,8 @@ html,body{overflow-x:hidden}
 .gal-n3{grid-template-columns:repeat(3,1fr)}.gal-n2{grid-template-columns:repeat(2,1fr)}.gal-n1{grid-template-columns:1fr}
 .gal-col{display:flex;flex-direction:column;min-height:0;background:var(--bg-glass-strong);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
 .gal-col-h{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font-size:20px;font-weight:800;color:var(--earth);background:var(--earth-glass);cursor:pointer;border-bottom:1px solid var(--border)}
-.gal-col-x{font-size:12px;font-weight:600;color:var(--text-muted)}
+.gal-col-x{font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:3px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg)}
+.gal-col-sel{font-family:'Heebo';font-size:19px;font-weight:800;color:var(--earth);background:transparent;border:none;cursor:pointer;max-width:70%}
 .gal-col-b{flex:1;overflow:auto;padding:12px 14px;min-height:0}
 .gal-col-b .text-area{box-shadow:none!important;background:transparent!important;padding:0 36px 0 0!important}
 .gal-part-map .canvas{background-image:none}
@@ -1126,10 +1127,12 @@ function buildLines(){
       if(S.brks[`${vi}-${wi}`]){
         lines.push({words:currentLine,startVi:vi,lineKey:`${vi}-${wi}-l`});
         currentLine=[];
+        // A paragraph can also start inside a verse: S.paraBreaks["vi-wi"] = gap after that word
+        if(wi<words.length-1&&S.paraBreaks[`${vi}-${wi}`])lines.push({isPara:true,afterVi:vi,paraKey:`${vi}-${wi}`});
       }
     });
     if(currentLine.length) lines.push({words:currentLine,startVi:vi,lineKey:`${vi}-last-l`});
-    if(S.paraBreaks[vi]) lines.push({isPara:true,afterVi:vi});
+    if(S.paraBreaks[vi]) lines.push({isPara:true,afterVi:vi,paraKey:String(vi)});
   });
   return lines;
 }
@@ -1453,7 +1456,7 @@ function splashScreen(){
   const sage=cv('#8FAF85','#6A8A60');const blue=cv('#9AADBC','#7A9AAA');
   const stepColors=[blue,rose,sage,gold,burg];
   return `<div class="splash" id="splashEl" style="flex-direction:column;overflow-y:auto">
-    <div style="position:relative;max-width:760px;margin:0 auto;flex-shrink:0">
+    <div style="position:relative;width:min(760px,92vw,calc(46vh * 1.286));margin:0 auto;flex-shrink:0">
       <img src="splash-art.png" alt="תנ״ך לעומק" style="width:100%;object-fit:cover;display:block;margin:0 auto;filter:drop-shadow(0 8px 32px rgba(90,58,74,.12));border-radius:16px 16px 0 0">
       <img src="splash-title.png" alt="" style="width:60%;display:block;margin:-2px auto 0;border-radius:0 0 16px 16px">
     </div>
@@ -2300,7 +2303,7 @@ function mImud(){
   html+=`<div class="text-area" style="position:relative;padding-right:48px">`;
   lines.forEach((line)=>{
     if(line.isPara){
-      html+=`<div class="para-break" onclick="delete S.paraBreaks[${line.afterVi}];R()" title="לחץ להסרת הפסקה" style="cursor:pointer"></div>`;
+      html+=`<div class="para-break" onclick="removePara('${line.paraKey}')" title="לחיצה מסירה את רווח הפסקה (אפשר לבטל ב־Ctrl+Z)" style="cursor:pointer"></div>`;
       return;
     }
     const indent=S.indents[line.lineKey]||0;
@@ -2810,6 +2813,7 @@ function getPrevWordKey(k){
   return null;
 }
 
+function removePara(key){if(S.paraBreaks[key]===undefined)return;saveUndo();delete S.paraBreaks[key];R();toast('רווח הפסקה הוסר. אפשר לבטל ב־Ctrl+Z');}
 function imudAction(action){
   if(action==='break'){
     if(!S.selWords.length){toast('בחרי מילה קודם');return;}
@@ -2820,7 +2824,7 @@ function imudAction(action){
   else if(action==='removeBrk'){
     if(!S.selWords.length){toast('בחרי מילה קודם');return;}
     const k=S.selWords[0];const prevK=getPrevWordKey(k);
-    if(prevK&&S.brks[prevK]){saveUndo();delete S.brks[prevK];S.selWords=[];R();toast('שבירה הוסרה');}
+    if(prevK&&S.brks[prevK]){saveUndo();delete S.brks[prevK];delete S.paraBreaks[prevK];S.selWords=[];R();toast('שבירה הוסרה');}
     else if(S.brks[k]){saveUndo();delete S.brks[k];S.selWords=[];R();toast('שבירה הוסרה');}
     else{toast('אין שבירה כאן');S.selWords=[];R();}
   }
@@ -2829,8 +2833,10 @@ function imudAction(action){
     const k=S.selWords[0];const prevK=getPrevWordKey(k);
     if(!prevK){toast('זו המילה הראשונה');S.selWords=[];R();return;}
     saveUndo();S.brks[prevK]=1;
-    const prevVi=parseInt(prevK.split('-')[0]);
-    S.paraBreaks[prevVi]=1;S.selWords=[];R();toast('פסקה חדשה');
+    const [pv,pw]=prevK.split('-').map(Number);
+    const lastInVerse=pw===D().verses[pv].t.split(/\s+/).length-1;
+    if(lastInVerse)S.paraBreaks[pv]=1;else S.paraBreaks[prevK]=1;  // gap exactly where the paragraph starts
+    S.selWords=[];R();toast('פסקה חדשה');
   }
   else if(action==='gap'||action==='ungap'){
     if(!S.selWords.length){toast('בחרי את המילה שמתחילה את הטור השני');return;}
@@ -3202,7 +3208,7 @@ function startConn(pid){
 
 // ===== ARROW POPOVER: label (with relation types), style, flip, delete =====
 // S.connEdit = index of the arrow being edited (transient, not saved)
-const REL_TYPES=['הקבלה','ניגוד','סיבה ותוצאה','כלל ופרט','המשך','חזרה'];
+const REL_TYPES=['הקבלה','ניגוד','סיבה ותוצאה','כלל ופרט','הדרגתיות','מבנה כיאסטי','שאלה ותשובה','המשך','חזרה'];
 let connDirty=false;
 function editConnLabel(ci){openConnPop(ci);}
 function openConnPop(ci){
@@ -4192,6 +4198,7 @@ function relayoutStaticArrows(inner){
 function fitReportCanvases(doc,maxH){
   doc.querySelectorAll('.canvas').forEach(cvEl=>{
     const inner=cvEl.querySelector('#cvInner')||cvEl.firstElementChild;if(!inner)return;
+    inner.style.setProperty('transform','none','important');  // measure unscaled (this can run twice)
     relayoutStaticArrows(inner);
     const ir=inner.getBoundingClientRect();let maxR=0,maxB=0;
     inner.querySelectorAll('.c-node,.c-sticky,.c-label,.c-frame-wrap,.c-shape-wrap,.c-arrow-label').forEach(el=>{
@@ -4715,7 +4722,7 @@ window.addEventListener('beforeunload',function(e){if(window._unsaved){e.prevent
 // ===== CLASS GALLERY: show three works side by side, by chavruta number only =====
 // Opened with #gallery in the address. Works are loaded from the students' PDFs (data embedded at submission),
 // JSON files or a ZIP of all submissions, and kept only in this browser.
-const GAL={open:false,works:[],shown:[],current:[],part:'map',focus:-1,doc:''};
+const GAL={open:false,works:[],shown:[],current:[],part:'map',focus:-1,doc:'',count:3};
 const GAL_PARTS=[{id:'conc',name:'מסקנות'},{id:'map',name:'מפת ארגון'},{id:'pkgs',name:'אריזות'},{id:'text',name:'הטקסט המסומן'}];
 function galLoadStored(){try{const r=localStorage.getItem('moovanly_gallery');if(r){const o=JSON.parse(r);GAL.works=o.works||[];GAL.shown=o.shown||[];}}catch(e){}}
 function galStore(){try{localStorage.setItem('moovanly_gallery',JSON.stringify({works:GAL.works,shown:GAL.shown}));return true;}catch(e){return false;}}
@@ -4793,12 +4800,13 @@ function galPick(){
   let pool=GAL.works.filter(w=>w.doc===GAL.doc);
   if(!pool.length){GAL.current=[];return;}
   let fresh=pool.filter(w=>!GAL.shown.includes(w.key));
-  if(fresh.length<Math.min(3,pool.length)){GAL.shown=GAL.shown.filter(k=>!pool.some(w=>w.key===k));fresh=pool;if(GAL.current.length)toast('כל העבודות במזמור הזה כבר הוצגו. מתחילים סבב חדש');}
+  const GN=GAL.count||3;
+  if(fresh.length<Math.min(GN,pool.length)){GAL.shown=GAL.shown.filter(k=>!pool.some(w=>w.key===k));fresh=pool;if(GAL.current.length)toast('כל העבודות במזמור הזה כבר הוצגו. מתחילים סבב חדש');}
   const F=fresh.map(w=>galFeatures(w.data));const mx=F[0].map((_,j)=>Math.max(1,...F.map(f=>f[j])));
   const N=F.map(f=>f.map((v,j)=>v/mx[j]));
   const dist=(a,b)=>Math.sqrt(a.reduce((s,v,j)=>s+(v-b[j])**2,0));
   const chosen=[Math.floor(Math.random()*fresh.length)];
-  while(chosen.length<Math.min(3,fresh.length)){
+  while(chosen.length<Math.min(GN,fresh.length)){
     let best=-1,bd=-1;
     fresh.forEach((_,i)=>{if(chosen.includes(i))return;const d=Math.min(...chosen.map(c=>dist(N[i],N[c])))+Math.random()*0.15;if(d>bd){bd=d;best=i;}});
     chosen.push(best);
@@ -4832,6 +4840,13 @@ function galPartHtml(w,part){
     try{return stripHandlers(mCanv());}finally{window.__cvStatic=false;S.step=old;}
   });
 }
+// Put a specific work into one column (the teacher picks it from the column's list)
+function galSwap(col,key){
+  if(!key)return;const i=GAL.current.indexOf(key);
+  if(i>=0&&i!==col){GAL.current[i]=GAL.current[col];}  // already on screen: swap places
+  GAL.current[col]=key;if(!GAL.shown.includes(key))GAL.shown.push(key);galStore();galRender();
+}
+function galSetCount(n){GAL.count=n;GAL.focus=-1;if(GAL.current.length!==n)galPick();galRender();}
 function galRender(){
   if(!GAL.open)return;
   let ov=document.getElementById('galOv');
@@ -4846,7 +4861,8 @@ function galRender(){
       <div class="gal-title">מצגת עבודות</div>
       ${docs.length?`<select class="gal-sel" onchange="GAL.doc=this.value;GAL.current=[];galPick();galRender()">${docs.map(d=>`<option value="${d}" ${d===GAL.doc?'selected':''}>${escH(galDocTitle(d,GAL.works.find(w=>w.doc===d)))} (${counts[d]})</option>`).join('')}</select>`:''}
       <div class="gal-tabs">${GAL_PARTS.map((p,i)=>`<span class="gal-tab ${GAL.part===p.id?'a':''}" onclick="GAL.part='${p.id}';galRender()" title="מקש ${i+1}">${p.name}</span>`).join('')}</div>
-      <span class="gal-btn gal-btn-main" onclick="galPick();galRender()" title="מקש רווח">🎲 שלוש אחרות</span>
+      <div class="gal-tabs" title="כמה עבודות על המסך"><span class="gal-tab ${GAL.count===2?'a':''}" onclick="galSetCount(2)">השוואה של שתיים</span><span class="gal-tab ${GAL.count!==2?'a':''}" onclick="galSetCount(3)">שלוש</span></div>
+      <span class="gal-btn gal-btn-main" onclick="galPick();galRender()" title="מקש רווח">🎲 ${GAL.count===2?'שתיים אחרות':'שלוש אחרות'}</span>
       <span class="gal-meta">${pool.length?`הוצגו ${shownHere} מתוך ${pool.length}`:''}</span>
       <span class="gal-spacer"></span>
       <label class="gal-btn">📥 טעינת עבודות<input type="file" multiple accept=".pdf,.json,.zip" style="display:none" onchange="galAddFiles(this.files)"></label>
@@ -4855,7 +4871,10 @@ function galRender(){
     </div>
     ${!GAL.works.length?`<div class="gal-emptystate"><div style="font-size:42px">🗂️</div><b>עוד אין כאן עבודות</b><div>בלמדה, במטלת ההגשה: "הורדת כל ההגשות". בחרי כאן את קובץ ה־ZIP שירד, או את קובצי ה־PDF עצמם.</div><label class="gal-btn gal-btn-main" style="margin-top:12px">📥 טעינת עבודות<input type="file" multiple accept=".pdf,.json,.zip" style="display:none" onchange="galAddFiles(this.files)"></label><div class="gal-note">העבודות נשמרות רק בדפדפן הזה, ומוצגות לפי מספר החברותא בלבד, בלי שמות.</div></div>`
     :`<div class="gal-cols gal-n${cols.length}">${cols.map((w,ci)=>{const idx=cur.indexOf(w);return `<div class="gal-col" data-k="${w.key}">
-        <div class="gal-col-h" onclick="GAL.focus=GAL.focus>=0?-1:${idx};galRender()" title="${GAL.focus>=0?'חזרה לשלוש':'הגדלה'}">${escH(galLabel(w))}<span class="gal-col-x">${GAL.focus>=0?'↩ חזרה לשלוש':'⤢'}</span></div>
+        <div class="gal-col-h">
+          <select class="gal-col-sel" onchange="galSwap(${idx},this.value)" title="בחירת עבודה אחרת לעמודה הזו">${pool.map(x=>`<option value="${x.key}" ${x.key===w.key?'selected':''}>${escH(galLabel(x))}</option>`).join('')}</select>
+          <span class="gal-col-x" onclick="GAL.focus=GAL.focus>=0?-1:${idx};galRender()" title="${GAL.focus>=0?'חזרה לכל העבודות':'הגדלה'}">${GAL.focus>=0?'↩ חזרה':'⤢ הגדלה'}</span>
+        </div>
         <div class="gal-col-b gal-part-${GAL.part}">${galPartHtml(w,GAL.part)}</div>
       </div>`;}).join('')}</div>`}
   `;
@@ -4866,6 +4885,10 @@ function galRender(){
       withWork(w.data,()=>fitReportCanvases(body,Math.max(200,body.clientHeight-24)));
     });
   });
+  // fonts can still be settling on the first frame: fit once more a moment later
+  if(GAL.part==='map')setTimeout(()=>{if(!GAL.open||GAL.part!=='map')return;
+    ov.querySelectorAll('.gal-col').forEach(col=>{const w=GAL.works.find(x=>x.key===col.dataset.k);if(!w)return;const body=col.querySelector('.gal-col-b');
+      withWork(w.data,()=>fitReportCanvases(body,Math.max(200,body.clientHeight-24)));});},250);
 }
 document.addEventListener('keydown',function(e){
   if(!GAL.open)return;
