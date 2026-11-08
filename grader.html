@@ -173,7 +173,7 @@ const CRITERIA=[
   {id:'c2',label:'גילוי וסימון (שלב 2)',max:25,icon:'🔍',desc:'קטגוריות, סימונים, שימוש בסגנונות — עומק הניתוח'},
   {id:'c3',label:'אריזה ומיפוי (שלב 3)',max:20,icon:'📦',desc:'חבילות נושאיות, שמות, קישורים'},
   {id:'c4',label:'ארגון ויזואלי (שלב 4)',max:15,icon:'🗺️',desc:'קנבס — פריסה, חצים, הערות'},
-  {id:'c5',label:'רפלקציה וקריאה (שלב 5)',max:15,icon:'💭',desc:'דף מסקנות (מוצג בראש העבודה), מחברת, פרשנות אישית'},
+  {id:'c5',label:'דף מסקנות (שלב 5)',max:15,icon:'📝',desc:'טענה ברורה על המזמור · מסקנה שנשענת על הניתוח (עימוד, סימונים, לפחות שתי אריזות או קשרים) · שאלה או משמעות שהלימוד פתח'},
   {id:'c6',label:'שלמות הגשה',max:10,icon:'✅',auto:true}
 ];
 
@@ -418,16 +418,19 @@ function renderGrade(){
           <div class="stat-box"><div class="sv">${d.labels?d.labels.length:0}</div><div class="sl">תוויות</div></div>
         </div>${connsH}${stickiesH}`;
     } else if(cr.id==='c5'){
+      // The conclusions page is the graded part; the notebook is shown below for context only
+      const cst=concState(d);const cLbl={done:'הושלם',partial:'חלקי',empty:'לא נכתב',legacy:'גרסה ישנה'}[cst];
+      let concH='';
+      if(d.conclusions)concH=CONC_QS.map((q,i)=>{const v=(d.conclusions[q.id]||'').trim();return `<div class="note-block"><div class="nb-step-lbl">${i+1}. ${q.title} <span style="font-weight:400">(${concWords(v)} מילים)</span></div><div style="font-size:.9rem;line-height:1.8;white-space:pre-wrap">${v?esc(v):'<span style="color:var(--tl)">לא נכתב</span>'}</div></div>`;}).join('');
+      else concH='<div class="note-block" style="color:var(--tl)">העבודה הוגשה לפני שנוסף דף המסקנות לאפליקציה.</div>';
       let notesH='';
       if(d.notes){
         Object.entries(d.notes).forEach(([k,v])=>{
-          if(v&&v.trim()){
-            notesH+=`<div class="note-block"><div class="nb-step-lbl">שלב ${parseInt(k)+1}: ${STEP_NAMES[k]||k}</div><div style="font-size:.88rem;line-height:1.7">${esc(v)}</div></div>`;
-          }
+          if(v&&v.trim())notesH+=`<div class="note-block" style="opacity:.8"><div class="nb-step-lbl">שלב ${parseInt(k)+1}: ${STEP_NAMES[k]||k}</div><div style="font-size:.85rem;line-height:1.7">${esc(v)}</div></div>`;
         });
       }
-      const cst=concState(d);const cLbl={done:'הושלם',partial:'חלקי',empty:'לא נכתב',legacy:'גרסה ישנה'}[cst];
-      contentH=`<div class="stats-grid"><div class="stat-box"><div class="sv">${cLbl}</div><div class="sl">דף מסקנות</div></div><div class="stat-box"><div class="sv">${numNotes}/5</div><div class="sl">הערות שנכתבו</div></div></div>${notesH}`;
+      contentH=`<div class="stats-grid"><div class="stat-box"><div class="sv">${cLbl}</div><div class="sl">דף מסקנות</div></div></div>${concH}`+
+        (notesH?`<details style="margin-top:.6rem"><summary style="cursor:pointer;font-size:.85rem;color:var(--tl)">מהמחברת של הסטודנט (${numNotes}/5), לרקע בלבד</summary>${notesH}</details>`:'');
     } else if(cr.id==='c6'){
       const pct=Math.min(100,score*10);
       contentH=`<div><div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--tl);margin-bottom:.3rem"><span>שלמות כוללת</span><span>${pct}%</span></div><div class="completeness-bar"><div class="comp-fill" style="width:${pct}%"></div></div></div>
@@ -530,7 +533,7 @@ function loadGrades(){try{const r=localStorage.getItem('moovanly_grades');if(r)g
 // === CSV EXPORT ===
 function exportCSV(){
   if(!students.length){alert('אין נתונים לייצוא');return;}
-  const rows=[['שם סטודנט','מסמך','שלב אחרון','עימוד (15)','גילוי (25)','אריזה (20)','ארגון (15)','רפלקציה (15)','שלמות (10)','סה"כ','הערה כללית','הסכמה למחקר']];
+  const rows=[['שם סטודנט','מסמך','שלב אחרון','עימוד (15)','גילוי (25)','אריזה (20)','ארגון (15)','דף מסקנות (15)','שלמות (10)','סה"כ','הערה כללית','הסכמה למחקר']];
   students.forEach(s=>{
     const g=grades[s.id]||{};
     const total=totalScore(s.id);
