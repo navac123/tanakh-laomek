@@ -113,7 +113,8 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 @keyframes ripple{0%{box-shadow:0 0 0 0 rgba(139,74,94,.4)}100%{box-shadow:0 0 0 12px rgba(139,74,94,0)}}
 
 /* ===== MAIN TRANSITIONS ===== */
-.main{flex:1;overflow-y:auto;padding:20px 28px;animation:fadeSlide .35s cubic-bezier(.22,1,.36,1)}
+.main{flex:1;overflow-y:auto;padding:20px 28px}
+.main.anim{animation:fadeSlide .35s cubic-bezier(.22,1,.36,1)}
 
 /* Top bar */
 .topbar{background:var(--bg-glass-strong);backdrop-filter:var(--glass-blur);padding:8px 20px;display:flex;align-items:center;gap:16px;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 12px rgba(90,58,74,.06)}
@@ -269,6 +270,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .canvas{min-height:600px;background:var(--bg-glass-light);backdrop-filter:blur(6px);border-radius:14px;position:relative;background-image:radial-gradient(var(--canvas-dots) 1px,transparent 1px);background-size:20px 20px;overflow:hidden}
 .cv-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:1}
 .cv-svg path{pointer-events:stroke;cursor:pointer}
+.cv-svg-top{z-index:3}
 .cv-svg path:hover{stroke-width:3!important}
 .c-node{position:absolute;border-radius:14px;padding:12px 16px;cursor:grab;border:2px solid;min-width:140px;box-shadow:var(--node-shadow);transition:all .25s cubic-bezier(.22,1,.36,1);z-index:2;user-select:none}
 .c-node:hover{box-shadow:0 8px 24px rgba(90,58,74,.14);z-index:10;transform:translateY(-2px)}
@@ -286,9 +288,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-node-w.collapsed{max-height:2.6em;overflow:hidden;opacity:.7}
 .c-node-tgl{position:absolute;top:4px;left:4px;width:20px;height:20px;border-radius:50%;background:var(--bg);border:1px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:10px;z-index:3}
 .c-node-tgl:hover{background:var(--hover);border-color:var(--earth)}
-.c-rsz{position:absolute;bottom:0;left:0;width:24px;height:24px;cursor:nwse-resize;opacity:.5;z-index:3;display:flex;align-items:center;justify-content:center;border-radius:0 8px 0 12px;background:var(--bg-glass-light);transition:all .2s}
+.c-rsz{position:absolute;bottom:0;left:0;width:24px;height:24px;cursor:nesw-resize;opacity:.5;z-index:3;display:flex;align-items:center;justify-content:center;border-radius:0 8px 0 12px;background:var(--bg-glass-light);transition:all .2s}
 .c-rsz:hover{opacity:1;background:var(--earth-glass-hover)}
-.c-rsz::after{content:'⤡';font-size:14px;color:var(--text-faint)}
+.c-rsz::after{content:'⤢';font-size:14px;color:var(--text-faint)}
 .c-conn-dot{position:absolute;bottom:-8px;left:50%;transform:translateX(-50%);width:16px;height:16px;border-radius:50%;background:var(--coral);border:2px solid var(--bg);cursor:crosshair;z-index:4;opacity:0;transition:opacity .2s}
 .c-node:hover .c-conn-dot{opacity:1}
 .conn-mode .c-conn-dot{opacity:1!important}
@@ -297,6 +299,33 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .c-arrow-label:hover{background:rgba(139,74,94,.1)}
 
 /* Canvas toolbar */
+.conn-row{padding:6px 9px;margin-bottom:4px;border-radius:9px;background:var(--earth-glass);border:1px solid var(--border);cursor:pointer;font-size:11px;line-height:1.5}
+.conn-row:hover,.conn-row.a{border-color:var(--coral)}
+.conn-row-names{font-weight:700}
+.conn-row-arrow{color:var(--earth)}
+.conn-row-lbl{color:var(--text);font-style:italic}
+.conn-row-lbl.empty{color:var(--text-faint);font-style:normal}
+.conn-pop{position:absolute;z-index:40;width:280px;background:var(--bg);border:1.5px solid var(--coral);border-radius:14px;padding:10px 12px;box-shadow:var(--shadow-md);direction:rtl;font-family:'Heebo';cursor:default}
+.cp-head{font-size:12px;color:var(--text);margin-bottom:6px;line-height:1.5}
+.cp-arrow{color:var(--earth);font-weight:800}
+.cp-lbl{font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:5px}
+.cp-chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.cp-chip{font-size:12px;padding:3px 9px;border-radius:12px;border:1px solid var(--border);background:var(--bg-warm);color:var(--text);cursor:pointer}
+.cp-chip:hover{border-color:var(--coral)}
+.cp-chip.a{background:var(--earth);border-color:var(--earth);color:var(--btn-primary-text)}
+.cp-input{width:100%;box-sizing:border-box;padding:6px 9px;border:1.5px solid var(--border);border-radius:9px;font-family:'Heebo';font-size:13px;direction:rtl;outline:none;background:var(--bg);color:var(--text);margin-bottom:7px}
+.cp-input:focus{border-color:var(--earth)}
+.cp-row{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:5px}
+.cp-btn{font-size:11px;padding:3px 9px;border-radius:8px;border:1px solid var(--border);cursor:pointer;color:var(--text);background:var(--bg)}
+.cp-btn.a{border-color:var(--earth);color:var(--earth);font-weight:700}
+.cp-actions{margin-top:4px;margin-bottom:0}
+.cp-del{color:var(--earth)}
+.cp-done{margin-right:auto;background:var(--earth);color:var(--btn-primary-text);border-color:var(--earth);font-weight:700}
+.cv-conn-banner{flex-basis:100%;order:11;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:4px;padding:7px 12px;border-radius:10px;background:var(--earth-glass-hover);border:1.5px dashed var(--coral);font-size:13px;font-weight:700;color:var(--text)}
+.cv-hint{border-style:solid;border-color:var(--border);background:var(--earth-glass);font-weight:600}
+.cv-more-row{flex-basis:100%;order:10;display:flex;flex-wrap:wrap;align-items:center;gap:5px;padding-top:6px;margin-top:2px;border-top:1px solid var(--border)}
+.cv-more-lbl{font-size:10px;font-weight:700;color:var(--text-faint)}
+.cv-conn-banner-x{cursor:pointer;font-size:12px;font-weight:600;padding:3px 10px;border-radius:8px;background:var(--bg);border:1px solid var(--border)}
 .cv-toolbar{position:sticky;top:0;z-index:20;display:flex;gap:5px;padding:8px 12px;background:var(--bg-glass-strong);backdrop-filter:var(--glass-blur);border-radius:14px;margin-bottom:10px;border:1px solid var(--border);flex-wrap:wrap;align-items:center;box-shadow:0 2px 12px rgba(90,58,74,.06);animation:slideUp .3s ease}
 .cv-tbtn{padding:5px 10px;border-radius:8px;border:1.5px solid var(--border);background:var(--bg);cursor:pointer;font-size:11px;font-weight:600;font-family:'Heebo';transition:all .15s;display:flex;align-items:center;gap:4px;color:var(--text-muted);white-space:nowrap}
 .cv-tbtn:hover{border-color:var(--earth);color:var(--text);background:var(--hover)}
@@ -354,6 +383,22 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 /* Reading */
 .read-card{background:var(--bg-glass);backdrop-filter:var(--glass-blur-sm);border-radius:16px;padding:24px 32px;margin-bottom:14px;box-shadow:0 4px 20px rgba(90,58,74,.06);border:1px solid var(--teal-border);animation:slideUp .4s cubic-bezier(.22,1,.36,1)}
 .read-title{font-size:20px;font-weight:800;margin-bottom:14px;letter-spacing:-.3px}
+.busy-ov{position:fixed;inset:0;z-index:9999;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center}
+.busy-box{background:var(--bg);color:var(--text);border-radius:14px;padding:18px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);font-family:'Heebo'}
+.busy-spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--earth);animation:spin 0.9s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.conc-card{border:2px solid var(--earth)}
+.conc-intro{font-size:13px;color:var(--text-muted);line-height:1.7;margin:-6px 0 16px}
+.conc-q{margin-bottom:16px}
+.conc-q-title{font-size:15px;font-weight:800;color:var(--text);margin-bottom:2px}
+.conc-q-hint{font-size:12px;color:var(--text-muted);margin-bottom:6px;line-height:1.6}
+.conc-ta{width:100%;min-height:110px;padding:10px 12px;border:1.5px solid var(--border);border-radius:12px;font-family:'Heebo';font-size:14px;line-height:1.8;direction:rtl;resize:vertical;outline:none;background:var(--bg);color:var(--text);box-sizing:border-box}
+.conc-ta:focus{border-color:var(--earth)}
+.conc-cnt{font-size:11px;color:var(--text-faint);margin-top:3px}
+.conc-cnt.ok{color:var(--earth);font-weight:700}
+.conc-status{font-size:12px;font-weight:700;color:var(--text-muted);padding:8px 10px;border-radius:10px;background:var(--earth-glass);text-align:center;cursor:pointer}
+.conc-status.ok{color:var(--earth)}
+.conc-lock.locked{opacity:.45;filter:grayscale(.5)}
 
 /* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--toast-bg);backdrop-filter:var(--glass-blur-lg);color:var(--toast-text);padding:12px 28px;border-radius:14px;font-size:13px;font-weight:600;z-index:999;display:none;box-shadow:0 8px 32px rgba(0,0,0,.18);border:1px solid rgba(255,255,255,.08)}
@@ -741,9 +786,10 @@ let S={doc:'psalms1',step:0,darkMode:false,
   splash:true,
   hiddenDocs:[],
   notes:{0:'',1:'',2:'',3:'',4:''},
+  conclusions:{q1:'',q2:'',q3:''},
   showNotebook:false,nbTab:-1,
   autoDetect:false,detectedGroups:[],detectedPairs:[],showAutoDetect:false,autoDetectMinCount:2,
-  studentName:''
+  studentName:'',partnerName:''
 };
 
 // ===== SAVE / LOAD =====
@@ -754,8 +800,8 @@ function saveWork(){
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
-      studentName:S.studentName||''};
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
+      studentName:S.studentName||'',partnerName:S.partnerName||''};
     if(TEXTS.custom) data.customText=TEXTS.custom;
     localStorage.setItem('moovanly_save',JSON.stringify(data));
     localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
@@ -779,7 +825,7 @@ function loadWork(){
       fromBackup=true;
     }
     if(d.customText)TEXTS.custom=d.customText;
-    S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
+    clearUndo();S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
     S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
     S.fs=d.fs||18;S.lh=d.lh||1.5;
     S.cats=d.cats||JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
@@ -791,13 +837,25 @@ function loadWork(){
     });
     S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
     S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
-    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.studentName=d.studentName||'';
+    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';
     S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
     if(d.darkMode!==undefined)S.darkMode=d.darkMode;
     S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
     S.splash=false;R();toast(fromBackup?'עבודה שוחזרה מגיבוי':'עבודה נטענה');return true;
   }catch(e){toast('שגיאה בטעינה');return false;}
 }
+// ===== CONCLUSIONS PAGE (step 5) =====
+// Stored as S.conclusions={q1,q2,q3}; missing in saves made before this feature, so always normalise.
+const CONC_QS=[
+  {id:'q1',title:'מה המזמור אומר?',hint:'מהי הטענה או התנועה המרכזית של המזמור, לדעתך?'},
+  {id:'q2',title:'איך הגעת לזה?',hint:'איך העימוד, הסימונים והמבנה שמצאת מובילים למסקנה הזאת? הפנו לשתי אריזות או קשרים לפחות.'},
+  {id:'q3',title:'מה הלימוד פתח לך?',hint:'שאלה, משמעות או כיוון שהלימוד הזה פתח אצלך.'}
+];
+const CONC_MIN_WORDS=40;
+function normConc(c){c=c||{};return {q1:c.q1||'',q2:c.q2||'',q3:c.q3||''};}
+function concWords(s){return (s||'').trim().split(/\s+/).filter(Boolean).length;}
+function concDoneCount(){const c=normConc(S.conclusions);return CONC_QS.filter(q=>concWords(c[q.id])>=CONC_MIN_WORDS).length;}
+function concComplete(){return concDoneCount()===CONC_QS.length;}
 function hasSavedWork(){return !!(localStorage.getItem('moovanly_save')||localStorage.getItem('moovanly_backup'));}
 function getSaveTime(){return localStorage.getItem('moovanly_time')||'';}
 function clearSave(){localStorage.removeItem('moovanly_save');localStorage.removeItem('moovanly_time');localStorage.removeItem('moovanly_backup');localStorage.removeItem('moovanly_backup_time');toast('שמירה נמחקה');}
@@ -829,6 +887,8 @@ function doRedo(){
   R();toast('שוחזר');
 }
 
+// History belongs to one text: clear it whenever the text or the whole work is replaced
+function clearUndo(){undoStack.length=0;redoStack.length=0;}
 function D(){return TEXTS[S.doc]}
 function fontCSS(){return (FONTS.find(f=>f.id===S.font)||FONTS[0]).css}
 function toast(m){const t=document.getElementById('toast');t.textContent=m;t.className='toast show';setTimeout(()=>t.className='toast',2200)}
@@ -1065,7 +1125,9 @@ function autoMarkPair(pairIdx){
 function getStyleById(id){return STYLES.find(s=>s.id===id)||STYLES[0]}
 function getCatById(id){return S.cats.find(c=>c.id===id)}
 
+let lastRenderStep=-1;
 function R(){
+  if(S.step!==3){S.connEdit=null;if(S.cvTool!=='conn')S.connMode=null;}
   if(S.splash){
     document.getElementById('app').innerHTML=splashScreen();
     return;
@@ -1077,15 +1139,17 @@ function R(){
   const mainScroll=mainEl?mainEl.scrollTop:0;
   document.getElementById('app').innerHTML=`
     ${topBar()}${stepsBar()}
-    <div class="wrap">${side()}<div class="main" role="main" aria-label="אזור תוכן ראשי">${mainContent()}</div></div>
+    <div class="wrap">${side()}<div class="main${S.step!==lastRenderStep?' anim':''}" role="main" aria-label="אזור תוכן ראשי">${mainContent()}</div></div>
     ${S.showUpload?modal():''}${S.showExport?exportModal():''}${S.showKeys?keysModal():''}
     ${S.showNotebook?notebookOverlay():''}${notebookPanel()}`;
+  lastRenderStep=S.step;
   // Restore scroll positions
   requestAnimationFrame(()=>{
     const s=document.querySelector('.side');if(s)s.scrollTop=sideScroll;
     const m=document.querySelector('.main');if(m)m.scrollTop=mainScroll;
   });
   if(S.step===3)requestAnimationFrame(()=>{ensureArrowMarker();updateArrows();expandCanvas()});
+  if(S.step===4)requestAnimationFrame(()=>{const inner=document.querySelector('.read-card #cvInner');if(inner)relayoutStaticArrows(inner);});
   if(S.showNotebook)requestAnimationFrame(()=>{const ta=document.getElementById('nbArea');if(ta)ta.focus()});
 }
 
@@ -1310,8 +1374,8 @@ function startAutoSave(){
         vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
         pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
-        studentName:S.studentName||''};
+        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
+        studentName:S.studentName||'',partnerName:S.partnerName||''};
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_save',JSON.stringify(data));
       localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
@@ -1326,8 +1390,8 @@ function startAutoSave(){
         vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
         pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
-        studentName:S.studentName||''};
+        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
+        studentName:S.studentName||'',partnerName:S.partnerName||''};
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_backup',JSON.stringify(data));
       localStorage.setItem('moovanly_backup_time',new Date().toLocaleString('he-IL'));
@@ -1348,7 +1412,7 @@ function loadDemo(){
   const el=document.getElementById('splashEl');
   if(el)el.classList.add('out');
   setTimeout(()=>{
-    S.doc='psalms19';S.step=4;S.splash=false;S.fs=18;
+    clearUndo();S.doc='psalms19';S.step=4;S.splash=false;S.fs=18;
     // === LAYOUT (Slide 1) ===
     // Breaks: after word X, new line starts
     S.brks={
@@ -1523,6 +1587,7 @@ function loadDemo(){
       {id:'sh1',type:'frame',x:10,y:160,w:680,h:460,ci:12,text:'שני סוגי השבח'}
     ];
     S.cvZoom=100;S.cvTool='move';
+    S.conclusions=normConc();
     S.notes={
       0:'העימוד מחלק את המזמור ל-5 יחידות. שימו לב לעימוד המיוחד בפסוקים ח-י: מבנה תקבולתי של שלוש עמודות — שם ה׳ + תואר + תוצאה.',
       1:'בחלק הראשון (ב-ז) — לשון דיבור והודעה: מספרים, מגיד, יביע, אומר, יחוה, דעת. הפרדוקס: בריאה ש"מדברת" אך אין לה מילים.\nבחלק השני (ח-י) — מבנה קבוע: שם ה׳ (תורת/עדות/פקודי/מצות/יראת/משפטי) + תואר (תמימה/נאמנה/ישרים/ברה/טהורה/אמת) + תוצאה (משיבת נפש/מחכימת פתי...).',
@@ -1921,7 +1986,7 @@ function sPkg(){
         <div class="sb-sub">אריזת על / אריזת משנה</div>
         ${S.pkgs.map((pkg,pi)=>`
           <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;font-size:11px">
-            <span>${pkg.emoji||''} ${pkg.name}</span><span style="color:${tcm()}">→</span>
+            <span>${pkg.emoji||''} ${pkg.name}</span><span style="color:${tcm()}">←</span>
             <select style="font-size:11px;border:1px solid ${brd()};border-radius:6px;padding:2px 4px;font-family:'Heebo';background:${bgc()};color:${tc()}" onchange="setPkgParent(${pi},this.value)">
               <option value="-1" ${!pkg.parentId?'selected':''}>עצמאית</option>
               ${S.pkgs.filter((_,i)=>i!==pi).map((p)=>{const idx=S.pkgs.indexOf(p);return `<option value="${idx}" ${pkg.parentId===p.id?'selected':''}>משנה של: ${p.emoji||''} ${p.name}</option>`}).join('')}
@@ -1930,7 +1995,7 @@ function sPkg(){
       `:''}
     `:''}
     <div style="background:linear-gradient(135deg,rgba(90,58,74,.06),rgba(196,139,159,.08));border:2px solid var(--a);border-radius:12px;padding:.8rem 1rem;margin:1rem 0 .5rem;font-size:.82rem;line-height:1.8;text-align:right">
-<strong style="color:var(--p)">📌 תזכורת:</strong> שנו שם קובץ לשמכם · העלו תחת הנושא המתאים · זוגות? ציינו שותף/ה · כל אחד מגיש בעצמו!
+<strong style="color:var(--p)">📌 תזכורת:</strong> בסוף מורידים קובץ PDF אחד ומעלים אותו ללמדה · בחברותא מספיק שאחד מגיש, ושני השמות נכנסים לקובץ
 </div>
 <button class="sb-btn sb-btn-blue" style="margin-top:16px" onclick="S.step=3;R()"><span>המשך לארגון →</span></button>
   `;
@@ -1948,14 +2013,15 @@ function sCanv(){
         <b>למה זה חשוב?</b><br>
         הצגה ויזואלית חושפת יחסים בין חלקי הטקסט שלא נראים בקריאה לינארית — הקבלות, ניגודים, סיבה ותוצאה, כלל ופרט.<br><br>
         <b>הנחיות:</b><br>
-        • <b>גרור</b> חבילות על הלוח למיקום הרצוי<br>
-        • <b>לחץ על הנקודה</b> התחתונה ליצירת חץ בין חבילות<br>
+        • <b>גררו</b> אריזות על הלוח למיקום הרצוי<br>
+        • <b>חץ:</b> לחצו על "חץ" בסרגל, ואז על הקופסה שממנה החץ יוצא ועל הקופסה שאליה הוא מגיע<br>
+        • <b>תנו שם ליחס</b> שבין שתי האריזות: הקבלה, ניגוד, סיבה ותוצאה...<br>
         • הוסף <b>פתקים</b>, <b>תוויות</b> ו<b>צורות</b> לעיצוב המפה<br>
         • השתמש ב<b>סידור אוטומטי</b> לארגון מהיר
         </div>
       </div>
     </div>
-    <div class="sb-hint">גרור חבילות על הלוח, לחץ על הנקודה ליצירת חיצים בין חבילות.</div>
+    <div class="sb-hint">גררו את הקופסאות כדי לסדר אותן. כדי לחבר: לחצו על <b>חץ</b>, ואז על שתי קופסאות. לחיצה על חץ קיים פותחת את התווית שלו.</div>
     <div class="sb-sub">חבילות</div>
     ${S.pkgs.map((p,i)=>{const c=C[p.ci];const sel=cm&&cm.from===p.id;
       return `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${c.b};border:1.5px solid ${sel?cv('#8B4A5E','#8B4A5E'):c.c+'44'};cursor:pointer" onclick="focusNode(${i})">
@@ -1963,25 +2029,17 @@ function sCanv(){
         <span style="font-size:12px;font-weight:700;color:${c.c};flex:1">${p.emoji||''} ${p.name}</span>
         <span style="font-size:10px;color:${tcm()}">${p.words.length} מ׳</span>
       </div>`}).join('')}
-    <div class="sb-sub" style="margin-top:14px">קישורים (${S.conns.length})</div>
+    <div class="sb-sub" style="margin-top:14px">חצים (${S.conns.length})</div>
     ${S.conns.length?S.conns.map((cn,ci)=>{
       const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
       if(!fp||!tp)return '';
       const fc=C[fp.ci],tpc=C[tp.ci];
-      return `<div style="display:flex;align-items:center;gap:4px;padding:6px 8px;margin-bottom:3px;border-radius:8px;background:${cv('rgba(139,74,94,.1)','rgba(139,74,94,.12)')};border:1px solid ${cv('rgba(139,74,94,.5)','rgba(139,74,94,.25)')};font-size:11px">
-        <span style="color:${fc.c};font-weight:700">${fp.emoji||''} ${fp.name}</span><span style="color:${cv('#1C335F','#8B4A5E')}">→</span>
-        <span style="color:${tpc.c};font-weight:700">${tp.emoji||''} ${tp.name}</span>
-        <span style="flex:1;color:${tc()};font-weight:600;cursor:pointer" onclick="editConnLabel(${ci})">${cn.label||cn.emoji||'לחץ לתווית'}</span>
-        <select style="font-size:9px;border:1px solid ${brd()};border-radius:4px;padding:1px 3px;font-family:'Heebo';background:${bgc()};color:${tc()}" onchange="setConnStyle(${ci},this.value)">
-          <option value="straight" ${(cn.style||'straight')==='straight'?'selected':''}>ישר</option>
-          <option value="curved" ${cn.style==='curved'?'selected':''}>מעוקל</option>
-          <option value="elbow" ${cn.style==='elbow'?'selected':''}>מרפק</option>
-          <option value="custom" ${cn.style==='custom'?'selected':''}>חופשי</option>
-        </select>
-        <span style="color:${cv('#ef4444','#8B4A5E')};cursor:pointer;font-size:10px" onclick="delConn(${ci})">✕</span>
-      </div>`}).join(''):`<div style="font-size:11px;color:${tcm()};text-align:center;padding:8px">אין קישורים עדיין</div>`}
+      return `<div class="conn-row ${S.connEdit===ci?'a':''}" onclick="openConnPop(${ci})" title="לחצו לעריכת החץ">
+        <div class="conn-row-names"><span style="color:${fc.c}">${escH(fp.name)}</span> <span class="conn-row-arrow">←</span> <span style="color:${tpc.c}">${escH(tp.name)}</span></div>
+        <div class="conn-row-lbl ${cn.label?'':'empty'}">${cn.label?escH(cn.label):'＋ הוסיפו תווית'}</div>
+      </div>`}).join(''):`<div style="font-size:11px;color:${tcm()};text-align:center;padding:8px">אין חצים עדיין</div>`}
     <div class="sb-sub" style="margin-top:14px">פתקים על הלוח</div>
-    <div style="font-size:11px;color:${tcm()};margin-bottom:6px">${S.stickies.length} פתקים · ${S.labels.length} תוויות</div>
+    <div style="font-size:11px;color:${tcm()};margin-bottom:6px">${S.stickies.length} פתקים · ${S.labels.length} כותרות</div>
     <div style="display:flex;gap:6px;flex-wrap:wrap">
       <div class="sb-btn sb-btn-out sb-btn-sm" onclick="resetNodeSizes()">איפוס גדלים</div>
     </div>
@@ -2014,14 +2072,18 @@ function sRead(){
       פתח מחברת
     </div>
     ${notesSummary}
+    <div class="conc-status ${concComplete()?'ok':''}" style="margin-top:12px" onclick="goToConclusions()">${concStatusText()}</div>
     <div style="margin-top:12px">
-      <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:4px">שם סטודנט/ית</div>
-      <input type="text" value="${S.studentName||''}" placeholder="שם מלא..." oninput="S.studentName=this.value;saveWork()" style="width:100%;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:13px;background:${bgc()};color:${tc()}">
+      <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:4px">שם מלא</div>
+      <input type="text" id="studentNameInput" value="${escH(S.studentName||'').replace(/"/g,'&quot;')}" placeholder="השם שלך..." oninput="S.studentName=this.value" style="width:100%;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:13px;background:${bgc()};color:${tc()};box-sizing:border-box">
+      <div style="font-size:11px;font-weight:700;color:${tcm()};margin:8px 0 4px">שם בן/בת החברותא <span style="font-weight:400">(אם עבדתם בזוג)</span></div>
+      <input type="text" value="${escH(S.partnerName||'').replace(/"/g,'&quot;')}" placeholder="השאירו ריק אם עבדת לבד" oninput="S.partnerName=this.value" style="width:100%;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:13px;background:${bgc()};color:${tc()};box-sizing:border-box">
+      <div style="font-size:10px;color:${tcm()};margin-top:4px;line-height:1.5">בחברותא מספיק שאחד מכם יגיש. שני השמות יופיעו בקובץ.</div>
     </div>
-    <div onclick="exportSubmission()" style="margin-top:10px;padding:12px 14px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:12px;cursor:pointer;text-align:center;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(139,74,94,.25);transition:transform .15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='none'">📤 הגשה למודל<div style="font-size:10px;font-weight:400;opacity:.85;margin-top:2px">JSON + PDF - העלו את שניהם</div></div>
+    <div class="conc-lock ${concComplete()?'':'locked'}" onclick="exportSubmission()" style="margin-top:10px;padding:12px 14px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:12px;cursor:pointer;text-align:center;font-weight:700;font-size:14px;box-shadow:0 4px 14px rgba(139,74,94,.25);transition:transform .15s" onmouseenter="this.style.transform='translateY(-2px)'" onmouseleave="this.style.transform='none'">📤 הגשה ללמדה<div style="font-size:10px;font-weight:400;opacity:.85;margin-top:2px">מוריד קובץ PDF אחד להעלאה</div></div>
     <div style="font-size:10px;color:${tcm()};margin-top:6px;text-align:center">אפשרויות נוספות:</div>
     <div style="display:flex;gap:6px;margin-top:4px">
-      <div class="sb-btn" style="flex:1;font-size:11px;background:var(--teal);color:#fff" onclick="exportSubmissionJSON()">💾 JSON בלבד</div>
+      <div class="sb-btn" style="flex:1;font-size:11px;background:var(--teal);color:#fff" onclick="exportJSON()" title="שמירת עותק של העבודה במחשב, כדי להמשיך במחשב אחר">💾 גיבוי</div>
       <div class="sb-btn" style="flex:1;font-size:11px;background:var(--coral);color:#fff" onclick="S.showExport=true;R()">ייצוא נוסף</div>
     </div>`;
 }
@@ -2227,6 +2289,7 @@ function mCanv(){
     S.nodes=S.pkgs.map((_,i)=>({x:60+(i%3)*240,y:50+Math.floor(i/3)*180,w:220,h:0}));
   }
   S.nodes.forEach(n=>{if(!n.w)n.w=220;});
+  if(S.cvTool==='conn'&&!S.connMode)S.connMode={from:null};
   const vv=D().verses;
   const cmClass=S.connMode?' conn-mode':'';
   // Build children map: parentId -> [child pkg indices]
@@ -2308,23 +2371,24 @@ function mCanv(){
         ${children.map(ci=>renderChild(ci)).join('')}
       </div>`;
     }
-    return `<div class="c-node${selClass}" id="nd${i}" style="left:${nd.x}px;top:${nd.y}px;width:${nodeW}px;${stl}" onmousedown="ds(event,${i})" ontouchstart="dts(event,${i})" onclick="nodeClick(event,${i})">
+    return `<div class="c-node${selClass}" id="nd${i}" style="left:${nd.x}px;top:${nd.y}px;width:${nodeW}px;${nd.h?`min-height:${nd.h}px;`:''}${stl}" onmousedown="ds(event,${i})" ontouchstart="dts(event,${i})" onclick="nodeClick(event,${i})">
       <div class="c-node-tgl" onclick="event.stopPropagation();tglExp('${p.id}')">${exp?'▾':'▸'}</div>
       <div class="c-node-t" style="color:${c.c}">${p.emoji||''} ${p.name}</div>
       <div class="c-node-w${exp?'':' collapsed'}" style="font-family:${fontCSS()};${exp?'font-size:14px;line-height:'+S.lh:''}">${txt}</div>
       ${verseNums.length&&!exp?`<div style="font-size:10px;color:${c.c};opacity:.5;margin-top:3px">פס׳ ${verseNums.join(',')}</div>`:''}
       ${childrenHtml}
       <div class="c-conn-dot" onmousedown="event.stopPropagation();startConn('${p.id}')" title="גרור ליצירת קישור"></div>
-      <div class="c-rsz" onmousedown="event.stopPropagation();startResize(event,${i})"></div>
+      <div class="c-rsz" onmousedown="event.stopPropagation();startResize(event,${i})" title="גררו החוצה להגדלה"></div>
     </div>`}).join('');
   let svgHtml=buildArrowsSvg();
   let arrowLabelsHtml=buildArrowLabels();
   const zScale=S.cvZoom/100;
-  return `${cvToolbar()}<div class="canvas${cmClass}" id="cv" style="min-height:600px;position:relative;overflow:auto">
+  const stat=!!window.__cvStatic;
+  return `${stat?'':cvToolbar()}<div class="canvas${cmClass}" id="cv" style="min-height:600px;position:relative;overflow:auto" onmousedown="cvBgDown(event)">
     <div id="cvInner" style="transform:scale(${zScale});transform-origin:top right;position:relative;min-height:${600/zScale}px;min-width:100%">
     <svg class="cv-svg" id="cvSvg">${svgHtml}</svg>
-    ${nodesHtml}${arrowLabelsHtml}${buildArrowMidpoints()}${renderShapes()}${renderStickies()}${renderLabels()}
-    </div>${renderZoom()}${renderMinimap()}</div>`;
+    ${nodesHtml}<svg class="cv-svg cv-svg-top" id="cvSvgTop">${buildArrowsSvg('top')}</svg>${arrowLabelsHtml}${buildArrowMidpoints()}${renderShapes()}${renderStickies()}${renderLabels()}${renderConnPop()}
+    </div>${stat?'':renderZoom()+renderMinimap()}</div>`;
 }
 
 function ndRect(i){
@@ -2400,27 +2464,32 @@ function arrowPathCustom(ep,cn){
 // backward compat
 function curvedPath(ep){return arrowPath(ep,'straight')}
 
-function buildArrowsSvg(){
+// Arrows to or from a sub-package would vanish behind the parent box (boxes sit above the arrow layer),
+// so they are drawn in a second SVG layer above the boxes.
+function isChildPkgId(id){const p=S.pkgs.find(x=>x.id===id);return !!(p&&p.parentId&&S.pkgs.some(pp=>pp.id===p.parentId));}
+function connOnTop(cn){return isChildPkgId(cn.from)||isChildPkgId(cn.to);}
+function arrowDefs(id){return `<defs><marker id="${id}" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#8B4A5E"/></marker></defs>`;}
+function buildArrowsSvg(layer){
+  const top=layer==='top',mk=top?'arrowheadT':'arrowhead';
   let connLines=S.conns.map((cn,ci)=>{
+    if(connOnTop(cn)!==top)return '';
     const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
     if(fi<0||ti<0)return '';
     const fr=ndRect(fi),tr=ndRect(ti);
     const ep=edgePts(fr,tr);
     const d=cn.style==='custom'?arrowPathCustom(ep,cn):arrowPath(ep,cn.style||'straight');
-    return `<path d="${d}" fill="none" stroke="${cv('#8B4A5E','#8B4A5E')}" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowhead)" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
+    const selW=S.connEdit===ci?3.5:2;
+    return `<path d="${d}" fill="none" stroke="transparent" stroke-width="16" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/><path d="${d}" fill="none" stroke="${cv('#8B4A5E','#8B4A5E')}" stroke-width="${selW}" stroke-dasharray="8,5" marker-end="url(#${mk})" onclick="editConnLabel(${ci})" style="pointer-events:stroke;cursor:pointer"/>`;
   }).join('');
-  return connLines;
+  return arrowDefs(mk)+connLines;
 }
 
 function buildArrowMidpoints(){
-  if(!S.conns.length)return '';
+  if(window.__cvStatic||S.connEdit==null||!S.conns[S.connEdit])return '';
   return S.conns.map((cn,ci)=>{
-    const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
-    if(fi<0||ti<0)return '';
-    const fr=ndRect(fi),tr=ndRect(ti);
-    const ep=edgePts(fr,tr);
-    const mx=cn.midX!==undefined?cn.midX:(ep.fx+ep.tx)/2;
-    const my=cn.midY!==undefined?cn.midY:(ep.fy+ep.ty)/2;
+    if(ci!==S.connEdit)return '';
+    const m=arrowMid(cn);if(!m)return '';
+    const mx=m.x,my=m.y;
     return `<div id="midDot${ci}" style="position:absolute;left:${mx-6}px;top:${my-6}px;width:12px;height:12px;border-radius:50%;background:${cv('#8B4A5E','#C48B9F')};border:2px solid ${bgc()};cursor:move;z-index:15;opacity:.6;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.transform='scale(1.3)'" onmouseout="this.style.opacity=.6;this.style.transform=''" onmousedown="startMidDrag(event,${ci})" title="גרור לשינוי מסלול"></div>`;
   }).join('');
 }
@@ -2428,19 +2497,19 @@ let midDg=null;
 function startMidDrag(e,ci){
   e.preventDefault();e.stopPropagation();
   const cn=S.conns[ci];const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
-  const fr=ndRect(fi),tr=ndRect(ti);const ep=edgePts(fr,tr);
-  const mx=cn.midX!==undefined?cn.midX:(ep.fx+ep.tx)/2;
-  const my=cn.midY!==undefined?cn.midY:(ep.fy+ep.ty)/2;
-  midDg={ci,sx:e.clientX,sy:e.clientY,ox:mx,oy:my};
+  const ep=edgePts(ndRect(fi),ndRect(ti));const m=arrowMid(cn);
+  midDg={ci,sx:e.clientX,sy:e.clientY,ox:m.x,oy:m.y,ex:(ep.fx+ep.tx)/2,ey:(ep.fy+ep.ty)/2};
   document.onmousemove=midDragMove;document.onmouseup=midDragEnd;
 }
 function midDragMove(e){
   if(!midDg)return;
+  if(!midDg.moved){saveUndo();midDg.moved=true;}
   const z=S.cvZoom/100;
   const mx=midDg.ox+(e.clientX-midDg.sx)/z;
   const my=midDg.oy+(e.clientY-midDg.sy)/z;
-  S.conns[midDg.ci].midX=mx;
-  S.conns[midDg.ci].midY=my;
+  // Quadratic control point chosen so the curve passes through the dragged point
+  S.conns[midDg.ci].midX=2*mx-midDg.ex;
+  S.conns[midDg.ci].midY=2*my-midDg.ey;
   S.conns[midDg.ci].style='custom';
   updateArrows();
   // Also move the midpoint dot itself
@@ -2453,17 +2522,58 @@ function buildArrowLabels(){
   return S.conns.map((cn,ci)=>{
     const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
     if(fi<0||ti<0)return '';
-    const fr=ndRect(fi),tr=ndRect(ti);
-    const ep=edgePts(fr,tr);
-    const mx=(ep.fx+ep.tx)/2,my=(ep.fy+ep.ty)/2;
-    const lbl=cn.emoji||cn.label?`${cn.emoji||''} ${cn.label||''}`:'';
+    if(ci===S.connEdit&&!window.__cvStatic)return '';
+    const m=arrowMid(cn);if(!m)return '';
+    const lbl=cn.emoji||cn.label?`${cn.emoji||''} ${escH(cn.label||'')}`:'';
     if(!lbl.trim())return '';
-    return `<div class="c-arrow-label" style="left:${mx-20}px;top:${my-12}px" onclick="editConnLabel(${ci})">${lbl}</div>`;
+    return `<div class="c-arrow-label" data-ci="${ci}" style="left:${m.x}px;top:${m.y}px;transform:translate(-50%,-50%)" onclick="editConnLabel(${ci})">${lbl}</div>`;
   }).join('');
 }
 
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+function workNames(){
+  const a=(S.studentName||'').trim(),b=(S.partnerName||'').trim();
+  return a&&b?`${a} ו${b}`:(a||b);
+}
+function concStatusText(){const d=concDoneCount();return d===CONC_QS.length?'✓ דף המסקנות מוכן להגשה':`דף מסקנות: ${d} מתוך ${CONC_QS.length} תשובות הושלמו`;}
+function concCard(){
+  const c=normConc(S.conclusions);
+  return `<div class="read-card conc-card" id="concCard">
+    <div class="read-title">📝 דף מסקנות</div>
+    <div class="conc-intro">עברו על הניתוח שעשיתם, ונסחו מה למדתם ממנו. אפשר להגיש רק אחרי שכל תשובה כוללת לפחות ${CONC_MIN_WORDS} מילים.</div>
+    ${CONC_QS.map((q,i)=>{const n=concWords(c[q.id]);return `<div class="conc-q">
+      <div class="conc-q-title">${i+1}. ${q.title}</div>
+      <div class="conc-q-hint">${q.hint}</div>
+      <textarea class="conc-ta" id="conc_${q.id}" oninput="concInput('${q.id}',this.value)">${escH(c[q.id])}</textarea>
+      <div class="conc-cnt ${n>=CONC_MIN_WORDS?'ok':''}" id="concCnt_${q.id}">${n} / ${CONC_MIN_WORDS} מילים</div>
+    </div>`;}).join('')}
+  </div>`;
+}
+// Update counters and lock state in place, without R(), so the textarea keeps focus
+function concInput(id,val){
+  S.conclusions=normConc(S.conclusions);S.conclusions[id]=val;
+  const n=concWords(val);const el=document.getElementById('concCnt_'+id);
+  if(el){el.textContent=`${n} / ${CONC_MIN_WORDS} מילים`;el.classList.toggle('ok',n>=CONC_MIN_WORDS);}
+  const ok=concComplete();
+  document.querySelectorAll('.conc-lock').forEach(b=>b.classList.toggle('locked',!ok));
+  document.querySelectorAll('.conc-status').forEach(s=>{s.textContent=concStatusText();s.classList.toggle('ok',ok);});
+}
+function goToConclusions(){
+  if(S.step!==4){S.step=4;S.showExport=false;R();}
+  setTimeout(()=>{const card=document.getElementById('concCard');const main=document.querySelector('.main');if(card&&main)main.scrollTo({top:Math.max(0,main.scrollTop+card.getBoundingClientRect().top-main.getBoundingClientRect().top-12),behavior:'smooth'});
+    const first=CONC_QS.find(q=>concWords(normConc(S.conclusions)[q.id])<CONC_MIN_WORDS);
+    if(first){const ta=document.getElementById('conc_'+first.id);if(ta)setTimeout(()=>ta.focus({preventScroll:true}),400);}},50);
+}
+// Submission exports require a complete conclusions page
+function concGate(){
+  if(concComplete())return true;
+  toast('לפני ההגשה צריך להשלים את דף המסקנות');
+  goToConclusions();
+  return false;
+}
+
 function mRead(){
-  return `<div class="read-card">
+  return `${concCard()}<div class="read-card">
     <div class="read-title">${D().title}</div>
     ${renderWithLayout((w,vi,wi)=>wrd(w,vi,wi,'read')).replace('text-area','text-area" style="box-shadow:none;padding:0;padding-right:48px')}
   </div>
@@ -2483,9 +2593,8 @@ function mRead(){
     <div class="read-title">מפת ארגון</div>
     <div style="overflow:auto;border:1px solid ${brd()};border-radius:12px;background:${cv('rgba(245,237,227,.5)','rgba(30,21,32,.3)')};padding:10px;max-height:500px">
       ${(()=>{
-        const oldStep=S.step;S.step=3;
-        let canvasHtml=mCanv();
-        S.step=oldStep;
+        const oldStep=S.step;S.step=3;window.__cvStatic=true;
+        let canvasHtml;try{canvasHtml=mCanv();}finally{window.__cvStatic=false;S.step=oldStep;}
         // Strip interactive handlers for static reading view
         canvasHtml=canvasHtml.replace(/onmousedown="[^"]*"/g,'')
           .replace(/ontouchstart="[^"]*"/g,'')
@@ -2505,7 +2614,7 @@ function mRead(){
         const fc=C[fp.ci],tpc=C[tp.ci];
         return `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:${cv('rgba(90,58,74,.04)','rgba(196,139,159,.08)')};border:1px solid ${brd()}">
           <span style="font-size:12px;font-weight:700;color:${fc.c}">${fp.name}</span>
-          <span style="color:${tc()};font-size:14px">→</span>
+          <span style="color:${tc()};font-size:14px">←</span>
           <span style="font-size:12px;font-weight:700;color:${tpc.c}">${tp.name}</span>
           <span style="font-size:11px;color:${tcm()};margin-right:auto;font-style:italic">${cn.label}</span>
         </div>`;
@@ -2547,10 +2656,10 @@ function mRead(){
     </div>`;
   })()}
   <div class="read-card" style="text-align:center;background:linear-gradient(135deg,${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')},${cv('rgba(139,74,94,.02)','rgba(196,139,159,.04)')});border:2px solid ${cv('rgba(139,74,94,.15)','rgba(196,139,159,.2)')}">
-    <div style="font-size:18px;font-weight:800;color:${tc()};margin-bottom:6px">סיימת? הגישו את העבודה</div>
-    <div style="font-size:13px;color:${tcm()};margin-bottom:14px">יש להעלות למודל שני קבצים: JSON ו-PDF</div>
-    <div onclick="exportSubmission()" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:14px;cursor:pointer;font-weight:800;font-size:16px;box-shadow:0 4px 16px rgba(139,74,94,.3);transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(139,74,94,.4)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(139,74,94,.3)'">📤 הגשה למודל</div>
-    <div style="font-size:11px;color:${tcm()};margin-top:8px">מוריד JSON + פותח PDF לשמירה</div>
+    <div style="font-size:18px;font-weight:800;color:${tc()};margin-bottom:6px">סיימתם? הגישו את העבודה</div>
+    <div style="font-size:13px;color:${tcm()};margin-bottom:14px">הכפתור מוריד קובץ PDF אחד. מעלים אותו ללמדה, וזהו</div>
+    <div class="conc-lock ${concComplete()?'':'locked'}" onclick="exportSubmission()" style="display:inline-block;padding:14px 32px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:14px;cursor:pointer;font-weight:800;font-size:16px;box-shadow:0 4px 16px rgba(139,74,94,.3);transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(139,74,94,.4)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(139,74,94,.3)'">📤 הגשה ללמדה</div>
+    <div style="font-size:11px;color:${tcm()};margin-top:8px">בחברותא מספיק שאחד מגיש. שני השמות יופיעו בקובץ.</div>
   </div>`;
 }
 
@@ -2612,6 +2721,8 @@ document.addEventListener('keydown',function(e){
     if(S.showExport){S.showExport=false;R();return;}
     if(S.showUpload){S.showUpload=false;R();return;}
     if(S.showNotebook){nbSave();S.showNotebook=false;R();return;}
+    if(S.step===3&&S.connEdit!=null){closeConnPop();return;}
+    if(S.step===3&&S.connMode){exitConnTool();return;}
   }
   if((e.ctrlKey||e.metaKey)&&e.key==='z'&&!e.shiftKey){e.preventDefault();doUndo();return;}
   if((e.ctrlKey||e.metaKey)&&(e.key==='y'||(e.key==='z'&&e.shiftKey))){e.preventDefault();doRedo();return;}
@@ -2714,13 +2825,13 @@ function sw(k){
   if(k===S.doc)return;
   const hasWork=Object.keys(S.marks).length||Object.keys(S.brks).length||S.pkgs.length;
   if(hasWork&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית. להמשיך?'))return;
-  S.doc=k;S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
+  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
   delete TEXTS.custom;
   const remaining=Object.keys(TEXTS).filter(x=>!(S.hiddenDocs||[]).includes(x));
-  S.doc=remaining[0]||'psalms1';
+  clearUndo();S.doc=remaining[0]||'psalms1';
   S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.selWords=[];
   S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נמחק');
@@ -2788,8 +2899,17 @@ function mkPkg(){
   if(!S.pkgSel.length){toast('בחר מילים');return}
   saveUndo();
   S.pkgs.push({id:'pkg_'+Date.now(),name:S.pkgNewName,emoji:S.pkgNewEmoji,ci:S.pkgNewCi,style:S.pkgNewStyle,words:[...S.pkgSel],parentId:null});
-  S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];S.nodes=[];
+  // Keep the canvas layout: give only the new box a free spot below everything else
+  if(S.nodes.length===S.pkgs.length-1)S.nodes.push(freeNodeSpot());else S.nodes=[];
+  S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];
   R();toast('אריזה נוצרה');
+}
+function freeNodeSpot(){
+  let maxY=0;
+  S.nodes.forEach(n=>{maxY=Math.max(maxY,n.y+Math.max(n.h||0,180));});
+  (S.shapes||[]).forEach(sh=>{maxY=Math.max(maxY,sh.y+(sh.h||80));});
+  S.stickies.forEach(s=>{maxY=Math.max(maxY,s.y+(s.h||120));});
+  return {x:60,y:maxY?snapToGrid(maxY+40,20):50,w:220,h:0};
 }
 function movePkg(idx,dir){
   const newIdx=idx+dir;
@@ -2803,10 +2923,18 @@ function movePkg(idx,dir){
 function deletePkg(idx){
   saveUndo();const pkg=S.pkgs[idx];
   S.pkgs.forEach(p=>{if(p.parentId===pkg.id)p.parentId=null});
-  S.pkgs.splice(idx,1);S.nodes=[];R();toast('אריזה נמחקה');
+  if(S.nodes.length===S.pkgs.length)S.nodes.splice(idx,1);else S.nodes=[];
+  S.conns=S.conns.filter(c=>c.from!==pkg.id&&c.to!==pkg.id);
+  S.pkgs.splice(idx,1);R();toast('אריזה נמחקה');
 }
 function setPkgParent(idx,parentIdx){
-  saveUndo();parentIdx=parseInt(parentIdx);
+  parentIdx=parseInt(parentIdx);
+  // Refuse a loop (A inside B inside A): both boxes would vanish from the canvas
+  if(parentIdx>=0&&!isNaN(parentIdx)){
+    const selfId=S.pkgs[idx].id;let cur=S.pkgs[parentIdx];const seen=new Set();
+    while(cur&&!seen.has(cur.id)){if(cur.id===selfId){toast('אי אפשר: זה יוצר מעגל של אריזות משנה');R();return;}seen.add(cur.id);cur=S.pkgs.find(p=>p.id===cur.parentId);}
+  }
+  saveUndo();
   if(parentIdx<0||isNaN(parentIdx)){S.pkgs[idx].parentId=null;}
   else{S.pkgs[idx].parentId=S.pkgs[parentIdx].id;}
   R();toast('היררכיה עודכנה');
@@ -2817,7 +2945,7 @@ let dg=null,dragged=false;
 function ds(e,i){if(S.connMode)return;e.preventDefault();dragged=false;dg={i,sx:e.clientX,sy:e.clientY,ox:S.nodes[i].x,oy:S.nodes[i].y};document.onmousemove=dm;document.onmouseup=de}
 function dts(e,i){if(S.connMode)return;const t=e.touches[0];dragged=false;dg={i,sx:t.clientX,sy:t.clientY,ox:S.nodes[i].x,oy:S.nodes[i].y};document.ontouchmove=e=>{const t=e.touches[0];dmxy(t.clientX,t.clientY)};document.ontouchend=de}
 function dm(e){dmxy(e.clientX,e.clientY)}
-function dmxy(x,y){if(!dg)return;dragged=true;const z=S.cvZoom/100;const el=document.getElementById('nd'+dg.i);if(el){const nx=Math.max(0,dg.ox+(x-dg.sx)/z),ny=Math.max(0,dg.oy+(y-dg.sy)/z);el.style.left=nx+'px';el.style.top=ny+'px';S.nodes[dg.i].x=nx;S.nodes[dg.i].y=ny;updateArrows()}}
+function dmxy(x,y){if(!dg)return;if(!dragged)saveUndo();dragged=true;const z=S.cvZoom/100;const el=document.getElementById('nd'+dg.i);if(el){const nx=Math.max(0,dg.ox+(x-dg.sx)/z),ny=Math.max(0,dg.oy+(y-dg.sy)/z);el.style.left=nx+'px';el.style.top=ny+'px';S.nodes[dg.i].x=nx;S.nodes[dg.i].y=ny;updateArrows()}}
 function snapToGrid(v,gridSize){return Math.round(v/gridSize)*gridSize}
 function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
   const gx=snapToGrid(Math.max(0,parseInt(el.style.left)),20);
@@ -2828,33 +2956,135 @@ function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
 
 // Resize
 let rg=null;
-function startResize(e,i){e.preventDefault();rg={i,sx:e.clientX,ow:S.nodes[i].w||220};document.onmousemove=resizeMove;document.onmouseup=resizeEnd}
-function resizeMove(e){if(!rg)return;const el=document.getElementById('nd'+rg.i);const dw=e.clientX-rg.sx;const nw=Math.max(120,Math.min(800,rg.ow+dw));if(el)el.style.width=nw+'px';S.nodes[rg.i].w=nw;updateArrows()}
-function resizeEnd(){rg=null;document.onmousemove=document.onmouseup=null}
-function resetNodeSizes(){S.nodes.forEach(n=>n.w=220);R();toast('גדלים אופסו')}
+// The handle sits in the bottom-left corner (RTL), so dragging it outward grows the box leftward and down:
+// the right edge stays put, x moves with the handle, and height is kept as a min-height (n.h)
+function startResize(e,i){
+  e.preventDefault();saveUndo();
+  const el=document.getElementById('nd'+i);
+  rg={i,sx:e.clientX,sy:e.clientY,ow:S.nodes[i].w||220,ox:S.nodes[i].x,oh:el?el.offsetHeight:(S.nodes[i].h||80)};
+  document.onmousemove=resizeMove;document.onmouseup=resizeEnd;
+}
+function resizeMove(e){
+  if(!rg)return;const z=S.cvZoom/100;const n=S.nodes[rg.i];
+  const dx=(e.clientX-rg.sx)/z,dy=(e.clientY-rg.sy)/z;
+  let nw=Math.max(120,Math.min(800,rg.ow-dx));
+  let nx=rg.ox+(rg.ow-nw);if(nx<0){nw+=nx;nx=0;}
+  const nh=Math.max(60,rg.oh+dy);
+  n.w=nw;n.x=nx;n.h=nh;
+  const el=document.getElementById('nd'+rg.i);
+  if(el){el.style.width=nw+'px';el.style.left=nx+'px';el.style.minHeight=nh+'px';}
+  updateArrows();
+}
+function resizeEnd(){rg=null;document.onmousemove=document.onmouseup=null;expandCanvas();R();}
+function resetNodeSizes(){saveUndo();S.nodes.forEach(n=>{n.w=220;n.h=0;});R();toast('גדלים אופסו')}
 
 function tglExp(pid){S.expandedPkgs[pid]=!S.expandedPkgs[pid];R()}
 
+// Arrow mode: S.cvTool==='conn' keeps the mode on for several arrows; S.connMode={from:id|null} is the pending source.
+// The dot under a box starts a one-off arrow (S.connMode set while cvTool stays 'move').
 function nodeClick(e,i){
   if(!S.connMode)return;
-  const toPkg=S.pkgs[i];if(!toPkg||toPkg.id===S.connMode.from)return;
-  saveUndo();S.conns.push({id:'conn_'+Date.now(),from:S.connMode.from,to:toPkg.id,label:'',emoji:''});
-  S.connMode=null;R();toast('קישור נוצר');
+  const pkg=S.pkgs[i];if(!pkg)return;
+  if(!S.connMode.from){S.connMode={from:pkg.id};R();return;}
+  if(pkg.id===S.connMode.from){S.connMode=S.cvTool==='conn'?{from:null}:null;R();return;}
+  createConn(S.connMode.from,pkg.id);
 }
-
+function createConn(from,to){
+  const dup=S.conns.findIndex(c=>c.from===from&&c.to===to);
+  if(dup>=0){S.connMode=S.cvTool==='conn'?{from:null}:null;toast('החץ הזה כבר קיים');openConnPop(dup);return;}
+  saveUndo();S.conns.push({id:'conn_'+Date.now(),from,to,label:'',emoji:''});
+  S.connMode=S.cvTool==='conn'?{from:null}:null;
+  openConnPop(S.conns.length-1);
+}
+function toggleConnTool(){
+  if(S.cvTool==='conn'){exitConnTool();return;}
+  S.cvTool='conn';S.connMode={from:null};R();
+}
+function exitConnTool(){S.cvTool='move';S.connMode=null;R();}
 function startConn(pid){
-  if(S.connMode&&S.connMode.from===pid){S.connMode=null;R();return}
-  S.connMode={from:pid};R();toast('לחץ על חבילת היעד');
+  if(S.connMode&&S.connMode.from===pid){S.connMode=S.cvTool==='conn'?{from:null}:null;R();return}
+  S.connMode={from:pid};R();
 }
 
-function editConnLabel(ci){
-  const cn=S.conns[ci];if(!cn)return;
-  const val=prompt('תווית לקישור (אפשר אימוג׳י):',cn.label||'');
-  if(val===null)return;saveUndo();cn.label=val;R()
+// ===== ARROW POPOVER: label (with relation types), style, flip, delete =====
+// S.connEdit = index of the arrow being edited (transient, not saved)
+const REL_TYPES=['הקבלה','ניגוד','סיבה ותוצאה','כלל ופרט','המשך','חזרה'];
+let connDirty=false;
+function editConnLabel(ci){openConnPop(ci);}
+function openConnPop(ci){
+  if(!S.conns[ci])return;
+  S.connEdit=ci;connDirty=false;
+  if(S.step!==3)S.step=3;
+  R();
+  setTimeout(()=>{const inp=document.getElementById('connPopInput');if(inp){inp.focus({preventScroll:true});inp.select();}},30);
 }
-
-function setConnStyle(ci,style){S.conns[ci].style=style;R();}
-function delConn(ci){saveUndo();S.conns.splice(ci,1);R();toast('קישור נמחק')}
+function closeConnPop(){if(S.connEdit==null)return;S.connEdit=null;R();}
+function connUndoOnce(){if(!connDirty){saveUndo();connDirty=true;}}
+function setConnRel(ci,rel){
+  const cn=S.conns[ci];if(!cn)return;connUndoOnce();
+  cn.label=cn.label===rel?'':rel;R();
+  setTimeout(()=>{const inp=document.getElementById('connPopInput');if(inp){inp.focus({preventScroll:true});inp.setSelectionRange(inp.value.length,inp.value.length);}},30);
+}
+function connLabelInput(ci,val){
+  const cn=S.conns[ci];if(!cn)return;connUndoOnce();cn.label=val;
+  document.querySelectorAll('.cp-chip').forEach(ch=>ch.classList.toggle('a',ch.textContent===val));
+  updateArrows();
+}
+function setConnStyle(ci,style){if(!S.conns[ci])return;saveUndo();S.conns[ci].style=style;R();}
+function flipConn(ci){
+  const cn=S.conns[ci];if(!cn)return;saveUndo();
+  const f=cn.from;cn.from=cn.to;cn.to=f;delete cn.midX;delete cn.midY;if(cn.style==='custom')cn.style='straight';
+  R();toast('כיוון החץ הוחלף');
+}
+function delConn(ci){saveUndo();S.conns.splice(ci,1);S.connEdit=null;R();toast('החץ נמחק')}
+// Point halfway along the drawn path, so labels and the popover sit on the line itself
+function arrowMid(cn){
+  const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
+  if(fi<0||ti<0)return null;
+  return arrowMidEp(edgePts(ndRect(fi),ndRect(ti)),cn);
+}
+function arrowMidEp(ep,cn){
+  const {fx,fy,tx,ty,fSide,tSide}=ep;
+  if(cn.style==='custom'&&cn.midX!==undefined&&cn.midY!==undefined)return {x:(fx+2*cn.midX+tx)/4,y:(fy+2*cn.midY+ty)/4};
+  if(cn.style==='curved'){
+    const off=Math.max(40,Math.hypot(tx-fx,ty-fy)*0.3);
+    let c1x=fx,c1y=fy,c2x=tx,c2y=ty;
+    if(fSide==='bottom')c1y=fy+off;else if(fSide==='top')c1y=fy-off;else if(fSide==='left')c1x=fx-off;else c1x=fx+off;
+    if(tSide==='top')c2y=ty-off;else if(tSide==='bottom')c2y=ty+off;else if(tSide==='right')c2x=tx+off;else c2x=tx-off;
+    return {x:(fx+3*c1x+3*c2x+tx)/8,y:(fy+3*c1y+3*c2y+ty)/8};
+  }
+  return {x:(fx+tx)/2,y:(fy+ty)/2};
+}
+function renderConnPop(){
+  if(window.__cvStatic||S.connEdit==null)return '';
+  const ci=S.connEdit,cn=S.conns[ci];
+  if(!cn){S.connEdit=null;return '';}
+  const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
+  const m=arrowMid(cn);if(!fp||!tp||!m)return '';
+  const st=cn.style||'straight';
+  const sBtn=(id,name)=>`<span class="cp-btn ${st===id?'a':''}" onclick="setConnStyle(${ci},'${id}')">${name}</span>`;
+  return `<div class="conn-pop" id="connPop" style="left:${Math.max(4,m.x-140)}px;top:${m.y+16}px" onmousedown="event.stopPropagation()" onclick="event.stopPropagation()">
+    <div class="cp-head"><b>${escH(fp.name)}</b> <span class="cp-arrow">←</span> <b>${escH(tp.name)}</b></div>
+    <div class="cp-lbl">מה היחס בין שתי האריזות?</div>
+    <div class="cp-chips">${REL_TYPES.map(r=>`<span class="cp-chip ${cn.label===r?'a':''}" onclick="setConnRel(${ci},'${r}')">${r}</span>`).join('')}</div>
+    <input id="connPopInput" class="cp-input" type="text" value="${escH(cn.label||'').replace(/"/g,'&quot;')}" placeholder="או נסחי במילים שלך..." oninput="connLabelInput(${ci},this.value)" onkeydown="if(event.key==='Enter'){event.preventDefault();closeConnPop();}">
+    <div class="cp-row">${sBtn('straight','ישר')}${sBtn('curved','מעוקל')}${sBtn('elbow','מרפק')}${st==='custom'?sBtn('custom','חופשי'):''}</div>
+    <div class="cp-row cp-actions">
+      <span class="cp-btn" onclick="flipConn(${ci})">⇄ היפוך כיוון</span>
+      <span class="cp-btn cp-del" onclick="delConn(${ci})">מחיקה</span>
+      <span class="cp-btn cp-done" onclick="closeConnPop()">סיום</span>
+    </div>
+  </div>`;
+}
+// Mousedown on empty canvas: close the popover and drop a half-made arrow
+function cvBgDown(e){
+  const id=e.target&&e.target.id;
+  if(id!=='cv'&&id!=='cvInner'&&id!=='cvSvg')return;
+  let ch=false;
+  if(S.connEdit!=null){S.connEdit=null;ch=true;}
+  if(S.connMode&&S.connMode.from){S.connMode=S.cvTool==='conn'?{from:null}:null;ch=true;}
+  if(ch)R();
+}
 
 function focusNode(i){
   const el=document.getElementById('nd'+i);
@@ -2882,6 +3112,8 @@ function autoLayout(){
 function updateArrows(){
   const svg=document.getElementById('cvSvg');
   if(svg)svg.innerHTML=buildArrowsSvg();
+  const svgT=document.getElementById('cvSvgTop');
+  if(svgT)svgT.innerHTML=buildArrowsSvg('top');
   const inner=document.getElementById('cvInner');if(!inner)return;
   inner.querySelectorAll('.c-arrow-label').forEach(el=>el.remove());
   inner.insertAdjacentHTML('beforeend',buildArrowLabels());
@@ -2909,18 +3141,28 @@ const STICKY_COLORS=[
   {bg:'#C8E6C9',text:'#1B5E20'},{bg:'#BBDEFB',text:'#0D47A1'},
   {bg:'#E1BEE7',text:'#4A148C'},{bg:'#FFE0B2',text:'#E65100'}
 ];
+// A spot inside the part of the canvas the student is looking at, so new items don't land off-screen
+function viewSpot(w,h){
+  const cv=document.getElementById('cv'),main=document.querySelector('.main');const z=S.cvZoom/100;
+  if(!cv||!main)return {x:80+Math.random()*120,y:80+Math.random()*80};
+  const r=cv.getBoundingClientRect(),mr=main.getBoundingClientRect();
+  const visTop=Math.max(0,mr.top+90-r.top)/z;
+  const x=Math.max(20,(cv.clientWidth/z-w)/2+(Math.random()*80-40));
+  return {x:snapToGrid(x,20),y:snapToGrid(visTop+40+Math.random()*60,20)};
+}
 function addSticky(ci){
   saveUndo();
-  const col=STICKY_COLORS[ci||0];
-  S.stickies.push({id:'st_'+Date.now(),x:80+Math.random()*200,y:80+Math.random()*150,w:180,h:120,text:'',ci:ci||0});
+  const col=STICKY_COLORS[ci||0];const sp=viewSpot(180,120);
+  S.stickies.push({id:'st_'+Date.now(),x:sp.x,y:sp.y,w:180,h:120,text:'',ci:ci||0});
   R();toast('פתק נוסף');
 }
 function delSticky(idx){saveUndo();S.stickies.splice(idx,1);R();}
 function updateStickyText(idx,text){S.stickies[idx].text=text;}
 function addLabel(){
   saveUndo();
-  S.labels.push({id:'lb_'+Date.now(),x:100+Math.random()*200,y:60+Math.random()*100,text:'כותרת',size:18});
-  R();toast('תווית נוספה');
+  const sp=viewSpot(160,40);
+  S.labels.push({id:'lb_'+Date.now(),x:sp.x,y:sp.y,text:'כותרת',size:18});
+  R();toast('כותרת נוספה');
 }
 function delLabel(idx){saveUndo();S.labels.splice(idx,1);R();}
 function updateLabelText(idx,text){S.labels[idx].text=text;}
@@ -2938,7 +3180,8 @@ function addShape(typeId){
   const ci=S.shapeColor||0;
   const isFrame=typeId==='frame';
   const w=isFrame?320:120, h=isFrame?220:80;
-  S.shapes.push({id:'sh_'+Date.now(),type:typeId,x:60+Math.random()*150,y:60+Math.random()*100,w,h,ci,text:isFrame?'כותרת':'',isFrame});
+  const sp=viewSpot(w,h);
+  S.shapes.push({id:'sh_'+Date.now(),type:typeId,x:sp.x,y:sp.y,w,h,ci,text:isFrame?'כותרת':'',isFrame});
   R();toast(isFrame?'מסגרת נוספה':'צורה נוספה');
 }
 function delShape(idx){saveUndo();S.shapes.splice(idx,1);R();}
@@ -3030,6 +3273,7 @@ function sdts(e,i,type){
 function sdm(e){sdmxy(e.clientX,e.clientY)}
 function sdmxy(x,y){
   if(!sdg)return;
+  if(!sdg.moved){saveUndo();sdg.moved=true;}
   const arr=sdg.type==='sticky'?S.stickies:sdg.type==='shape'?(S.shapes||[]):S.labels;
   const z=S.cvZoom/100;
   arr[sdg.i].x=Math.max(0,sdg.ox+(x-sdg.sx)/z);
@@ -3058,22 +3302,28 @@ function cvToolbar(){
   const shapeColorPicker=C.map((col,i)=>`<div onclick="S.shapeColor=${i};R()" title="${col.name}" style="width:16px;height:16px;border-radius:50%;background:${col.c};cursor:pointer;border:2px solid ${S.shapeColor===i?'var(--text)':'transparent'};transition:all .15s;box-shadow:${S.shapeColor===i?'0 0 0 2px var(--bg), 0 0 0 4px '+col.c:'none'}" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></div>`).join('');
   const sep=`<div style="width:1px;height:20px;background:var(--border);margin:0 4px"></div>`;
   return `<div class="cv-toolbar">
-    <div class="cv-tbtn ${S.cvTool==='move'?'active':''}" onclick="S.cvTool='move';S.connMode=null;R()" title="הזזה">${icons.move} הזזה</div>
-    <div class="cv-tbtn ${S.connMode?'active':''}" onclick="S.cvTool='conn';R()" title="קישור">${icons.conn} חץ</div>
+    <div class="cv-tbtn ${S.cvTool!=='conn'?'active':''}" onclick="exitConnTool()" title="הזזת קופסאות">${icons.move} הזזה</div>
+    <div class="cv-tbtn ${S.cvTool==='conn'?'active':''}" onclick="toggleConnTool()" title="מצב חץ: חיבור קופסאות">${icons.conn} חץ</div>
     ${sep}
-    ${STICKY_COLORS.map((sc,i)=>`<div class="cv-tbtn" onclick="addSticky(${i})" title="פתק ${i+1}" style="padding:4px 7px"><div style="width:16px;height:14px;border-radius:3px;background:${sc.bg};border:1px solid ${sc.text}40"></div></div>`).join('')}
-    <div class="cv-tbtn" onclick="addLabel()" title="תווית">${icons.label} תווית</div>
-    ${sep}
-    <div style="display:flex;align-items:center;gap:3px;padding:2px 6px;border-radius:8px;border:1px solid var(--border);background:var(--bg)">
-      <span style="font-size:9px;font-weight:700;color:var(--text-faint);margin-left:4px">צבע:</span>
-      ${shapeColorPicker}
-    </div>
-    ${shapeBtns}
-    ${sep}
+    <div class="cv-tbtn" onclick="addSticky(0)" title="פתק להערה או שאלה">${icons.sticky} פתק</div>
+    <div class="cv-tbtn" onclick="addLabel()" title="כותרת חופשית על הלוח">${icons.label} כותרת</div>
+    <div class="cv-tbtn" onclick="addShape('frame')" title="מסגרת שמקבצת כמה קופסאות"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">${SHAPE_TYPES[0].svg}</svg> מסגרת</div>
+    <div class="cv-tbtn ${S.cvMore?'active':''}" onclick="S.cvMore=!S.cvMore;R()" title="צבעים וצורות נוספות">עוד ${S.cvMore?'▴':'▾'}</div>
+    ${S.cvMore?`<div class="cv-more-row">
+      <span class="cv-more-lbl">צבע פתק:</span>
+      ${STICKY_COLORS.map((sc,i)=>`<div class="cv-tbtn" onclick="addSticky(${i})" title="פתק בצבע הזה" style="padding:4px 7px"><div style="width:16px;height:14px;border-radius:3px;background:${sc.bg};border:1px solid ${sc.text}40"></div></div>`).join('')}
+      ${sep}
+      <span class="cv-more-lbl">צורות:</span>${shapeBtns}
+      ${sep}
+      <span class="cv-more-lbl">צבע מסגרת וצורה:</span>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:3px">${shapeColorPicker}</div>
+    </div>`:''}
     <div style="flex:1"></div>
     <div class="cv-tbtn" onclick="autoLayout()" title="סידור אוטומטי"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg> סדר</div>
     <div class="cv-tbtn" onclick="doUndo()" title="ביטול" style="${undoStack.length?'':'opacity:.4;pointer-events:none'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div>
     <div class="cv-tbtn" onclick="doRedo()" title="חזרה" style="${redoStack.length?'':'opacity:.4;pointer-events:none'}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.13-9.36L23 10"/></svg></div>
+    ${!S.connMode&&!S.conns.length&&S.pkgs.length>1?`<div class="cv-conn-banner cv-hint"><span>💡 התחילו בחיבור: לחצו על <b>חץ</b>, ואז על שתי קופסאות, ותנו שם ליחס ביניהן.</span></div>`:''}
+    ${S.connMode?`<div class="cv-conn-banner"><span>${S.connMode.from?'עכשיו לחצי על הקופסה שאליה החץ מגיע':'מצב חץ: לחצי על הקופסה שממנה יוצא החץ'}</span><span class="cv-conn-banner-x" onclick="exitConnTool()">סיום (Esc)</span></div>`:''}
   </div>`;
 }
 
@@ -3146,7 +3396,7 @@ function loadPaste(){
     return {n:num,t:replaceDivineName(l.trim())};
   });
   TEXTS.custom={title:customName,verses};
-  S.doc='custom';S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
+  clearUndo();S.doc='custom';S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נטען: '+customName);
 }
 function handleFile(input){
@@ -3161,6 +3411,14 @@ function handleFile(input){
 }
 
 // ===== EXPORT =====
+function concExportHTML(){
+  const c=normConc(S.conclusions);
+  return CONC_QS.map((q,i)=>`<div style="margin-bottom:18px;page-break-inside:avoid">
+    <div style="font-size:16px;font-weight:800;color:#5A3A4A;margin-bottom:2px">${i+1}. ${q.title}</div>
+    <div style="font-size:12px;color:#9A8A92;margin-bottom:6px">${q.hint}</div>
+    <div style="font-size:14px;line-height:1.9;white-space:pre-wrap;color:#5A3A4A;padding:10px 14px;background:#F5EDE3;border-radius:10px;border-right:4px solid #8B4A5E">${escH(c[q.id].trim())||'<span style="color:#9A8A92">לא נכתב</span>'}</div>
+  </div>`).join('');
+}
 function notesExportHTML(){
   const hasNotes=Object.values(S.notes||{}).some(v=>v&&v.trim());
   if(!hasNotes)return '';
@@ -3210,13 +3468,13 @@ function exportModal(){
   return `<div class="export-bg" onclick="S.showExport=false;R()">
     <div class="export-modal" onclick="event.stopPropagation()">
       <h3>ייצוא ושיתוף</h3>
-      <div onclick="exportSubmission()" style="margin-bottom:14px;padding:14px 18px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:14px;cursor:pointer;text-align:center;box-shadow:0 4px 16px rgba(139,74,94,.3);transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(139,74,94,.4)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(139,74,94,.3)'">
-        <div style="font-size:20px;font-weight:800;margin-bottom:4px">📤 הגשה למודל</div>
-        <div style="font-size:12px;opacity:.85">מוריד JSON + פותח PDF לשמירה - העלו את שניהם</div>
+      <div class="conc-lock ${concComplete()?'':'locked'}" onclick="exportSubmission()" style="margin-bottom:14px;padding:14px 18px;background:linear-gradient(135deg,var(--btn-primary-bg),var(--btn-primary-hover));color:var(--btn-primary-text);border-radius:14px;cursor:pointer;text-align:center;box-shadow:0 4px 16px rgba(139,74,94,.3);transition:transform .15s,box-shadow .15s" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(139,74,94,.4)'" onmouseleave="this.style.transform='none';this.style.boxShadow='0 4px 16px rgba(139,74,94,.3)'">
+        <div style="font-size:20px;font-weight:800;margin-bottom:4px">📤 הגשה ללמדה</div>
+        <div style="font-size:12px;opacity:.85">מוריד קובץ PDF אחד להעלאה</div>
       </div>
       <p style="font-size:12px;color:var(--text-muted);margin-bottom:10px">אפשרויות ייצוא נוספות:</p>
       <div class="export-opt">
-        <div class="export-btn" onclick="exportFullPDF()" style="border:2px solid var(--earth)"><span style="font-size:18px;color:${tc()}">📄 PDF מלא</span><br><span style="font-size:11px">כל 5 השלבים</span></div>
+        <div class="export-btn conc-lock ${concComplete()?'':'locked'}" onclick="exportSubmission()" style="border:2px solid var(--earth)"><span style="font-size:18px;color:${tc()}">📄 PDF מלא</span><br><span style="font-size:11px">כל 5 השלבים</span></div>
         <div class="export-btn" onclick="exportPrint()"><span style="font-size:18px;color:${tc()}">📄 PDF</span><br><span style="font-size:11px">שלב נוכחי</span></div>
         <div class="export-btn" onclick="exportImage()"><span style="font-size:18px;color:${tc()}">🖼️ PNG</span><br><span style="font-size:11px">תמונה</span></div>
         <div class="export-btn" onclick="exportHTML()"><span style="font-size:18px;color:${tc()}">💾 HTML</span><br><span style="font-size:11px">שמירה</span></div>
@@ -3262,7 +3520,10 @@ function exportPrint(){
       }
       // Get computed styles for key elements
       const bodyStyle=getComputedStyle(document.body);
-      const mainContent=mainEl.innerHTML;
+      // Print conclusions as plain text blocks rather than fixed-height textareas
+      const mainClone=mainEl.cloneNode(true);
+      mainClone.querySelectorAll('.conc-ta').forEach(ta=>{const d=document.createElement('div');d.style.cssText='white-space:pre-wrap;line-height:1.8;font-size:14px;padding:6px 0';d.textContent=ta.value;ta.replaceWith(d);});
+      const mainContent=mainClone.innerHTML;
       const title=D().title;
       const isDark=document.documentElement.classList.contains('dark');
       // Build a clean print document
@@ -3318,7 +3579,8 @@ window.onload=function(){setTimeout(function(){window.print()},600)}
   },200);
 }
 
-function exportFullPDF(){
+function exportFullPDF(mode){
+  if(!concGate())return;
   S.showExport=false;R();
   toast('מכין PDF מלא...');
   setTimeout(()=>{
@@ -3397,7 +3659,7 @@ function exportFullPDF(){
       let canvasHTML='';
       let connsListHTML='';
       if(S.nodes.length&&S.pkgs.length){
-        canvasHTML=mCanv();
+        window.__cvStatic=true;try{canvasHTML=mCanv();}finally{window.__cvStatic=false;}
         // Strip interactive handlers for static view
         canvasHTML=canvasHTML.replace(/onmousedown="[^"]*"/g,'')
           .replace(/ontouchstart="[^"]*"/g,'')
@@ -3416,7 +3678,7 @@ function exportFullPDF(){
             const fc=C[fp.ci],tpc=C[tp.ci];
             connsListHTML+='<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:10px;background:rgba(90,58,74,.04);border:1px solid #D4C4CC">';
             connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+fc.c+'">'+fp.name+'</span>';
-            connsListHTML+='<span style="color:#5A3A4A;font-size:14px">&rarr;</span>';
+            connsListHTML+='<span style="color:#5A3A4A;font-size:14px">&larr;</span>';
             connsListHTML+='<span style="font-size:12px;font-weight:700;color:'+tpc.c+'">'+tp.name+'</span>';
             connsListHTML+='<span style="font-size:11px;color:#7A6070;margin-right:auto;font-style:italic">'+cn.label+'</span>';
             connsListHTML+='</div>';
@@ -3491,26 +3753,32 @@ body{background:#fff!important;margin:0;padding:20px 30px;font-family:'Heebo',sa
   <div style="font-size:60px;margin-bottom:16px;opacity:.7">&#x1f4d6;</div>
   <h1>תנ״ך לעומק - ניתוח מלא</h1>
   <h2>${title}</h2>
-  ${sname?'<div class="student-name">'+sname+'</div>':''}
+  ${workNames()?'<div class="student-name">'+escH(workNames())+'</div>':''}
   <div class="date-line">${new Date().toLocaleDateString('he-IL',{year:'numeric',month:'long',day:'numeric'})}</div>
+</div>
+
+<!-- Conclusions page -->
+<div class="pdf-section">
+  <div class="pdf-section-header">📝 מסקנות מהלימוד</div>
+  ${concExportHTML()}
 </div>
 
 <!-- Step 0: Imud -->
 <div class="pdf-section">
-  <div class="pdf-section-header"><span class="step-num">0</span> ${stepNames[0]} - עיצוב הטקסט</div>
+  <div class="pdf-section-header"><span class="step-num">1</span> ${stepNames[0]} - עיצוב הטקסט</div>
   ${imudHTML}
 </div>
 
 <!-- Step 1: Discovery -->
 <div class="pdf-section">
-  <div class="pdf-section-header"><span class="step-num">1</span> ${stepNames[1]} - סימון מילים</div>
+  <div class="pdf-section-header"><span class="step-num">2</span> ${stepNames[1]} - סימון מילים</div>
   ${discHTML}
   ${legendHTML?'<div class="pdf-sub-header">מקרא סימונים</div>'+legendHTML:''}
 </div>
 
 <!-- Step 2: Packages -->
 ${S.pkgs.length?`<div class="pdf-section">
-  <div class="pdf-section-header"><span class="step-num">2</span> ${stepNames[2]} - חבילות</div>
+  <div class="pdf-section-header"><span class="step-num">3</span> ${stepNames[2]} - חבילות</div>
   <div class="pdf-sub-header">רשימת חבילות</div>
   ${pkgsListHTML}
   <div class="pdf-sub-header" style="margin-top:24px">טקסט עם חבילות</div>
@@ -3519,7 +3787,7 @@ ${S.pkgs.length?`<div class="pdf-section">
 
 <!-- Step 3: Canvas -->
 ${canvasHTML?`<div class="pdf-section">
-  <div class="pdf-section-header"><span class="step-num">3</span> ${stepNames[3]} - מפת ארגון</div>
+  <div class="pdf-section-header"><span class="step-num">4</span> ${stepNames[3]} - מפת ארגון</div>
   <div style="overflow:visible;border:1px solid #D4C4CC;border-radius:12px;background:rgba(245,237,227,.5);padding:10px">
     ${canvasHTML}
   </div>
@@ -3537,6 +3805,7 @@ window.onload=function(){setTimeout(function(){window.print()},800)}
 </body>
 </html>`;
 
+      if(mode==='download'){downloadReportPDF(printHTML);return;}
       const printWin=window.open('','_blank','width=900,height=700');
       if(printWin){
         printWin.document.write(printHTML);
@@ -3606,9 +3875,9 @@ function exportJSON(){
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
     try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
@@ -3622,15 +3891,16 @@ function exportJSON(){
   }catch(e){toast('שגיאה בייצוא JSON');}
 }
 function exportSubmissionJSON(){
+  if(!concGate())return;
   S.showExport=false;R();
   try{
     const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
     try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
@@ -3644,32 +3914,151 @@ function exportSubmissionJSON(){
     toast('קובץ גיבוי נוצר — העלו ל-Moodle עם ה-PDF!');
   }catch(e){toast('שגיאה בייצוא JSON');}
 }
+// ===== SUBMISSION: one PDF file, downloaded directly (no print dialog, no pop-up) =====
 function exportSubmission(){
-  // Download JSON first (inline logic from exportSubmissionJSON)
+  if(!(S.studentName||'').trim()){
+    toast('לפני ההגשה כתבו את השם בשדה "שם מלא"');
+    if(S.step!==4||S.showExport){S.step=4;S.showExport=false;R();}
+    setTimeout(()=>{const inp=document.getElementById('studentNameInput'),side=document.querySelector('.side');
+      if(inp&&side){side.scrollTop=Math.max(0,side.scrollTop+inp.getBoundingClientRect().top-side.getBoundingClientRect().top-120);inp.focus({preventScroll:true});}},120);
+    return;
+  }
+  if(!concGate())return;
+  exportFullPDF('download');
+}
+function buildWorkData(){
+  const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+    fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+    vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+    pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+    stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
+    cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
+    studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+    timestamp:new Date().toISOString()};
+  try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
+  if(TEXTS.custom)data.customText=TEXTS.custom;
+  return data;
+}
+function loadScriptOnce(src,ready){
+  if(ready())return Promise.resolve();
+  return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=()=>ready()?res():rej(new Error('lib'));s.onerror=()=>rej(new Error('network'));document.head.appendChild(s);});
+}
+function busyOverlay(msg){
+  let el=document.getElementById('busyOv');
+  if(!msg){if(el)el.remove();return;}
+  if(!el){el=document.createElement('div');el.id='busyOv';el.className='busy-ov';document.body.appendChild(el);}
+  el.innerHTML=`<div class="busy-box"><div class="busy-spin"></div><div>${msg}</div></div>`;
+}
+// Pick a cut row near the page bottom that is blank, so lines of text are not sliced in half
+function whiteCut(canvas,y,h){
+  const w=canvas.width;const top=Math.max(y+40,y+h-320),rows=y+h-top;if(rows<=0)return h;
+  const d=canvas.getContext('2d').getImageData(0,top,w,rows).data;  // one read for the whole search band
+  for(let r=rows-1;r>=0;r--){
+    let ok=true;const base=r*w*4;
+    for(let k=0;k<w*4;k+=16){const q=base+k;if(d[q]<244||d[q+1]<244||d[q+2]<244){ok=false;break;}}
+    if(ok)return top+r-y+1;
+  }
+  return h;
+}
+// In the report the map's boxes are absolutely positioned, so its frame collapses to zero height.
+// Measure the real content, give the frame that size, and scale it down to the page width if needed.
+// A static copy of the map (reading view, PDF) is built without the live boxes on screen, so arrow ends
+// were guessed from stored sizes. Redraw every arrow and move every label from the boxes as actually laid out.
+function boxInInner(el,inner){let x=0,y=0,c=el;while(c&&c!==inner){x+=c.offsetLeft;y+=c.offsetTop;c=c.offsetParent;}return {x,y,w:el.offsetWidth,h:el.offsetHeight};}
+function relayoutStaticArrows(inner){
+  if(!inner)return;
+  const svgs=inner.querySelectorAll('svg.cv-svg');if(!svgs.length)return;
+  let paths='',pathsTop='';
+  S.conns.forEach((cn,ci)=>{
+    const fi=S.pkgs.findIndex(p=>p.id===cn.from),ti=S.pkgs.findIndex(p=>p.id===cn.to);
+    if(fi<0||ti<0)return;
+    const fe=inner.querySelector('#nd'+fi),te=inner.querySelector('#nd'+ti);if(!fe||!te)return;
+    const ep=edgePts(boxInInner(fe,inner),boxInInner(te,inner));
+    const d=cn.style==='custom'?arrowPathCustom(ep,cn):arrowPath(ep,cn.style||'straight');
+    const pth=`<path d="${d}" fill="none" stroke="#8B4A5E" stroke-width="2" stroke-dasharray="8,5" marker-end="url(#arrowheadS)"/>`;
+    if(connOnTop(cn))pathsTop+=pth;else paths+=pth;
+    const lb=inner.querySelector(`.c-arrow-label[data-ci="${ci}"]`);
+    if(lb){const m=arrowMidEp(ep,cn);lb.style.left=m.x+'px';lb.style.top=m.y+'px';}
+  });
+  svgs[0].innerHTML=arrowDefs('arrowheadS')+paths;
+  if(svgs[1])svgs[1].innerHTML=arrowDefs('arrowheadS2')+pathsTop.replace(/arrowheadS\)/g,'arrowheadS2)');
+}
+function fitReportCanvases(doc){
+  doc.querySelectorAll('.canvas').forEach(cvEl=>{
+    const inner=cvEl.querySelector('#cvInner')||cvEl.firstElementChild;if(!inner)return;
+    relayoutStaticArrows(inner);
+    const ir=inner.getBoundingClientRect();let maxR=0,maxB=0;
+    inner.querySelectorAll('.c-node,.c-sticky,.c-label,.c-frame-wrap,.c-shape-wrap,.c-arrow-label').forEach(el=>{
+      const r=el.getBoundingClientRect();maxR=Math.max(maxR,r.right-ir.left);maxB=Math.max(maxB,r.bottom-ir.top);
+    });
+    if(!maxR||!maxB)return;
+    const W=maxR+20,H=maxB+20;
+    const imp=(el,k,v)=>el.style.setProperty(k,v,'important');  // the report CSS uses !important on these
+    imp(inner,'width',W+'px');imp(inner,'height',H+'px');imp(inner,'min-height',H+'px');imp(inner,'min-width',W+'px');inner.style.position='relative';
+    // Explicit size and viewBox: html2canvas rasterises the SVG by its attributes, not its CSS box
+    inner.querySelectorAll('svg.cv-svg').forEach(svg=>{svg.style.width=W+'px';svg.style.height=H+'px';svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox',`0 0 ${W} ${H}`);});
+    const avail=cvEl.parentElement.clientWidth-4;
+    // Fit width, and also height so the whole map stays on one A4 page (about 940px under the section title)
+    const sc=Math.min(1,avail/W,940/H);
+    imp(inner,'transform-origin','top right');imp(inner,'transform',sc<1?`scale(${sc})`:'none');
+    imp(cvEl,'height',(H*sc+8)+'px');imp(cvEl,'min-height',(H*sc+8)+'px');imp(cvEl,'width',(W*sc+4)+'px');imp(cvEl,'overflow','hidden');cvEl.style.margin='0 auto';
+  });
+}
+function pdfFileName(){
+  const clean=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').trim();
+  return `תנך לעומק - ${clean(workNames())||'עבודה'} - ${clean(D().title)}.pdf`;
+}
+async function downloadReportPDF(html){
+  busyOverlay('מכינים את קובץ ה־PDF... זה לוקח כמה שניות');
+  let ifr=null;
   try{
-    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
-      fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
-      vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
-      pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
-      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      studentName:S.studentName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
-      timestamp:new Date().toISOString()};
-    try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
-    if(TEXTS.custom)data.customText=TEXTS.custom;
-    const json=JSON.stringify(data,null,2);
-    const blob=new Blob([json],{type:'application/json;charset=utf-8'});
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    const sname=(S.studentName||'').trim();
-    a.download='moovanly_'+(sname?sname+'_':'')+D().title+'_'+new Date().toISOString().slice(0,10)+'.json';
-    a.click();
-  }catch(e){toast('שגיאה בייצוא JSON');return;}
-  // Show toast and then open PDF
-  toast('קובץ JSON הורד. שמרו גם את ה-PDF ואז העלו את שניהם למודל');
-  S.showExport=false;R();
-  // Small delay so the JSON download starts before the print window opens
-  setTimeout(()=>{ exportFullPDF(); },600);
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js',()=>!!window.html2canvas);
+    await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',()=>!!(window.jspdf&&window.jspdf.jsPDF));
+    // Render the same report the print version uses, in an off-screen frame of A4 width
+    html=html.replace(/<script>[\s\S]*?<\/script>/g,'').replace('</head>','<style>body{width:794px!important;box-sizing:border-box;padding:24px 34px!important}.pdf-cover{padding-top:120px}.c-arrow-label{background:#fff!important;backdrop-filter:none!important;border:1.5px solid #C48B9F!important;box-shadow:0 1px 3px rgba(0,0,0,.08)}</style></head>');
+    ifr=document.createElement('iframe');
+    ifr.style.cssText='position:fixed;left:-12000px;top:0;width:820px;height:1200px;border:0';
+    document.body.appendChild(ifr);
+    await new Promise(res=>{ifr.onload=res;ifr.srcdoc=html;});
+    const doc=ifr.contentDocument;
+    try{await doc.fonts.ready;}catch(_e){}
+    await new Promise(r=>setTimeout(r,400));
+    fitReportCanvases(doc);
+    if(typeof window.__pdfDocHook==='function')window.__pdfDocHook(doc);  // test hook
+    const blocks=[doc.querySelector('.pdf-cover'),...doc.querySelectorAll('.pdf-section')].filter(Boolean);
+    const pdf=new window.jspdf.jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+    const M=10,CW=210-2*M,CH=297-2*M;let first=true;
+    for(const b of blocks){
+      const canvas=await window.html2canvas(b,{scale:2,backgroundColor:'#ffffff',useCORS:true,logging:false,windowWidth:820});
+      const pxPerMm=canvas.width/CW,pageHpx=Math.floor(CH*pxPerMm);
+      let y=0;
+      while(y<canvas.height){
+        let h=Math.min(pageHpx,canvas.height-y);
+        if(y+h<canvas.height)h=whiteCut(canvas,y,h);
+        const sl=document.createElement('canvas');sl.width=canvas.width;sl.height=h;
+        const sctx=sl.getContext('2d');sctx.fillStyle='#fff';sctx.fillRect(0,0,sl.width,h);sctx.drawImage(canvas,0,y,canvas.width,h,0,0,canvas.width,h);
+        if(!first)pdf.addPage();first=false;
+        pdf.addImage(sl.toDataURL('image/jpeg',0.88),'JPEG',M,M,CW,h/pxPerMm);
+        y+=h;
+      }
+    }
+    // The full work data rides inside the PDF (XMP metadata, base64), so the grader can read it later
+    try{
+      const json=JSON.stringify(buildWorkData());
+      const b64=btoa(unescape(encodeURIComponent(json)));
+      pdf.addMetadata('MOOVANLY_DATA_BEGIN'+b64+'MOOVANLY_DATA_END','https://navac123.github.io/tanakh-laomek/ns/');
+    }catch(_e){}
+    pdf.setProperties({title:'Tanakh LaOmek',creator:'Tanakh LaOmek'});
+    if(typeof window.__pdfCapture==='function')window.__pdfCapture(pdf,pdfFileName());  // test hook
+    else pdf.save(pdfFileName());
+    toast('קובץ ה־PDF ירד. העלו אותו ללמדה');
+  }catch(e){
+    console.error(e);
+    toast('לא הצלחנו ליצור את הקובץ. בדקו חיבור לאינטרנט ונסו שוב');
+  }finally{
+    if(ifr)ifr.remove();
+    busyOverlay(null);
+  }
 }
 function importJSON(){
   S.showExport=false;R();
@@ -3682,7 +4071,7 @@ function importJSON(){
       try{
         const d=JSON.parse(e.target.result);
         if(d.customText)TEXTS.custom=d.customText;
-        S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
+        clearUndo();S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
         S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
         S.fs=d.fs||18;S.lh=d.lh||1.5;
         S.cats=d.cats||[];S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
@@ -3690,7 +4079,8 @@ function importJSON(){
         if(d.darkMode!==undefined)S.darkMode=d.darkMode;
         S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
         S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
-        S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};
+        S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);
+        S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';
         S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
         S.splash=false;
         document.documentElement.classList.toggle('dark',S.darkMode);
@@ -3710,7 +4100,7 @@ function exportHTML(){
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},
+      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
     if(TEXTS.custom)stateData.customText=TEXTS.custom;
     // Build exported HTML by injecting state as JSON in a data attribute on body
@@ -3718,7 +4108,7 @@ function exportHTML(){
     const safeState=JSON.stringify(stateData).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
     html=html.replace('<body','<body data-saved-state="'+safeState.replace(/"/g,'&quot;')+'"');
     // Inject loader before R() call — uses a comment marker approach
-    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
+    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},conclusions:normConc(d.conclusions),cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
     html=html.replace('R();',loader+'\nR();');
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');

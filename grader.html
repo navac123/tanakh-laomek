@@ -69,6 +69,11 @@ h1,h2,h3,h4{font-family:'Assistant',sans-serif;font-weight:700}
 .pkg-card .pc-words{font-size:.8rem;color:var(--tl);font-family:serif}
 .conn-item{font-size:.85rem;padding:.3rem .5rem;margin:.2rem 0;background:rgba(90,58,74,.04);border-radius:6px}
 .note-block{background:rgba(90,58,74,.04);border-right:3px solid var(--a);border-radius:8px;padding:.6rem .8rem;margin:.3rem 0}
+.conc-panel{background:#fff;border:2px solid var(--a);border-radius:12px;padding:1rem 1.2rem;margin-bottom:1rem}
+.conc-panel h3{font-size:1rem;color:var(--p);margin-bottom:.5rem}
+.conc-legacy{border-style:dashed;opacity:.85}
+.conc-msg{font-size:.85rem;color:var(--tl);margin-bottom:.5rem}
+.conc-warn{color:#9a2c2c;font-weight:700}
 .nb-step-lbl{font-size:.75rem;font-weight:700;color:var(--pl);margin-bottom:.2rem}
 .stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.5rem;margin:.5rem 0}
 .stat-box{background:rgba(90,58,74,.06);border-radius:6px;padding:.5rem;text-align:center}
@@ -139,13 +144,33 @@ h1,h2,h3,h4{font-family:'Assistant',sans-serif;font-weight:700}
 <script>
 // === CONSTANTS ===
 const STEP_NAMES=['עימוד','גילוי','אריזה','ארגון','קריאה'];
+// Must match CONC_QS / CONC_MIN_WORDS in index.html
+const CONC_QS=[{id:'q1',title:'מה המזמור אומר?'},{id:'q2',title:'איך הגעת לזה?'},{id:'q3',title:'מה הלימוד פתח לך?'}];
+const CONC_MIN_WORDS=40;
+function concWords(s){return String(s||'').trim().split(/\s+/).filter(Boolean).length;}
+// 'legacy' = file saved before the conclusions page existed; 'empty' / 'partial' / 'done'
+function concState(d){
+  if(!d.conclusions)return 'legacy';
+  const n=CONC_QS.filter(q=>concWords(d.conclusions[q.id])>=CONC_MIN_WORDS).length;
+  const any=CONC_QS.some(q=>concWords(d.conclusions[q.id])>0);
+  return n===CONC_QS.length?'done':any?'partial':'empty';
+}
+function concPanel(d){
+  const st=concState(d);
+  if(st==='legacy')return `<div class="conc-panel conc-legacy"><h3>📝 דף מסקנות</h3><div class="conc-msg">העבודה הוגשה לפני שנוסף דף המסקנות לאפליקציה.</div></div>`;
+  const msg=st==='done'?'':`<div class="conc-msg conc-warn">⚠️ ${st==='empty'?'דף המסקנות לא נכתב':'דף המסקנות לא הושלם'} (נדרשות ${CONC_MIN_WORDS} מילים לכל תשובה)</div>`;
+  return `<div class="conc-panel"><h3>📝 דף מסקנות</h3>${msg}
+    ${CONC_QS.map((q,i)=>{const v=d.conclusions[q.id]||'';const n=concWords(v);
+      return `<div class="note-block"><div class="nb-step-lbl">${i+1}. ${q.title} <span style="font-weight:400">(${n} מילים)</span></div><div style="font-size:.9rem;line-height:1.8;white-space:pre-wrap">${v.trim()?esc(v.trim()):'<span style="color:var(--tl)">לא נכתב</span>'}</div></div>`;}).join('')}
+  </div>`;
+}
 
 const CRITERIA=[
   {id:'c1',label:'עימוד ועיצוב (שלב 0)',max:15,icon:'📐',desc:'פירוק לשורות, כניסות, פסקאות — הבנת מבנה הטקסט'},
   {id:'c2',label:'גילוי וסימון (שלב 1)',max:25,icon:'🔍',desc:'קטגוריות, סימונים, שימוש בסגנונות — עומק הניתוח'},
   {id:'c3',label:'אריזה ומיפוי (שלב 2)',max:20,icon:'📦',desc:'חבילות נושאיות, שמות, קישורים'},
   {id:'c4',label:'ארגון ויזואלי (שלב 3)',max:15,icon:'🗺️',desc:'קנבס — פריסה, חצים, הערות'},
-  {id:'c5',label:'רפלקציה וקריאה (שלב 4)',max:15,icon:'💭',desc:'מחברת, פרשנות אישית'},
+  {id:'c5',label:'רפלקציה וקריאה (שלב 4)',max:15,icon:'💭',desc:'דף מסקנות (מוצג בראש העבודה), מחברת, פרשנות אישית'},
   {id:'c6',label:'שלמות הגשה',max:10,icon:'✅',auto:true}
 ];
 
@@ -162,7 +187,7 @@ function loadFiles(files){
     r.onload=e=>{
       try{
         const d=JSON.parse(e.target.result);
-        const name=(d.studentName||'').trim()||f.name.replace('.json','');
+        const name=[(d.studentName||'').trim(),(d.partnerName||'').trim()].filter(Boolean).join(' ו')||f.name.replace('.json','');
         const doc=(d.doc||'').trim();
         const sid=name+'|||'+doc;
         if(!students.find(s=>s.id===sid)){
@@ -196,6 +221,7 @@ function computeComp(d){
   if(d.pkgs&&d.pkgs.length>=4)score+=1;
   if(d.conns&&d.conns.length>=1)score+=0.5;
   if(d.notes){const noteCnt=Object.values(d.notes).filter(v=>v&&v.trim()).length;if(noteCnt>=1)score+=0.5;}
+  if(concState(d)==='done')score+=1;
   return Math.min(10,Math.round(score));
 }
 
@@ -215,7 +241,7 @@ function renderList(){
     const graded=total>0;
     const active=students[currentIdx]&&students[currentIdx].id===sid;
     return `<div class="sb-item${active?' active':''}" onclick="selectByIdx(${students.indexOf(s)})">
-      <div><div class="si-name">${esc(s.name)}</div><div class="si-meta">${esc(s.doc)||'ללא מסמך'}</div></div>
+      <div><div class="si-name">${esc(s.name)}</div><div class="si-meta">${esc(s.doc)||'ללא מסמך'}${(()=>{const c=concState(s.data);return c==='empty'||c==='partial'?' · <span style="color:#9a2c2c">חסר דף מסקנות</span>':'';})()}</div></div>
       <div class="si-score${graded?' done':''}">${graded?total+'/100':'—'}</div>
     </div>`;
   }).join('');
@@ -363,7 +389,8 @@ function renderGrade(){
           }
         });
       }
-      contentH=`<div class="stats-grid"><div class="stat-box"><div class="sv">${numNotes}/5</div><div class="sl">הערות שנכתבו</div></div></div>${notesH}`;
+      const cst=concState(d);const cLbl={done:'הושלם',partial:'חלקי',empty:'לא נכתב',legacy:'גרסה ישנה'}[cst];
+      contentH=`<div class="stats-grid"><div class="stat-box"><div class="sv">${cLbl}</div><div class="sl">דף מסקנות</div></div><div class="stat-box"><div class="sv">${numNotes}/5</div><div class="sl">הערות שנכתבו</div></div></div>${notesH}`;
     } else if(cr.id==='c6'){
       const pct=Math.min(100,score*10);
       contentH=`<div><div style="display:flex;justify-content:space-between;font-size:.8rem;color:var(--tl);margin-bottom:.3rem"><span>שלמות כוללת</span><span>${pct}%</span></div><div class="completeness-bar"><div class="comp-fill" style="width:${pct}%"></div></div></div>
@@ -404,6 +431,7 @@ function renderGrade(){
       <button onclick="exportStudentPDF()" style="background:linear-gradient(135deg,var(--p),#2d1a26);color:#fff;border:none;border-radius:8px;padding:.6rem 1.2rem;font-family:'Heebo',sans-serif;font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:.4rem;white-space:nowrap">📄 ייצוא PDF לסטודנט</button>
     </div>
     ${integrityPanel(d)}
+    ${concPanel(d)}
     ${critH}
     <div class="overall-card">
       <h3>📝 הערה כללית</h3>
