@@ -973,7 +973,8 @@ const CONC_QS=[
   {id:'q2',title:'איך הגעת לזה?',hint:'איך העימוד, הסימונים והמבנה שמצאת מובילים למסקנה הזאת? הפנו לשתי אריזות או קשרים לפחות.'},
   {id:'q3',title:'מה הלימוד פתח לך?',hint:'שאלה, משמעות או כיוון שהלימוד הזה פתח אצלך.'}
 ];
-const CONC_MIN_WORDS=40;
+const CONC_MIN_WORDS=15;  // internal floor; students are told "two or three sentences"
+function concCntText(n){return n>=CONC_MIN_WORDS?'✓ מספיק':(n?n+' מילים · עוד קצת':'שניים או שלושה משפטים');}
 function normConc(c){c=c||{};return {q1:c.q1||'',q2:c.q2||'',q3:c.q3||''};}
 function concWords(s){return (s||'').trim().split(/\s+/).filter(Boolean).length;}
 function concDoneCount(){const c=normConc(S.conclusions);return CONC_QS.filter(q=>concWords(c[q.id])>=CONC_MIN_WORDS).length;}
@@ -2678,12 +2679,12 @@ function concCard(){
   const c=normConc(S.conclusions);
   return `<div class="read-card conc-card" id="concCard">
     <div class="read-title">📝 דף מסקנות</div>
-    <div class="conc-intro">עברו על הניתוח שעשיתם, ונסחו מה למדתם ממנו. אפשר להגיש רק אחרי שכל תשובה כוללת לפחות ${CONC_MIN_WORDS} מילים. דף המסקנות שווה 15 נקודות מתוך 100 בציון העבודה. בודקים בו טענה ברורה על המזמור, מסקנה שנשענת על הניתוח, ושאלה או משמעות שהלימוד פתח.</div>
+    <div class="conc-intro">עברו על הניתוח שעשיתם, ונסחו מה למדתם ממנו. עונים על כל שאלה בשניים או שלושה משפטים, ואפשר להגיש רק אחרי שכל התשובות כתובות. דף המסקנות שווה 15 נקודות מתוך 100 בציון העבודה. בודקים בו טענה ברורה על המזמור, מסקנה שנשענת על הניתוח, ושאלה או משמעות שהלימוד פתח.</div>
     ${CONC_QS.map((q,i)=>{const n=concWords(c[q.id]);return `<div class="conc-q">
       <div class="conc-q-title">${i+1}. ${q.title}</div>
       <div class="conc-q-hint">${q.hint}</div>
       <textarea class="conc-ta" id="conc_${q.id}" oninput="concInput('${q.id}',this.value)">${escH(c[q.id])}</textarea>
-      <div class="conc-cnt ${n>=CONC_MIN_WORDS?'ok':''}" id="concCnt_${q.id}">${n} / ${CONC_MIN_WORDS} מילים</div>
+      <div class="conc-cnt ${n>=CONC_MIN_WORDS?'ok':''}" id="concCnt_${q.id}">${concCntText(n)}</div>
     </div>`;}).join('')}
   </div>`;
 }
@@ -2693,7 +2694,7 @@ function concInput(id,val){
   concAutosize(document.getElementById('conc_'+id));
   S.conclusions=normConc(S.conclusions);S.conclusions[id]=val;
   const n=concWords(val);const el=document.getElementById('concCnt_'+id);
-  if(el){el.textContent=`${n} / ${CONC_MIN_WORDS} מילים`;el.classList.toggle('ok',n>=CONC_MIN_WORDS);}
+  if(el){el.textContent=concCntText(n);el.classList.toggle('ok',n>=CONC_MIN_WORDS);}
   const ok=concComplete();
   document.querySelectorAll('.conc-lock').forEach(b=>b.classList.toggle('locked',!ok));
   document.querySelectorAll('.conc-status').forEach(s=>{s.textContent=concStatusText();s.classList.toggle('ok',ok);});

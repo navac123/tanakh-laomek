@@ -149,7 +149,7 @@ h1,h2,h3,h4{font-family:'Assistant',sans-serif;font-weight:700}
 const STEP_NAMES=['עימוד','גילוי','אריזה','ארגון','קריאה'];
 // Must match CONC_QS / CONC_MIN_WORDS in index.html
 const CONC_QS=[{id:'q1',title:'מה המזמור אומר?'},{id:'q2',title:'איך הגעת לזה?'},{id:'q3',title:'מה הלימוד פתח לך?'}];
-const CONC_MIN_WORDS=40;
+const CONC_MIN_WORDS=15;
 function concWords(s){return String(s||'').trim().split(/\s+/).filter(Boolean).length;}
 // 'legacy' = file saved before the conclusions page existed; 'empty' / 'partial' / 'done'
 function concState(d){
@@ -161,7 +161,7 @@ function concState(d){
 function concPanel(d){
   const st=concState(d);
   if(st==='legacy')return `<div class="conc-panel conc-legacy"><h3>📝 דף מסקנות</h3><div class="conc-msg">העבודה הוגשה לפני שנוסף דף המסקנות לאפליקציה.</div></div>`;
-  const msg=st==='done'?'':`<div class="conc-msg conc-warn">⚠️ ${st==='empty'?'דף המסקנות לא נכתב':'דף המסקנות לא הושלם'} (נדרשות ${CONC_MIN_WORDS} מילים לכל תשובה)</div>`;
+  const msg=st==='done'?'':`<div class="conc-msg conc-warn">⚠️ ${st==='empty'?'דף המסקנות לא נכתב':'דף המסקנות לא הושלם'} (נדרשים שניים או שלושה משפטים בכל תשובה)</div>`;
   return `<div class="conc-panel"><h3>📝 דף מסקנות</h3>${msg}
     ${CONC_QS.map((q,i)=>{const v=d.conclusions[q.id]||'';const n=concWords(v);
       return `<div class="note-block"><div class="nb-step-lbl">${i+1}. ${q.title} <span style="font-weight:400">(${n} מילים)</span></div><div style="font-size:.9rem;line-height:1.8;white-space:pre-wrap">${v.trim()?esc(v.trim()):'<span style="color:var(--tl)">לא נכתב</span>'}</div></div>`;}).join('')}
