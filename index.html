@@ -124,6 +124,7 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .top-docs{display:flex;gap:4px;margin-right:auto}
 /* On narrower screens the psalm tabs scroll inside the bar instead of pushing the whole page sideways */
 .topbar>*{flex-shrink:0}.topbar>.top-docs{flex-shrink:1;min-width:0;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+.topbar>:last-child{flex-shrink:1;min-width:0;flex-wrap:wrap}
 html,body{overflow-x:hidden}
 .top-doc{padding:6px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-glass-light);color:var(--text-muted);transition:all .2s;font-family:'Heebo';display:flex;align-items:center;gap:6px;position:relative}
 .top-doc:hover{border-color:var(--earth);color:var(--text)}
@@ -431,6 +432,9 @@ html,body{overflow-x:hidden}
 .pkg-del{color:var(--earth)}
 .pkg-note{font-size:11px;line-height:1.6;color:var(--text-muted);margin-top:12px;padding:8px 10px;border-radius:10px;border:1px solid var(--border)}
 .col-seg{display:inline-block;vertical-align:top;margin-left:1.2em}
+.app-banner{margin:6px 16px 0;padding:8px 14px;border-radius:10px;background:var(--earth-glass-hover);border:1.5px solid var(--coral);font-size:13px;font-weight:600;color:var(--text);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.app-banner.warn{border-color:#c45050}
+.app-banner-btn{cursor:pointer;padding:3px 12px;border-radius:8px;background:var(--earth);color:var(--btn-primary-text);font-weight:700}
 .busy-ov{position:fixed;inset:0;z-index:9999;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center}
 .busy-box{background:var(--bg);color:var(--text);border-radius:14px;padding:18px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);font-family:'Heebo'}
 .busy-spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--earth);animation:spin 0.9s linear infinite}
@@ -841,19 +845,47 @@ let S={doc:'psalms1',step:0,darkMode:false,
 };
 
 // ===== SAVE / LOAD =====
+// ===== SAVING =====
+// One slot in localStorage per browser. Guards: never save in demo mode, never save while another tab
+// has written newer work, and never let an untouched empty state overwrite real saved work.
+function buildSaveData(){
+  const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
+    fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
+    vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
+    cvZoom:S.cvZoom,cvTool:'move',shapeColor:S.shapeColor,
+    pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
+    stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
+    studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
+  if(TEXTS.custom) data.customText=TEXTS.custom;
+  return data;
+}
+function workIsEmpty(d){
+  if(!d)return true;
+  const has=o=>o&&Object.keys(o).length>0;
+  const txt=o=>o&&Object.values(o).some(v=>v&&String(v).trim());
+  return !(has(d.marks)||has(d.brks)||has(d.indents)||has(d.gaps)||has(d.paraBreaks)||(d.pkgs&&d.pkgs.length)||(d.stickies&&d.stickies.length)||(d.labels&&d.labels.length)||txt(d.notes)||txt(d.conclusions));
+}
+let saveBlockedReason='';
+function persist(key){
+  key=key||'moovanly_save';saveBlockedReason='';
+  if(!window.__appStarted||S.splash){return false;}
+  if(window.__demoMode){saveBlockedReason='demo';return false;}
+  if(window.__otherTab){saveBlockedReason='othertab';return false;}
+  const data=buildSaveData();
+  if(workIsEmpty(data)&&!window.__dirty){
+    try{const cur=JSON.parse(localStorage.getItem(key)||'null');if(!workIsEmpty(cur))return false;}catch(e){}
+  }
+  localStorage.setItem(key,JSON.stringify(data));
+  const now=new Date().toLocaleString('he-IL');
+  localStorage.setItem(key==='moovanly_save'?'moovanly_time':'moovanly_backup_time',now);
+  if(key==='moovanly_save'){window.__lastOwnWrite=localStorage.getItem('moovanly_save');window._unsaved=false;}
+  return true;
+}
 function saveWork(){
   try{
-    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
-      fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
-      vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
-      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-      stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-      studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
-    if(TEXTS.custom) data.customText=TEXTS.custom;
-    localStorage.setItem('moovanly_save',JSON.stringify(data));
-    localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
-    toast('העבודה נשמרה');
+    if(persist())toast('העבודה נשמרה');
+    else if(saveBlockedReason==='demo')toast('במצב דוגמה לא שומרים');
+    else if(saveBlockedReason==='othertab')toast('העבודה עודכנה בלשונית אחרת. טענו את הגרסה העדכנית');
   }catch(e){toast('שגיאה בשמירה');}
 }
 function loadWork(){
@@ -888,7 +920,8 @@ function loadWork(){
     S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';S.chavruta=d.chavruta||'';
     S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
     if(d.darkMode!==undefined)S.darkMode=d.darkMode;
-    S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
+    S.cvZoom=d.cvZoom||100;S.cvTool='move';S.connMode=null;S.shapeColor=d.shapeColor||0;S.pkgSel=[];S.pkgEdit=null;S.selWords=[];
+    window.__lastOwnWrite=localStorage.getItem('moovanly_save');window.__demoMode=false;window.__otherTab=false;
     S.splash=false;R();toast(fromBackup?'עבודה שוחזרה מגיבוי':'עבודה נטענה');return true;
   }catch(e){toast('שגיאה בטעינה');return false;}
 }
@@ -915,6 +948,7 @@ const MAX_UNDO=50;
 function undoSnapshot(){return JSON.stringify({brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes,stickies:S.stickies,labels:S.labels,shapes:S.shapes})}
 function restoreSnapshot(s){const p=JSON.parse(s);S.brks=p.brks;S.indents=p.indents;S.gaps=p.gaps||{};S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
 function saveUndo(){
+  window.__dirty=true;window._unsaved=true;
   undoStack.push(undoSnapshot());
   if(undoStack.length>MAX_UNDO) undoStack.shift();
   redoStack.length=0;
@@ -1186,7 +1220,7 @@ function R(){
   const sideScroll=sideEl?sideEl.scrollTop:0;
   const mainScroll=mainEl?mainEl.scrollTop:0;
   document.getElementById('app').innerHTML=`
-    ${topBar()}${stepsBar()}
+    ${topBar()}${stepsBar()}${statusBanner()}
     <div class="wrap">${side()}<div class="main${S.step!==lastRenderStep?' anim':''}" role="main" aria-label="אזור תוכן ראשי">${mainContent()}</div></div>
     ${S.showUpload?modal():''}${S.showExport?exportModal():''}${S.showKeys?keysModal():''}
     ${S.showNotebook?notebookOverlay():''}${notebookPanel()}`;
@@ -1391,12 +1425,10 @@ function splashScreen(){
         </div>`).join('')}
       </div>
 
-      <button class="splash-go" onclick="startApp()" style="background:${burg};box-shadow:0 6px 24px ${cv('rgba(139,74,94,.25)','rgba(196,139,159,.25)')};border-radius:14px;padding:14px 48px;font-size:16px;letter-spacing:.5px">התחל לעבוד</button>
-      ${saved?`<div style="margin-top:12px">
-        <button class="splash-saved-btn" onclick="loadSaved()" style="border-color:${cv('rgba(212,196,204,.6)','rgba(58,42,53,.6)')}">טען עבודה שמורה <span style="font-size:11px;color:${cv('#9A8A92','#7A6A72')};font-weight:400">(${time})</span></button>
-      </div>`:''}
+      <button class="splash-go" onclick="startApp()" style="background:${burg};box-shadow:0 6px 24px ${cv('rgba(139,74,94,.25)','rgba(196,139,159,.25)')};border-radius:14px;padding:14px 48px;font-size:16px;letter-spacing:.5px">${window.__appStarted?'חזרה לעבודה':(saved?'המשך לעבוד':'התחל לעבוד')}</button>
+      ${saved&&!window.__appStarted?`<div style="margin-top:8px;font-size:11px;color:${cv('#9A8A92','#7A6A72')}">ממשיכים מהעבודה השמורה (${time})</div>`:''}
       <div style="display:flex;gap:10px;justify-content:center;margin-top:16px;flex-wrap:wrap">
-        <button class="splash-saved-btn" onclick="loadDemo()" style="border-color:${gold};color:${gold}">צפה בדוגמה — מזמור י״ט</button>
+        <button class="splash-saved-btn" onclick="loadDemo()" style="border-color:${gold};color:${gold};${window.__appStarted?'display:none':''}">צפה בדוגמה — מזמור י״ט</button>
         <a href="guide-tanakh-laomek.html" target="_blank" style="font-size:12px;color:${cv('#7A6070','#B0A098')};text-decoration:none;padding:7px 16px;border-radius:10px;border:1px solid ${cv('rgba(212,196,204,.4)','rgba(58,42,53,.4)')};font-weight:500;font-family:'Heebo';transition:all .2s;display:flex;align-items:center;gap:5px;background:${cv('rgba(245,237,227,.4)','rgba(30,21,32,.4)')}" onmouseover="this.style.borderColor='${rose}'" onmouseout="this.style.borderColor='${cv('rgba(212,196,204,.4)','rgba(58,42,53,.4)')}'">מדריך שימוש</a>
       </div>
       <div style="margin-top:20px;font-size:12px;color:${cv('#7A6070','#B0A098')};letter-spacing:.3px">
@@ -1414,47 +1446,41 @@ function splashScreen(){
 }
 let autoSaveTimer=null;
 function startAutoSave(){
+  window.__appStarted=true;
   if(autoSaveTimer)return;
-  autoSaveTimer=setInterval(()=>{
-    try{
-      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
-        fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
-        vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
-        cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-        pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-        studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
-      if(TEXTS.custom) data.customText=TEXTS.custom;
-      localStorage.setItem('moovanly_save',JSON.stringify(data));
-      localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
-      window._unsaved=false;
-    }catch(e){}
-  },30000);
-  // Backup save every 5 minutes
-  setInterval(()=>{
-    try{
-      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
-        fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
-        vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
-        cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-        pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
-        stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-        studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
-      if(TEXTS.custom) data.customText=TEXTS.custom;
-      localStorage.setItem('moovanly_backup',JSON.stringify(data));
-      localStorage.setItem('moovanly_backup_time',new Date().toLocaleString('he-IL'));
-    }catch(e){}
-  },300000);
+  // Only the tab in front saves on a timer, so a forgotten background tab can't overwrite newer work
+  autoSaveTimer=setInterval(()=>{try{if(document.visibilityState==='visible')persist();}catch(e){}},30000);
+  setInterval(()=>{try{if(document.visibilityState==='visible')persist('moovanly_backup');}catch(e){}},300000);
+}
+// Save at once when the student leaves the tab or closes it
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'){try{persist();}catch(e){}}});
+window.addEventListener('pagehide',()=>{try{persist();}catch(e){}});
+// Another tab wrote newer work: stop saving here until the student loads it
+window.addEventListener('storage',e=>{
+  if(e.key!=='moovanly_save'||!window.__appStarted||window.__demoMode)return;
+  if(e.newValue&&e.newValue!==window.__lastOwnWrite){window.__otherTab=true;if(!S.splash)R();}
+});
+function reloadFromOtherTab(){window.__otherTab=false;loadWork();}
+function exitDemo(){window.__demoMode=false;location.hash='';location.reload();}
+function statusBanner(){
+  if(window.__demoMode)return `<div class="app-banner">מצב דוגמה: אפשר לנסות הכול, אבל שום דבר כאן לא נשמר. <span class="app-banner-btn" onclick="exitDemo()">${hasSavedWork()?'חזרה לעבודה שלי':'יציאה מהדוגמה'}</span></div>`;
+  if(window.__otherTab)return `<div class="app-banner warn">העבודה עודכנה בלשונית אחרת של האפליקציה. כדי לא לדרוס אותה, השמירה כאן הופסקה. <span class="app-banner-btn" onclick="reloadFromOtherTab()">טעינת הגרסה העדכנית</span></div>`;
+  return '';
 }
 function startApp(){
   const el=document.getElementById('splashEl');
   if(el)el.classList.add('out');
-  setTimeout(()=>{S.splash=false;R();startAutoSave();},450);
+  setTimeout(()=>{
+    if(window.__appStarted){S.splash=false;R();return;}  // back from the logo: keep the work on screen
+    let saved=null;try{saved=JSON.parse(localStorage.getItem('moovanly_save')||localStorage.getItem('moovanly_backup')||'null');}catch(e){}
+    if(saved&&!workIsEmpty(saved)){loadWork();startAutoSave();return;}  // returning student: continue, never start blank over saved work
+    S.splash=false;R();startAutoSave();
+  },450);
 }
 function loadSaved(){
   const el=document.getElementById('splashEl');
   if(el)el.classList.add('out');
-  setTimeout(()=>{loadWork();startAutoSave();},450);
+  setTimeout(()=>{if(window.__appStarted){S.splash=false;R();return;}loadWork();startAutoSave();},450);
 }
 function loadDemo(){
   const el=document.getElementById('splashEl');
@@ -1643,7 +1669,7 @@ function loadDemo(){
       3:'הקבלה בין שני סוגי השבח: מהטבע (פס׳ ב-ז) ומהתורה (פס׳ ח-י). מעבר מגוף שלישי (השמים מספרים) לגוף ראשון (עבדך, אמרי פי). החתימה מחולקת: 5א תפילה להתקבלות הדיבור, 5ב תפילה להתקבלות הגיון הלב, 5ג פניה לאל.',
       4:'המזמור בנוי כמשפך: שמים → תורה → עבד ה׳ → תפילה אישית. המבט מצטמצם בכל שלב — מהכלל אל הפרט, מהאובייקטיבי לסובייקטיבי.'
     };
-    R();startAutoSave();toast('דמו נטען — מזמור י״ט');
+    window.__demoMode=true;R();toast('דמו נטען: מזמור י״ט. במצב דוגמה לא שומרים');
   },450);
 }
 
@@ -1817,7 +1843,7 @@ function sImud(){
     <div class="sb-sub">רווח שורות</div>
     <input type="range" min="1.2" max="2.4" step=".1" value="${S.lh}" oninput="S.lh=+this.value;R()" style="width:100%;accent-color:${cv('#8B4A5E','#8B4A5E')};margin-bottom:8px">
     <div style="display:flex;gap:6px;margin:8px 0">
-      <div class="sb-btn sb-btn-out sb-btn-sm" style="flex:1" onclick="S.brks={};S.indents={};S.gaps={};S.paraBreaks={};R();toast('עימוד נוקה')">נקה הכל</div>
+      <div class="sb-btn sb-btn-out sb-btn-sm" style="flex:1" onclick="if(confirm('לנקות את כל העימוד: שבירות, הזחות, רווחים ופסקאות?')){saveUndo();S.brks={};S.indents={};S.gaps={};S.paraBreaks={};R();toast('העימוד נוקה. אפשר לבטל ב־Ctrl+Z')}">נקה הכל</div>
     </div>
     <div class="sb-btn sb-btn-blue" onclick="S.step=1;R()">המשך לגילוי →</div>`;
 }
@@ -2893,9 +2919,9 @@ function hideDoc(k){
 }
 function sw(k){
   if(k===S.doc)return;
-  const hasWork=Object.keys(S.marks).length||Object.keys(S.brks).length||S.pkgs.length;
-  if(hasWork&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית. להמשיך?'))return;
-  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
+  if(window.__demoMode){if(confirm('זו הדוגמה, ושום דבר בה לא נשמר. לצאת ממנה ולעבוד על מזמור משלך?'))exitDemo();return;}
+  if(!workIsEmpty(buildSaveData())&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית, כולל המחברת ודף המסקנות. כדאי לשמור קודם גיבוי. להמשיך?'))return;
+  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.pkgEdit=null;S.gaps={};window.__dirty=true;R();toast(D().title)}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
@@ -3475,8 +3501,9 @@ function loadPaste(){
     let num=hebrewNum(i+1);
     return {n:num,t:replaceDivineName(l.trim())};
   });
+  if(!workIsEmpty(buildSaveData())&&!confirm('טעינת טקסט חדש תמחק את כל העבודה הנוכחית. כדאי לשמור קודם גיבוי. להמשיך?'))return;
   TEXTS.custom={title:customName,verses};
-  clearUndo();S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
+  clearUndo();S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.stickies=[];S.labels=[];S.shapes=[];S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.pkgEdit=null;S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נטען: '+customName);
 }
 function handleFile(input){
@@ -4157,6 +4184,8 @@ function importJSON(){
     reader.onload=function(e){
       try{
         const d=JSON.parse(e.target.result);
+        if(!d||typeof d!=='object'||!d.doc||!d.marks){toast('זה לא קובץ עבודה של תנ״ך לעומק');return;}
+        if(!workIsEmpty(buildSaveData())&&!confirm('טעינת הקובץ תחליף את העבודה הנוכחית. להמשיך?'))return;
         if(d.customText)TEXTS.custom=d.customText;
         clearUndo();S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
         S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
@@ -4168,7 +4197,10 @@ function importJSON(){
         S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
         S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);
         S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';S.chavruta=d.chavruta||'';
-        S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
+        S.cvZoom=d.cvZoom||100;S.cvTool='move';S.shapeColor=d.shapeColor||0;S.pkgSel=[];S.pkgEdit=null;S.selWords=[];S.connMode=null;
+        (S.cats||[]).forEach(c=>ensureSubs(c));
+        Object.keys(S.marks).forEach(k=>{const m=S.marks[k];if(m&&!m.subId){const cat=S.cats.find(c=>c.id===m.catId);if(cat)m.subId=cat.subs[0].id;}});
+        window.__dirty=true;window.__demoMode=false;window.__otherTab=false;
         S.splash=false;
         document.documentElement.classList.toggle('dark',S.darkMode);
         R();toast('עבודה יובאה בהצלחה!');startAutoSave();
@@ -4188,15 +4220,18 @@ function exportHTML(){
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-      cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor};
+      cvZoom:S.cvZoom,cvTool:'move',shapeColor:S.shapeColor,studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
     if(TEXTS.custom)stateData.customText=TEXTS.custom;
     // Build exported HTML by injecting state as JSON in a data attribute on body
     let html=document.documentElement.outerHTML;
     const safeState=JSON.stringify(stateData).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
     html=html.replace('<body','<body data-saved-state="'+safeState.replace(/"/g,'&quot;')+'"');
     // Inject loader before R() call — uses a comment marker approach
-    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},gaps:d.gaps||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},conclusions:normConc(d.conclusions),cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
-    html=html.replace('R();',loader+'\nR();');
+    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},gaps:d.gaps||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},conclusions:normConc(d.conclusions),studentName:d.studentName||"",partnerName:d.partnerName||"",chavruta:d.chavruta||"",cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
+    // Insert right before the app's own final start call (the first R(); in the page is inside an attribute)
+    const at=html.lastIndexOf("\nR();\nif(location.hash");
+    if(at<0)throw new Error('start marker');
+    html=html.slice(0,at)+'\n'+loader+html.slice(at);
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');
     a.href=URL.createObjectURL(blob);
