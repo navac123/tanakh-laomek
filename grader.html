@@ -187,7 +187,7 @@ function loadFiles(files){
     r.onload=e=>{
       try{
         const d=JSON.parse(e.target.result);
-        const name=[(d.studentName||'').trim(),(d.partnerName||'').trim()].filter(Boolean).join(' ו')||f.name.replace('.json','');
+        const name=(d.chavruta?'חברותא '+d.chavruta+' · ':'')+([(d.studentName||'').trim(),(d.partnerName||'').trim()].filter(Boolean).join(' ו')||f.name.replace('.json',''));
         const doc=(d.doc||'').trim();
         const sid=name+'|||'+doc;
         if(!students.find(s=>s.id===sid)){

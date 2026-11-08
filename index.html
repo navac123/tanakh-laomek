@@ -122,6 +122,9 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 .logo:hover{opacity:.8}
 .logo svg{width:24px;height:24px}
 .top-docs{display:flex;gap:4px;margin-right:auto}
+/* On narrower screens the psalm tabs scroll inside the bar instead of pushing the whole page sideways */
+.topbar>*{flex-shrink:0}.topbar>.top-docs{flex-shrink:1;min-width:0;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px}
+html,body{overflow-x:hidden}
 .top-doc{padding:6px 14px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-glass-light);color:var(--text-muted);transition:all .2s;font-family:'Heebo';display:flex;align-items:center;gap:6px;position:relative}
 .top-doc:hover{border-color:var(--earth);color:var(--text)}
 .top-doc.a{background:var(--btn-primary-bg);color:var(--btn-primary-text);border-color:var(--btn-primary-bg)}
@@ -383,6 +386,50 @@ body{font-family:'Heebo',sans-serif;background:var(--bg);color:var(--text);min-h
 /* Reading */
 .read-card{background:var(--bg-glass);backdrop-filter:var(--glass-blur-sm);border-radius:16px;padding:24px 32px;margin-bottom:14px;box-shadow:0 4px 20px rgba(90,58,74,.06);border:1px solid var(--teal-border);animation:slideUp .4s cubic-bezier(.22,1,.36,1)}
 .read-title{font-size:20px;font-weight:800;margin-bottom:14px;letter-spacing:-.3px}
+.gal-ov{position:fixed;inset:0;z-index:5000;background:var(--bg);display:flex;flex-direction:column;direction:rtl;font-family:'Heebo'}
+.gal-top{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:10px 16px;border-bottom:1px solid var(--border);background:var(--bg-warm)}
+.gal-title{font-size:18px;font-weight:800;color:var(--earth);margin-left:6px}
+.gal-sel{font-family:'Heebo';font-size:13px;padding:5px 8px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.gal-tabs{display:flex;gap:3px;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:3px}
+.gal-tab{font-size:13px;padding:4px 11px;border-radius:7px;cursor:pointer;color:var(--text)}
+.gal-tab.a{background:var(--earth);color:var(--btn-primary-text);font-weight:700}
+.gal-btn{font-size:13px;padding:6px 12px;border-radius:9px;border:1px solid var(--border);background:var(--bg);color:var(--text);cursor:pointer;display:inline-flex;align-items:center;gap:4px}
+.gal-btn-main{background:var(--earth);color:var(--btn-primary-text);border-color:var(--earth);font-weight:700}
+.gal-meta{font-size:12px;color:var(--text-muted)}
+.gal-spacer{flex:1}
+.gal-cols{flex:1;display:grid;gap:12px;padding:12px;min-height:0}
+.gal-n3{grid-template-columns:repeat(3,1fr)}.gal-n2{grid-template-columns:repeat(2,1fr)}.gal-n1{grid-template-columns:1fr}
+.gal-col{display:flex;flex-direction:column;min-height:0;background:var(--bg-glass-strong);border:1.5px solid var(--border);border-radius:14px;overflow:hidden}
+.gal-col-h{display:flex;justify-content:space-between;align-items:center;padding:8px 14px;font-size:20px;font-weight:800;color:var(--earth);background:var(--earth-glass);cursor:pointer;border-bottom:1px solid var(--border)}
+.gal-col-x{font-size:12px;font-weight:600;color:var(--text-muted)}
+.gal-col-b{flex:1;overflow:auto;padding:12px 14px;min-height:0}
+.gal-col-b .text-area{box-shadow:none!important;background:transparent!important;padding:0 36px 0 0!important}
+.gal-part-map .canvas{background-image:none}
+.gal-conc .gal-q{margin-bottom:14px}
+.gal-q-t{font-size:15px;font-weight:800;color:var(--text);margin-bottom:4px}
+.gal-q-a{font-size:15px;line-height:1.85;white-space:pre-wrap;color:var(--text);background:var(--earth-glass);border-right:4px solid var(--earth);border-radius:8px;padding:8px 12px}
+.gal-empty{color:var(--text-faint);font-style:italic}
+.gal-emptystate{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;color:var(--text);font-size:15px;padding:20px;max-width:560px;margin:0 auto;line-height:1.7}
+.gal-note{font-size:12px;color:var(--text-muted);margin-top:10px}
+.pkg-steps{font-size:12px;line-height:1.6;background:var(--earth-glass);border-radius:10px;padding:8px 10px;margin-bottom:8px}
+.pkg-steps div{opacity:.9}.pkg-steps div.done{opacity:.5;text-decoration:line-through}
+.pkg-selbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:12px;padding:7px 10px;border-radius:10px;border:1.5px dashed var(--border);color:var(--text-muted)}
+.pkg-selbar.on{border-color:var(--earth);color:var(--text);background:var(--earth-glass)}
+.pkg-link{color:var(--earth);cursor:pointer;text-decoration:underline;font-size:11px}
+#pkgMakeBtn.off{opacity:.5}
+.pkg-row{border-radius:10px;background:var(--pb);border:1.5px solid var(--pc);margin-bottom:5px;overflow:hidden}
+.pkg-row-h{display:flex;align-items:center;gap:6px;padding:7px 10px;cursor:pointer}
+.pkg-dot{width:10px;height:10px;border-radius:4px;background:var(--pc);flex-shrink:0}
+.pkg-row-n{flex:1;font-size:12px;font-weight:700;color:var(--pc)}
+.pkg-sub{opacity:.6;margin-left:3px}
+.pkg-row-c{font-size:10px;color:var(--pc);opacity:.75}
+.pkg-row-e{font-size:12px;color:var(--pc)}
+.pkg-ed{padding:6px 10px 10px;background:var(--bg);border-top:1px solid var(--pc)}
+.pkg-ed-l{font-size:11px;color:var(--text-muted);display:block;margin:4px 0 3px}
+.pkg-ed-sel{width:100%;font-family:'Heebo';font-size:12px;padding:4px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
+.pkg-ed-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.pkg-del{color:var(--earth)}
+.pkg-note{font-size:11px;line-height:1.6;color:var(--text-muted);margin-top:12px;padding:8px 10px;border-radius:10px;border:1px solid var(--border)}
 .busy-ov{position:fixed;inset:0;z-index:9999;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center}
 .busy-box{background:var(--bg);color:var(--text);border-radius:14px;padding:18px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);font-family:'Heebo'}
 .busy-spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--earth);animation:spin 0.9s linear infinite}
@@ -789,7 +836,7 @@ let S={doc:'psalms1',step:0,darkMode:false,
   conclusions:{q1:'',q2:'',q3:''},
   showNotebook:false,nbTab:-1,
   autoDetect:false,detectedGroups:[],detectedPairs:[],showAutoDetect:false,autoDetectMinCount:2,
-  studentName:'',partnerName:''
+  studentName:'',partnerName:'',chavruta:''
 };
 
 // ===== SAVE / LOAD =====
@@ -801,7 +848,7 @@ function saveWork(){
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-      studentName:S.studentName||'',partnerName:S.partnerName||''};
+      studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
     if(TEXTS.custom) data.customText=TEXTS.custom;
     localStorage.setItem('moovanly_save',JSON.stringify(data));
     localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
@@ -837,7 +884,7 @@ function loadWork(){
     });
     S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
     S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
-    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';
+    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';S.chavruta=d.chavruta||'';
     S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
     if(d.darkMode!==undefined)S.darkMode=d.darkMode;
     S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
@@ -1375,7 +1422,7 @@ function startAutoSave(){
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
         pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
         stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-        studentName:S.studentName||'',partnerName:S.partnerName||''};
+        studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_save',JSON.stringify(data));
       localStorage.setItem('moovanly_time',new Date().toLocaleString('he-IL'));
@@ -1391,7 +1438,7 @@ function startAutoSave(){
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
         pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
         stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
-        studentName:S.studentName||'',partnerName:S.partnerName||''};
+        studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||''};
       if(TEXTS.custom) data.customText=TEXTS.custom;
       localStorage.setItem('moovanly_backup',JSON.stringify(data));
       localStorage.setItem('moovanly_backup_time',new Date().toLocaleString('he-IL'));
@@ -1926,6 +1973,10 @@ function sDisc(){
 }
 
 function sPkg(){
+  const n=S.pkgSel.length;
+  const swatches=(cur,fn)=>C.map((col,i)=>`<div class="pal-c ${cur===i?'a':''}" style="background:${col.c}" title="${col.name}" onclick="${fn(i)}"></div>`).join('');
+  const styles=(cur,fn)=>[['fill','רקע מלא'],['subtle','רקע עדין'],['border','מסגרת']].map(([id,nm])=>`<div class="style-opt ${cur===id?'a':''}" onclick="${fn(id)}">${nm}</div>`).join('');
+  const canMake=!!(S.pkgNewName.trim()&&n);
   return `
     <div class="sb-title">אריזה</div>
     <div class="info-box" onclick="S.showPkgInfo=!S.showPkgInfo;R()">
@@ -1943,61 +1994,53 @@ function sPkg(){
         </div>
       </div>
     </div>
-    <div style="background:${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(139,74,94,.15)','rgba(196,139,159,.15)')};font-size:12px;line-height:1.6">
-      <b>איך בוחרים מילים?</b><br>
-      • <b>גרירה</b> — לחצו וגררו על מילים רצופות (כמו בוורד)<br>
-      • <b>מספר פסוק</b> — לחצו על המספר לבחירת פסוק שלם<br>
-      • <b>לחיצה בודדת</b> — להוסיף/להסיר מילה אחת
+    <div class="pkg-steps">
+      <div class="${n?'done':''}"><b>1.</b> סמנו בטקסט את המילים: גוררים על מילים רצופות, או לוחצים על מספר פסוק.</div>
+      <div class="${S.pkgNewName.trim()?'done':''}"><b>2.</b> תנו לאריזה כותרת שמתארת את התוכן.</div>
+      <div><b>3.</b> לחצו "צור אריזה" או Enter.</div>
     </div>
-    <div style="display:flex;gap:4px;margin-bottom:10px;flex-wrap:wrap">
-      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="selectAllWords()">בחר הכל</div>
-      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="S.pkgSel=[];R()">נקה בחירה</div>
-      <div class="sb-btn sb-btn-out sb-btn-sm" onclick="selectVerseRange()">בחר טווח פסוקים...</div>
+    <div class="pkg-selbar ${n?'on':''}">
+      <span>${n?`נבחרו <b id="pkgSelCount">${n}</b> מילים`:'<span id="pkgSelCount" style="display:none">0</span>עוד לא נבחרו מילים'}</span>
+      ${n?`<span class="pkg-link" onclick="S.pkgSel=[];R()">ניקוי</span>`:''}
+      <span class="pkg-link" onclick="selectVerseRange()">טווח פסוקים...</span>
     </div>
-    <div class="sb-sub">יצירת אריזה חדשה</div>
-    <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">כותרת</label>
-    <input type="text" id="pkgNewName" class="sb-input" placeholder="כותרת האריזה" value="${S.pkgNewName}" oninput="S.pkgNewName=this.value;const btn=document.querySelector('.sb-btn-green');if(btn){btn.disabled=!this.value||!S.pkgSel.length;btn.style.opacity=btn.disabled?'0.5':'1'}" style="margin-bottom:8px">
-    <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">צבע</label>
-    <div class="pal" id="pkgNewPal">
-      ${C.map((col,i)=>`<div class="pal-c" style="background:${col.c}" data-ci="${i}" onclick="S.pkgNewCi=${i};document.querySelectorAll('#pkgNewPal .pal-c').forEach(el=>el.classList.remove('a'));this.classList.add('a');R()" ${S.pkgNewCi===i?'class="a"':''}></div>`).join('')}
-    </div>
-    <label style="font-size:11px;color:${tcm()};display:block;margin-bottom:4px">סגנון</label>
-    <div class="style-tgl">
-      <div class="style-opt ${S.pkgNewStyle==='fill'?'a':''}" onclick="S.pkgNewStyle='fill';R()">רקע מלא</div>
-      <div class="style-opt ${S.pkgNewStyle==='subtle'?'a':''}" onclick="S.pkgNewStyle='subtle';R()">רקע עדין</div>
-      <div class="style-opt ${S.pkgNewStyle==='border'?'a':''}" onclick="S.pkgNewStyle='border';R()">מסגרת</div>
-    </div>
-    <div style="font-size:11px;color:${tcm()};margin-bottom:8px">מילים נבחרות: <span id="pkgSelCount">${S.pkgSel.length}</span> <span style="font-size:10px;opacity:.6">· גרור על מילים לבחירה מהירה</span></div>
-    <button class="sb-btn sb-btn-green" onclick="mkPkg()" ${!S.pkgNewName||!S.pkgSel.length?'disabled style="opacity:0.5;cursor:not-allowed"':''}><span>צור אריזה</span></button>
-    ${S.pkgs.length>0?`
-      <div class="sb-sub">אריזות (${S.pkgs.length})</div>
-      ${S.pkgs.map((pkg,pi)=>{const col=C[pkg.ci]||C[0];return `
-        <div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${col.b};border:1.5px solid ${col.c}">
-          <div style="display:flex;flex-direction:column;gap:1px">
-            <span style="cursor:pointer;font-size:10px;color:${col.c};opacity:${pi>0?'.7':'.2'};line-height:1" onclick="${pi>0?`movePkg(${pi},-1)`:''}" title="הזז למעלה">▲</span>
-            <span style="cursor:pointer;font-size:10px;color:${col.c};opacity:${pi<S.pkgs.length-1?'.7':'.2'};line-height:1" onclick="${pi<S.pkgs.length-1?`movePkg(${pi},1)`:''}" title="הזז למטה">▼</span>
+    <input type="text" id="pkgNewName" class="sb-input" placeholder="כותרת האריזה החדשה" value="${escH(S.pkgNewName).replace(/"/g,'&quot;')}"
+      oninput="S.pkgNewName=this.value;const b=document.getElementById('pkgMakeBtn');if(b)b.classList.toggle('off',!(this.value.trim()&&S.pkgSel.length))"
+      onkeydown="if(event.key==='Enter'){event.preventDefault();mkPkg();}" style="margin:8px 0">
+    <div class="pal" id="pkgNewPal">${swatches(S.pkgNewCi,i=>`S.pkgNewCi=${i};R()`)}</div>
+    <div class="style-tgl">${styles(S.pkgNewStyle,id=>`S.pkgNewStyle='${id}';R()`)}</div>
+    <button id="pkgMakeBtn" class="sb-btn sb-btn-green ${canMake?'':'off'}" onclick="mkPkg()"><span>צור אריזה</span></button>
+    ${S.pkgs.length?`
+      <div class="sb-sub">האריזות שלכם (${S.pkgs.length}) <span style="font-weight:400;font-size:10px;color:${tcm()}">· לחיצה לעריכה</span></div>
+      ${S.pkgs.map((pkg,pi)=>{const col=C[pkg.ci]||C[0];const ed=S.pkgEdit===pkg.id;const parent=S.pkgs.find(p=>p.id===pkg.parentId);
+        return `<div class="pkg-row ${ed?'ed':''}" style="--pc:${col.c};--pb:${col.b}">
+          <div class="pkg-row-h" onclick="S.pkgEdit=${ed?'null':`'${pkg.id}'`};R()">
+            <span class="pkg-dot"></span>
+            <span class="pkg-row-n">${parent?'<span class="pkg-sub">↳</span>':''}${escH(pkg.name)}</span>
+            <span class="pkg-row-c">${pkg.words.length} מילים</span>
+            <span class="pkg-row-e">${ed?'▴':'✎'}</span>
           </div>
-          <span style="font-size:14px">${pkg.emoji||''}</span>
-          <span style="font-size:12px;font-weight:700;color:${col.c};flex:1">${pkg.name}</span>
-          <span style="font-size:10px;color:${col.c};opacity:.7">${pkg.words.length} מילים</span>
-          <span style="cursor:pointer;color:${cv('#ef4444','#8B4A5E')};font-size:16px;padding:0 4px" onclick="deletePkg(${pi})">×</span>
-        </div>`;}).join('')}
-      ${S.pkgs.length>1?`
-        <div class="sb-sub">אריזת על / אריזת משנה</div>
-        ${S.pkgs.map((pkg,pi)=>`
-          <div style="display:flex;align-items:center;gap:4px;margin-bottom:4px;font-size:11px">
-            <span>${pkg.emoji||''} ${pkg.name}</span><span style="color:${tcm()}">←</span>
-            <select style="font-size:11px;border:1px solid ${brd()};border-radius:6px;padding:2px 4px;font-family:'Heebo';background:${bgc()};color:${tc()}" onchange="setPkgParent(${pi},this.value)">
-              <option value="-1" ${!pkg.parentId?'selected':''}>עצמאית</option>
-              ${S.pkgs.filter((_,i)=>i!==pi).map((p)=>{const idx=S.pkgs.indexOf(p);return `<option value="${idx}" ${pkg.parentId===p.id?'selected':''}>משנה של: ${p.emoji||''} ${p.name}</option>`}).join('')}
+          ${ed?`<div class="pkg-ed" onclick="event.stopPropagation()">
+            <input type="text" class="sb-input" value="${escH(pkg.name).replace(/"/g,'&quot;')}" onchange="renamePkg(${pi},this.value)" onkeydown="if(event.key==='Enter')this.blur()">
+            <div class="pal">${swatches(pkg.ci,i=>`setPkgProp(${pi},'ci',${i})`)}</div>
+            <div class="style-tgl">${styles(pkg.style,id=>`setPkgProp(${pi},'style','${id}')`)}</div>
+            <label class="pkg-ed-l">נמצאת בתוך אריזה:</label>
+            <select class="pkg-ed-sel" onchange="setPkgParent(${pi},this.value)">
+              <option value="-1" ${!pkg.parentId?'selected':''}>לא, אריזה עצמאית</option>
+              ${S.pkgs.map((p,i)=>i===pi?'':`<option value="${i}" ${pkg.parentId===p.id?'selected':''}>${escH(p.name)}</option>`).join('')}
             </select>
-          </div>`).join('')}
-      `:''}
+            <div class="pkg-ed-btns">
+              <span class="sb-btn sb-btn-out sb-btn-sm" onclick="S.pkgSel=[...S.pkgs[${pi}].words];R()" title="מסמן בטקסט את המילים של האריזה, כדי לבדוק או לשנות">הצג מילים</span>
+              ${n?`<span class="sb-btn sb-btn-out sb-btn-sm" onclick="setPkgWords(${pi})" title="המילים של האריזה יוחלפו במילים המסומנות עכשיו בטקסט">עדכן למילים המסומנות (${n})</span>`:''}
+              <span class="sb-btn sb-btn-out sb-btn-sm" onclick="movePkg(${pi},-1)" title="הזזה למעלה ברשימה">▲</span>
+              <span class="sb-btn sb-btn-out sb-btn-sm" onclick="movePkg(${pi},1)" title="הזזה למטה ברשימה">▼</span>
+              <span class="sb-btn sb-btn-out sb-btn-sm pkg-del" onclick="deletePkg(${pi})">מחיקה</span>
+            </div>
+          </div>`:''}
+        </div>`;}).join('')}
     `:''}
-    <div style="background:linear-gradient(135deg,rgba(90,58,74,.06),rgba(196,139,159,.08));border:2px solid var(--a);border-radius:12px;padding:.8rem 1rem;margin:1rem 0 .5rem;font-size:.82rem;line-height:1.8;text-align:right">
-<strong style="color:var(--p)">📌 תזכורת:</strong> בסוף מורידים קובץ PDF אחד ומעלים אותו ללמדה · בחברותא מספיק שאחד מגיש, ושני השמות נכנסים לקובץ
-</div>
-<button class="sb-btn sb-btn-blue" style="margin-top:16px" onclick="S.step=3;R()"><span>המשך לארגון →</span></button>
+    <div class="pkg-note">📌 בסוף מורידים קובץ PDF אחד ומעלים אותו ללמדה · בחברותא מספיק שאחד מגיש</div>
+    <button class="sb-btn sb-btn-blue" style="margin-top:12px" onclick="S.step=3;R()"><span>המשך לארגון →</span></button>
   `;
 }
 
@@ -2074,6 +2117,8 @@ function sRead(){
     ${notesSummary}
     <div class="conc-status ${concComplete()?'ok':''}" style="margin-top:12px" onclick="goToConclusions()">${concStatusText()}</div>
     <div style="margin-top:12px">
+      <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:4px">מספר החברותא <span style="font-weight:400">(מהרשימה בלמדה)</span></div>
+      <input type="text" inputmode="numeric" id="chavrutaInput" value="${escH(S.chavruta||'').replace(/"/g,'&quot;')}" placeholder="למשל 7" oninput="S.chavruta=this.value.replace(/[^0-9]/g,'');this.value=S.chavruta" style="width:90px;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:14px;font-weight:700;background:${bgc()};color:${tc()};box-sizing:border-box;margin-bottom:8px">
       <div style="font-size:11px;font-weight:700;color:${tcm()};margin-bottom:4px">שם מלא</div>
       <input type="text" id="studentNameInput" value="${escH(S.studentName||'').replace(/"/g,'&quot;')}" placeholder="השם שלך..." oninput="S.studentName=this.value" style="width:100%;padding:6px 8px;border:1px solid ${brd()};border-radius:6px;font-family:'Heebo';font-size:13px;background:${bgc()};color:${tc()};box-sizing:border-box">
       <div style="font-size:11px;font-weight:700;color:${tcm()};margin:8px 0 4px">שם בן/בת החברותא <span style="font-weight:400">(אם עבדתם בזוג)</span></div>
@@ -2216,7 +2261,7 @@ function pkgBoxOpen(pkg){
   else if(pkg.style==='subtle')boxClass+='pkg-box-subtle';
   else boxClass+='pkg-box-border';
   return `<div class="${boxClass}" style="${style}">
-    <div style="font-size:${isChild?'11':'12'}px;font-weight:700;color:${col.c};margin-bottom:${isChild?'4':'6'}px;display:flex;align-items:center;gap:4px">${pkg.emoji||''} ${pkg.name}</div>`;
+    <div style="font-size:${isChild?'11':'12'}px;font-weight:700;color:${col.c};margin-bottom:${isChild?'4':'6'}px;display:flex;align-items:center;gap:4px;cursor:pointer" onclick="S.pkgEdit='${pkg.id}';R()" title="לחיצה לעריכת האריזה">${pkg.emoji||''} ${escH(pkg.name)} <span style="opacity:.5;font-weight:400">✎</span></div>`;
 }
 
 function mPkg(){
@@ -2858,7 +2903,13 @@ function pkgWordEnter(k){
   if(pkgDrag.selecting&&!S.pkgSel.includes(k)){S.pkgSel.push(k);sortPkgSel();updateWordVisual(k,true);updatePkgCount();}
   else if(!pkgDrag.selecting&&S.pkgSel.includes(k)){S.pkgSel=S.pkgSel.filter(x=>x!==k);updateWordVisual(k,false);updatePkgCount();}
 }
-function pkgWordUp(){if(pkgDrag){pkgDrag=null;R();}}
+function pkgWordUp(){if(pkgDrag){pkgDrag=null;R();
+  if(S.pkgSel.length&&!S.pkgNewName.trim()&&!S.pkgEdit){const i=document.getElementById('pkgNewName');if(i)i.focus({preventScroll:true});}}}
+// Touch: follow the finger across words while selecting
+document.addEventListener('touchmove',function(e){
+  if(!pkgDrag)return;const t=e.touches[0];const el=document.elementFromPoint(t.clientX,t.clientY);
+  const w=el&&el.closest&&el.closest('[data-pk]');if(w){e.preventDefault();pkgWordEnter(w.dataset.pk);}
+},{passive:false});
 function updatePkgCount(){const el=document.getElementById('pkgSelCount');if(el)el.textContent=S.pkgSel.length;}
 document.addEventListener('mouseup',pkgWordUp);
 document.addEventListener('touchend',pkgWordUp);
@@ -2895,13 +2946,13 @@ function selectVerseWords(vi){
   R();
 }
 function mkPkg(){
-  if(!S.pkgNewName){toast('הכנס כותרת');return}
-  if(!S.pkgSel.length){toast('בחר מילים');return}
+  if(!S.pkgSel.length){toast('קודם סמנו בטקסט את המילים של האריזה');return}
+  if(!S.pkgNewName.trim()){toast('תנו לאריזה כותרת');const i=document.getElementById('pkgNewName');if(i)i.focus();return}
   saveUndo();
   S.pkgs.push({id:'pkg_'+Date.now(),name:S.pkgNewName,emoji:S.pkgNewEmoji,ci:S.pkgNewCi,style:S.pkgNewStyle,words:[...S.pkgSel],parentId:null});
   // Keep the canvas layout: give only the new box a free spot below everything else
   if(S.nodes.length===S.pkgs.length-1)S.nodes.push(freeNodeSpot());else S.nodes=[];
-  S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];
+  S.pkgNewName='';S.pkgNewEmoji='';S.pkgSel=[];S.pkgNewCi=nextFreeColor();
   R();toast('אריזה נוצרה');
 }
 function freeNodeSpot(){
@@ -2911,6 +2962,10 @@ function freeNodeSpot(){
   S.stickies.forEach(s=>{maxY=Math.max(maxY,s.y+(s.h||120));});
   return {x:60,y:maxY?snapToGrid(maxY+40,20):50,w:220,h:0};
 }
+function renamePkg(i,v){v=String(v||'').trim();if(!v||!S.pkgs[i]||S.pkgs[i].name===v)return;saveUndo();S.pkgs[i].name=v;R();}
+function setPkgProp(i,k,v){if(!S.pkgs[i])return;saveUndo();S.pkgs[i][k]=v;R();}
+function setPkgWords(i){if(!S.pkgs[i]||!S.pkgSel.length)return;saveUndo();S.pkgs[i].words=[...S.pkgSel];S.pkgSel=[];R();toast('מילות האריזה עודכנו');}
+function nextFreeColor(){const used=new Set(S.pkgs.map(p=>p.ci));for(let k=1;k<=C.length;k++){const c=(S.pkgNewCi+k)%C.length;if(!used.has(c))return c;}return (S.pkgNewCi+1)%C.length;}
 function movePkg(idx,dir){
   const newIdx=idx+dir;
   if(newIdx<0||newIdx>=S.pkgs.length)return;
@@ -2925,7 +2980,7 @@ function deletePkg(idx){
   S.pkgs.forEach(p=>{if(p.parentId===pkg.id)p.parentId=null});
   if(S.nodes.length===S.pkgs.length)S.nodes.splice(idx,1);else S.nodes=[];
   S.conns=S.conns.filter(c=>c.from!==pkg.id&&c.to!==pkg.id);
-  S.pkgs.splice(idx,1);R();toast('אריזה נמחקה');
+  S.pkgs.splice(idx,1);if(S.pkgEdit===pkg.id)S.pkgEdit=null;R();toast('אריזה נמחקה. אפשר לבטל ב־Ctrl+Z');
 }
 function setPkgParent(idx,parentIdx){
   parentIdx=parseInt(parentIdx);
@@ -3753,7 +3808,8 @@ body{background:#fff!important;margin:0;padding:20px 30px;font-family:'Heebo',sa
   <div style="font-size:60px;margin-bottom:16px;opacity:.7">&#x1f4d6;</div>
   <h1>תנ״ך לעומק - ניתוח מלא</h1>
   <h2>${title}</h2>
-  ${workNames()?'<div class="student-name">'+escH(workNames())+'</div>':''}
+  ${S.chavruta?'<div class="student-name">חברותא '+escH(S.chavruta)+'</div>':''}
+  ${workNames()?'<div class="student-name" style="margin-top:6px">'+escH(workNames())+'</div>':''}
   <div class="date-line">${new Date().toLocaleDateString('he-IL',{year:'numeric',month:'long',day:'numeric'})}</div>
 </div>
 
@@ -3877,7 +3933,7 @@ function exportJSON(){
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
     try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
@@ -3900,7 +3956,7 @@ function exportSubmissionJSON(){
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
       stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-      studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+      studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
       timestamp:new Date().toISOString()};
     try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
     if(TEXTS.custom)data.customText=TEXTS.custom;
@@ -3915,7 +3971,13 @@ function exportSubmissionJSON(){
   }catch(e){toast('שגיאה בייצוא JSON');}
 }
 // ===== SUBMISSION: one PDF file, downloaded directly (no print dialog, no pop-up) =====
+function focusSideInput(id){
+  if(S.step!==4||S.showExport){S.step=4;S.showExport=false;R();}
+  setTimeout(()=>{const inp=document.getElementById(id),side=document.querySelector('.side');
+    if(inp&&side){side.scrollTop=Math.max(0,side.scrollTop+inp.getBoundingClientRect().top-side.getBoundingClientRect().top-120);inp.focus({preventScroll:true});}},120);
+}
 function exportSubmission(){
+  if(!String(S.chavruta||'').trim()){toast('לפני ההגשה כתבו את מספר החברותא');focusSideInput('chavrutaInput');return;}
   if(!(S.studentName||'').trim()){
     toast('לפני ההגשה כתבו את השם בשדה "שם מלא"');
     if(S.step!==4||S.showExport){S.step=4;S.showExport=false;R();}
@@ -3933,7 +3995,7 @@ function buildWorkData(){
     pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
     stickies:S.stickies,labels:S.labels,shapes:S.shapes||[],notes:S.notes||{},conclusions:normConc(S.conclusions),
     cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
-    studentName:S.studentName||'',partnerName:S.partnerName||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
+    studentName:S.studentName||'',partnerName:S.partnerName||'',chavruta:S.chavruta||'',researchConsent:localStorage.getItem('moovanly_research')||'no',
     timestamp:new Date().toISOString()};
   try{data._meta=(window.__buildPMeta&&window.__buildPMeta())||null;}catch(_e){}
   if(TEXTS.custom)data.customText=TEXTS.custom;
@@ -3983,7 +4045,7 @@ function relayoutStaticArrows(inner){
   svgs[0].innerHTML=arrowDefs('arrowheadS')+paths;
   if(svgs[1])svgs[1].innerHTML=arrowDefs('arrowheadS2')+pathsTop.replace(/arrowheadS\)/g,'arrowheadS2)');
 }
-function fitReportCanvases(doc){
+function fitReportCanvases(doc,maxH){
   doc.querySelectorAll('.canvas').forEach(cvEl=>{
     const inner=cvEl.querySelector('#cvInner')||cvEl.firstElementChild;if(!inner)return;
     relayoutStaticArrows(inner);
@@ -3999,14 +4061,14 @@ function fitReportCanvases(doc){
     inner.querySelectorAll('svg.cv-svg').forEach(svg=>{svg.style.width=W+'px';svg.style.height=H+'px';svg.setAttribute('width',W);svg.setAttribute('height',H);svg.setAttribute('viewBox',`0 0 ${W} ${H}`);});
     const avail=cvEl.parentElement.clientWidth-4;
     // Fit width, and also height so the whole map stays on one A4 page (about 940px under the section title)
-    const sc=Math.min(1,avail/W,940/H);
+    const sc=Math.min(1,avail/W,(maxH||940)/H);
     imp(inner,'transform-origin','top right');imp(inner,'transform',sc<1?`scale(${sc})`:'none');
     imp(cvEl,'height',(H*sc+8)+'px');imp(cvEl,'min-height',(H*sc+8)+'px');imp(cvEl,'width',(W*sc+4)+'px');imp(cvEl,'overflow','hidden');cvEl.style.margin='0 auto';
   });
 }
 function pdfFileName(){
   const clean=s=>String(s||'').replace(/[\\/:*?"<>|]/g,'').trim();
-  return `תנך לעומק - ${clean(workNames())||'עבודה'} - ${clean(D().title)}.pdf`;
+  return `תנך לעומק - ${S.chavruta?'חברותא '+clean(S.chavruta)+' - ':''}${clean(workNames())||'עבודה'} - ${clean(D().title)}.pdf`;
 }
 async function downloadReportPDF(html){
   busyOverlay('מכינים את קובץ ה־PDF... זה לוקח כמה שניות');
@@ -4080,7 +4142,7 @@ function importJSON(){
         S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
         S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
         S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);
-        S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';
+        S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';S.chavruta=d.chavruta||'';
         S.cvZoom=d.cvZoom||100;S.cvTool=d.cvTool||'move';S.shapeColor=d.shapeColor||0;
         S.splash=false;
         document.documentElement.classList.toggle('dark',S.darkMode);
@@ -4494,8 +4556,174 @@ document.addEventListener('input',function(){window._unsaved=true;});
 document.addEventListener('change',function(){window._unsaved=true;});
 window.addEventListener('beforeunload',function(e){if(window._unsaved){e.preventDefault();e.returnValue='עבודה לא נשמרה עדיין';}});
 
+// ===== CLASS GALLERY: show three works side by side, by chavruta number only =====
+// Opened with #gallery in the address. Works are loaded from the students' PDFs (data embedded at submission),
+// JSON files or a ZIP of all submissions, and kept only in this browser.
+const GAL={open:false,works:[],shown:[],current:[],part:'map',focus:-1,doc:''};
+const GAL_PARTS=[{id:'conc',name:'מסקנות'},{id:'map',name:'מפת ארגון'},{id:'pkgs',name:'אריזות'},{id:'text',name:'הטקסט המסומן'}];
+function galLoadStored(){try{const r=localStorage.getItem('moovanly_gallery');if(r){const o=JSON.parse(r);GAL.works=o.works||[];GAL.shown=o.shown||[];}}catch(e){}}
+function galStore(){try{localStorage.setItem('moovanly_gallery',JSON.stringify({works:GAL.works,shown:GAL.shown}));return true;}catch(e){return false;}}
+function openGallery(){
+  GAL.open=true;galLoadStored();
+  if(!GAL.doc){const c=galDocCounts();GAL.doc=Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||'';}
+  if(!GAL.current.length&&GAL.works.length)galPick();
+  galRender();
+}
+function closeGallery(){GAL.open=false;const el=document.getElementById('galOv');if(el)el.remove();if(location.hash==='#gallery')history.replaceState(null,'',location.pathname+location.search);}
+function galDocCounts(){const c={};GAL.works.forEach(w=>{c[w.doc]=(c[w.doc]||0)+1;});return c;}
+function galDocTitle(doc,w){if(TEXTS[doc]&&doc!=='custom')return TEXTS[doc].title;return (w&&w.data.customText&&w.data.customText.title)||'טקסט אחר';}
+// --- reading the files ---
+function galDataFromPdfBytes(buf){
+  const bytes=new Uint8Array(buf);let s='';
+  for(let i=0;i<bytes.length;i+=65536)s+=String.fromCharCode.apply(null,bytes.subarray(i,i+65536));
+  const a=s.indexOf('MOOVANLY_DATA_BEGIN'),b=s.indexOf('MOOVANLY_DATA_END');
+  if(a<0||b<0)return null;
+  const b64=s.slice(a+19,b).replace(/\s+/g,'');
+  return JSON.parse(decodeURIComponent(escape(atob(b64))));
+}
+async function galReadFile(name,getBuf,getText){
+  const low=name.toLowerCase();
+  try{
+    if(low.endsWith('.json'))return JSON.parse(await getText());
+    if(low.endsWith('.pdf'))return galDataFromPdfBytes(await getBuf());
+  }catch(e){}
+  return null;
+}
+async function galAddFiles(fileList){
+  const files=[...fileList];let added=0,skipped=0;
+  busyOverlay('טוענת את העבודות...');
+  try{
+    for(const f of files){
+      const low=f.name.toLowerCase();
+      if(low.endsWith('.zip')){
+        await loadScriptOnce('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js',()=>!!window.JSZip);
+        const zip=await window.JSZip.loadAsync(f);
+        for(const entry of Object.values(zip.files)){
+          if(entry.dir)continue;
+          const d=await galReadFile(entry.name,()=>entry.async('arraybuffer'),()=>entry.async('string'));
+          if(d&&galAddWork(d))added++;else if(/\.(pdf|json)$/i.test(entry.name))skipped++;
+        }
+      }else{
+        const d=await galReadFile(f.name,()=>f.arrayBuffer(),()=>f.text());
+        if(d&&galAddWork(d))added++;else skipped++;
+      }
+    }
+  }catch(e){console.error(e);toast('חלק מהקבצים לא נקראו');}
+  busyOverlay(null);
+  if(!galStore())toast('אין מקום לשמור את כל העבודות בדפדפן. הן יישארו עד שתסגרי את הדף');
+  if(!GAL.doc||!galDocCounts()[GAL.doc]){const c=galDocCounts();GAL.doc=Object.keys(c).sort((a,b)=>c[b]-c[a])[0]||'';}
+  toast(`נטענו ${added} עבודות`+(skipped?` · ${skipped} קבצים בלי נתוני עבודה (הוגשו בגרסה ישנה)`:''));
+  if(!GAL.current.length)galPick();
+  galRender();
+}
+function galAddWork(d){
+  if(!d||!d.doc||!d.marks)return false;
+  const ch=String(d.chavruta||'').trim();
+  const key=ch?('c'+ch+'|'+d.doc):('n'+(d.studentName||'')+'|'+d.doc+'|'+(d.timestamp||''));
+  const w={key,chavruta:ch,doc:d.doc,ts:d.timestamp||'',data:d};
+  const i=GAL.works.findIndex(x=>x.key===key);
+  if(i>=0){if((GAL.works[i].ts||'')<=w.ts)GAL.works[i]=w;return true;}  // a later submission of the same chavruta replaces the earlier
+  GAL.works.push(w);return true;
+}
+function galLabel(w){if(w.chavruta)return 'חברותא '+w.chavruta;const n=GAL.works.filter(x=>!x.chavruta).indexOf(w)+1;return 'עבודה '+n;}
+// --- choosing three works that differ from each other ---
+function galFeatures(d){
+  const conns=d.conns||[],labeled=conns.filter(c=>c.label).length;
+  const rels=new Set(conns.map(c=>(c.label||'').trim()).filter(Boolean)).size;
+  const conc=normConc(d.conclusions);const cw=concWords(conc.q1)+concWords(conc.q2)+concWords(conc.q3);
+  return [(d.pkgs||[]).length,conns.length,labeled,rels,Object.keys(d.marks||{}).length/8,(d.cats||[]).length,cw/40,Object.keys(d.brks||{}).length/6];
+}
+function galPick(){
+  let pool=GAL.works.filter(w=>w.doc===GAL.doc);
+  if(!pool.length){GAL.current=[];return;}
+  let fresh=pool.filter(w=>!GAL.shown.includes(w.key));
+  if(fresh.length<Math.min(3,pool.length)){GAL.shown=GAL.shown.filter(k=>!pool.some(w=>w.key===k));fresh=pool;if(GAL.current.length)toast('כל העבודות במזמור הזה כבר הוצגו. מתחילים סבב חדש');}
+  const F=fresh.map(w=>galFeatures(w.data));const mx=F[0].map((_,j)=>Math.max(1,...F.map(f=>f[j])));
+  const N=F.map(f=>f.map((v,j)=>v/mx[j]));
+  const dist=(a,b)=>Math.sqrt(a.reduce((s,v,j)=>s+(v-b[j])**2,0));
+  const chosen=[Math.floor(Math.random()*fresh.length)];
+  while(chosen.length<Math.min(3,fresh.length)){
+    let best=-1,bd=-1;
+    fresh.forEach((_,i)=>{if(chosen.includes(i))return;const d=Math.min(...chosen.map(c=>dist(N[i],N[c])))+Math.random()*0.15;if(d>bd){bd=d;best=i;}});
+    chosen.push(best);
+  }
+  GAL.current=chosen.map(i=>fresh[i].key);
+  GAL.shown.push(...GAL.current.filter(k=>!GAL.shown.includes(k)));
+  GAL.focus=-1;galStore();
+}
+// --- rendering one work with the app's own renderers ---
+function withWork(d,fn){
+  const saved=S,savedCustom=TEXTS.custom;
+  S=Object.assign({},saved,{doc:d.doc,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},
+    fs:d.fs||18,lh:d.lh||1.5,font:d.font||'assistant',cats:d.cats||[],marks:d.marks||{},vf:'all',pkgs:d.pkgs||[],pkgSel:[],
+    nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],
+    shapes:d.shapes||[],conclusions:normConc(d.conclusions),cvZoom:100,connMode:null,connEdit:null,cvTool:'move',searchQuery:''});
+  (S.cats||[]).forEach(c=>ensureSubs(c));
+  if(d.customText)TEXTS.custom=d.customText;
+  try{return fn();}finally{S=saved;if(savedCustom)TEXTS.custom=savedCustom;else if(d.customText)delete TEXTS.custom;}
+}
+const stripHandlers=h=>h.replace(/\son[a-z]+="[^"]*"/g,'');
+function galPartHtml(w,part){
+  return withWork(w.data,()=>{
+    if(part==='conc'){
+      const c=normConc(S.conclusions);
+      return `<div class="gal-conc">${CONC_QS.map((q,i)=>`<div class="gal-q"><div class="gal-q-t">${i+1}. ${q.title}</div><div class="gal-q-a">${escH(c[q.id].trim())||'<span class="gal-empty">לא נכתב</span>'}</div></div>`).join('')}</div>`;
+    }
+    if(part==='text')return stripHandlers(renderWithLayout((wd,vi,wi)=>wrd(wd,vi,wi,'read')));
+    if(part==='pkgs')return S.pkgs.length?stripHandlers(mPkg()):'<div class="gal-empty">אין אריזות</div>';
+    if(!S.pkgs.length)return '<div class="gal-empty">אין מפת ארגון</div>';
+    const old=S.step;S.step=3;window.__cvStatic=true;
+    try{return stripHandlers(mCanv());}finally{window.__cvStatic=false;S.step=old;}
+  });
+}
+function galRender(){
+  if(!GAL.open)return;
+  let ov=document.getElementById('galOv');
+  if(!ov){ov=document.createElement('div');ov.id='galOv';ov.className='gal-ov';document.body.appendChild(ov);}
+  const counts=galDocCounts();
+  const docs=Object.keys(counts);
+  const pool=GAL.works.filter(w=>w.doc===GAL.doc);
+  const shownHere=GAL.shown.filter(k=>pool.some(w=>w.key===k)).length;
+  const cur=GAL.current.map(k=>GAL.works.find(w=>w.key===k)).filter(Boolean);
+  const cols=GAL.focus>=0&&cur[GAL.focus]?[cur[GAL.focus]]:cur;
+  ov.innerHTML=`<div class="gal-top">
+      <div class="gal-title">מצגת עבודות</div>
+      ${docs.length?`<select class="gal-sel" onchange="GAL.doc=this.value;GAL.current=[];galPick();galRender()">${docs.map(d=>`<option value="${d}" ${d===GAL.doc?'selected':''}>${escH(galDocTitle(d,GAL.works.find(w=>w.doc===d)))} (${counts[d]})</option>`).join('')}</select>`:''}
+      <div class="gal-tabs">${GAL_PARTS.map((p,i)=>`<span class="gal-tab ${GAL.part===p.id?'a':''}" onclick="GAL.part='${p.id}';galRender()" title="מקש ${i+1}">${p.name}</span>`).join('')}</div>
+      <span class="gal-btn gal-btn-main" onclick="galPick();galRender()" title="מקש רווח">🎲 שלוש אחרות</span>
+      <span class="gal-meta">${pool.length?`הוצגו ${shownHere} מתוך ${pool.length}`:''}</span>
+      <span class="gal-spacer"></span>
+      <label class="gal-btn">📥 טעינת עבודות<input type="file" multiple accept=".pdf,.json,.zip" style="display:none" onchange="galAddFiles(this.files)"></label>
+      <span class="gal-btn" onclick="if(confirm('לנקות את כל העבודות מהמסך הזה? הקבצים עצמם לא נמחקים')){GAL.works=[];GAL.shown=[];GAL.current=[];galStore();galRender()}">ניקוי</span>
+      <span class="gal-btn" onclick="closeGallery()" title="Esc">✕</span>
+    </div>
+    ${!GAL.works.length?`<div class="gal-emptystate"><div style="font-size:42px">🗂️</div><b>עוד אין כאן עבודות</b><div>בלמדה, במטלת ההגשה: "הורדת כל ההגשות". בחרי כאן את קובץ ה־ZIP שירד, או את קובצי ה־PDF עצמם.</div><label class="gal-btn gal-btn-main" style="margin-top:12px">📥 טעינת עבודות<input type="file" multiple accept=".pdf,.json,.zip" style="display:none" onchange="galAddFiles(this.files)"></label><div class="gal-note">העבודות נשמרות רק בדפדפן הזה, ומוצגות לפי מספר החברותא בלבד, בלי שמות.</div></div>`
+    :`<div class="gal-cols gal-n${cols.length}">${cols.map((w,ci)=>{const idx=cur.indexOf(w);return `<div class="gal-col" data-k="${w.key}">
+        <div class="gal-col-h" onclick="GAL.focus=GAL.focus>=0?-1:${idx};galRender()" title="${GAL.focus>=0?'חזרה לשלוש':'הגדלה'}">${escH(galLabel(w))}<span class="gal-col-x">${GAL.focus>=0?'↩ חזרה לשלוש':'⤢'}</span></div>
+        <div class="gal-col-b gal-part-${GAL.part}">${galPartHtml(w,GAL.part)}</div>
+      </div>`;}).join('')}</div>`}
+  `;
+  if(GAL.part==='map')requestAnimationFrame(()=>{
+    ov.querySelectorAll('.gal-col').forEach(col=>{
+      const w=GAL.works.find(x=>x.key===col.dataset.k);if(!w)return;
+      const body=col.querySelector('.gal-col-b');
+      withWork(w.data,()=>fitReportCanvases(body,Math.max(200,body.clientHeight-24)));
+    });
+  });
+}
+document.addEventListener('keydown',function(e){
+  if(!GAL.open)return;
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.key==='Escape'){if(GAL.focus>=0){GAL.focus=-1;galRender();}else closeGallery();}
+  else if(e.key===' '){galPick();galRender();}
+  else if(/^[1-4]$/.test(e.key)){GAL.part=GAL_PARTS[+e.key-1].id;galRender();}
+  else return;
+  e.preventDefault();e.stopImmediatePropagation();
+},true);
+window.addEventListener('resize',()=>{if(GAL.open)galRender();});
+
 R();
-checkConsent();
+if(location.hash==='#gallery')openGallery();else checkConsent();
 
 </script>
 
