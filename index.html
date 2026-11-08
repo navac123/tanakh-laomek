@@ -1276,6 +1276,7 @@ function R(){
   });
   if(S.step===3)requestAnimationFrame(()=>{ensureArrowMarker();updateArrows();expandCanvas()});
   if(S.step===4)requestAnimationFrame(()=>{const inner=document.querySelector('.read-card #cvInner');if(inner)relayoutStaticArrows(inner);});
+  if(S.step===4)setTimeout(()=>document.querySelectorAll('.conc-ta').forEach(concAutosize),30);
   if(S.showNotebook)requestAnimationFrame(()=>{const ta=document.getElementById('nbArea');if(ta)ta.focus()});
 }
 
@@ -1709,7 +1710,8 @@ function loadDemo(){
       {id:'sh1',type:'frame',x:10,y:160,w:680,h:460,ci:12,text:'שני סוגי השבח'}
     ];
     S.cvZoom=100;S.cvTool='move';
-    S.conclusions=normConc();
+    // Model conclusions page, drawn from the course video "מודל קד״ם: הדגמה מלאה"
+    S.conclusions={"q1": "המזמור מתאר שני מקורות שמהם עולה שבח ה׳: הבריאה, שמספרת את כבוד האל בלי מילים ובלי קול, והתורה והמצוות, שמשובחות בפני עצמן ומשפיעות לטובה על נפשו ומחשבותיו של האדם. מתוך ההתבוננות בשני אלה נולדת תפילתו של המשורר להיות עבד ה׳ נקי מחטא. פסוק החתימה מאחד את שלושת החלקים: הוא מבקש שגם דיבורו ומחשבותיו יעלו לרצון לפני ה׳, צורו וגואלו.", "q2": "כבר בעימוד המזמור נפרד לחלקים: פסוקים 2–7 עוסקים בשמיים, ופסוקים 8–11 בתורה. במעבר ביניהם גם \"אל\" מתחלף ב\"ה׳\". בפסוקים 12–14 המשורר מדבר בגוף ראשון, והחתימה בפסוק 15 עומדת לבדה.\n\nבגילוי סימנתי את השדה הסמנטי של הדיבור: מספרים, מגיד, יביע, אומר, יחוה. מולו חוזרת שלוש פעמים המילה \"אין\": \"אין אומר ואין דברים\". זה פרדוקס של בריאה שמדברת בלי דברים. בפסוקים 8–10 חוזר מבנה קבוע: מילה מתחום הציווי, אחריה שם ה׳, תואר של שבח, והשפעה על האדם.\n\nבאריזה ובארגון העמדתי את האריזה \"שבח ה׳ העולה מדיבור הבריאה\" מול \"שבח ה׳ העולה מהתורה והמצוות\", ומתחתן את \"תפילת עבד ה׳\", שנגזרת משתיהן. את החתימה קשרתי בשלושה חצים, אחד לכל חלק:\n• \"אמרי פי\" לדיבור הבריאה\n• \"הגיון לבי\" לתורה שמשפיעה על הלב\n• \"צורי וגאלי\" לתפילת עבד ה׳", "q3": "נשארתי עם השאלה למה המזמור מדגיש את הדיבור ומיד שולל אותו, ומה מקומה של השמש, שבפסוקים עליה הדיבור כבר לא מופיע. עוד שאלה היא אם פסוק 11 מסכם את שבח התורה או פותח את התפילה. ומשהו אישי: המשורר מבקש שגם המילים שלו יהיו לרצון, כמו השבח השקט של השמיים. הבקשה הזו מזמינה אותי לחשוב על הקשר בין מה שאני אומרת לבין מה שאני חושבת בלב."};
     S.notes={
       0:'העימוד מחלק את המזמור ל-5 יחידות. שימו לב לעימוד המיוחד בפסוקים ח-י: מבנה תקבולתי של שלוש עמודות — שם ה׳ + תואר + תוצאה.',
       1:'בחלק הראשון (ב-ז) — לשון דיבור והודעה: מספרים, מגיד, יביע, אומר, יחוה, דעת. הפרדוקס: בריאה ש"מדברת" אך אין לה מילים.\nבחלק השני (ח-י) — מבנה קבוע: שם ה׳ (תורת/עדות/פקודי/מצות/יראת/משפטי) + תואר (תמימה/נאמנה/ישרים/ברה/טהורה/אמת) + תוצאה (משיבת נפש/מחכימת פתי...).',
@@ -2686,7 +2688,9 @@ function concCard(){
   </div>`;
 }
 // Update counters and lock state in place, without R(), so the textarea keeps focus
+function concAutosize(ta){if(!ta)return;ta.style.height='auto';ta.style.height=Math.max(110,ta.scrollHeight+4)+'px';}  // the whole answer stays visible
 function concInput(id,val){
+  concAutosize(document.getElementById('conc_'+id));
   S.conclusions=normConc(S.conclusions);S.conclusions[id]=val;
   const n=concWords(val);const el=document.getElementById('concCnt_'+id);
   if(el){el.textContent=`${n} / ${CONC_MIN_WORDS} מילים`;el.classList.toggle('ok',n>=CONC_MIN_WORDS);}
