@@ -435,6 +435,21 @@ html,body{overflow-x:hidden}
 .app-banner{margin:6px 16px 0;padding:8px 14px;border-radius:10px;background:var(--earth-glass-hover);border:1.5px solid var(--coral);font-size:13px;font-weight:600;color:var(--text);display:flex;flex-wrap:wrap;gap:10px;align-items:center}
 .app-banner.warn{border-color:#c45050}
 .app-banner-btn{cursor:pointer;padding:3px 12px;border-radius:8px;background:var(--earth);color:var(--btn-primary-text);font-weight:700}
+html{touch-action:manipulation}
+.c-node,.c-sticky,.c-label,.c-shape-wrap,.c-frame-wrap,.c-rsz,.shp-rsz,[id^=midDot]{touch-action:none}
+.c-sticky textarea,.c-label textarea,.c-frame-wrap textarea,.c-shape-wrap textarea{touch-action:manipulation}
+.doc-saved-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--coral);margin-right:4px;vertical-align:middle}
+.top-actions{display:flex;gap:5px;margin-right:auto;align-items:center;flex-wrap:wrap}
+.top-btn{padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--bg-glass-light);color:var(--text);font-family:'Heebo';display:flex;align-items:center;gap:5px;white-space:nowrap}
+.top-btn.on,.top-btn:hover{border-color:var(--coral)}
+.top-btn-main{background:var(--earth);color:var(--btn-primary-text);border-color:var(--earth)}
+.top-more-wrap{position:relative}
+.top-more{position:absolute;top:calc(100% + 6px);left:0;z-index:300;min-width:230px;background:var(--bg);border:1.5px solid var(--border);border-radius:12px;box-shadow:var(--shadow-md);padding:6px;direction:rtl}
+.tm-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;font-size:13px;color:var(--text);cursor:pointer;text-decoration:none}
+.tm-item:hover{background:var(--earth-glass-hover)}
+.tm-item svg{width:15px;height:15px}
+.tm-key{margin-right:auto;font-size:10px;color:var(--text-faint)}
+.tm-font select{margin-right:auto;font-family:'Heebo';font-size:12px;padding:3px 6px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text)}
 .busy-ov{position:fixed;inset:0;z-index:9999;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center}
 .busy-box{background:var(--bg);color:var(--text);border-radius:14px;padding:18px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);font-family:'Heebo'}
 .busy-spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--earth);animation:spin 0.9s linear infinite}
@@ -876,6 +891,17 @@ function workIsEmpty(d){
   return !(has(d.marks)||has(d.brks)||has(d.indents)||has(d.gaps)||has(d.paraBreaks)||(d.pkgs&&d.pkgs.length)||(d.stickies&&d.stickies.length)||(d.labels&&d.labels.length)||txt(d.notes)||txt(d.conclusions));
 }
 let saveBlockedReason='';
+// Every psalm keeps its own copy in 'moovanly_works' ({doc: data}), so switching psalms never throws work away.
+// 'moovanly_save' still holds the current work, exactly as before, so older code paths and saves keep working.
+function readWorks(){try{return JSON.parse(localStorage.getItem('moovanly_works')||'{}')||{};}catch(e){return {};}}
+function worksIndex(){if(!window.__worksIdx){const w=readWorks();window.__worksIdx=Object.keys(w);}return window.__worksIdx;}
+function storeInWorks(data){
+  const works=readWorks();const key=data.doc;
+  if(workIsEmpty(data))delete works[key];
+  else{const P=window.__PMETA;works[key]=Object.assign({},data,{_pm:P?JSON.parse(JSON.stringify(P)):null,_savedAt:new Date().toISOString()});}
+  try{localStorage.setItem('moovanly_works',JSON.stringify(works));}catch(e){toast('אין מקום לשמור עוד מזמורים בדפדפן. כדאי לשמור גיבוי');}
+  window.__worksIdx=Object.keys(works);
+}
 function persist(key){
   key=key||'moovanly_save';saveBlockedReason='';
   if(!window.__appStarted||S.splash){return false;}
@@ -888,7 +914,7 @@ function persist(key){
   localStorage.setItem(key,JSON.stringify(data));
   const now=new Date().toLocaleString('he-IL');
   localStorage.setItem(key==='moovanly_save'?'moovanly_time':'moovanly_backup_time',now);
-  if(key==='moovanly_save'){window.__lastOwnWrite=localStorage.getItem('moovanly_save');window._unsaved=false;}
+  if(key==='moovanly_save'){window.__lastOwnWrite=localStorage.getItem('moovanly_save');window._unsaved=false;storeInWorks(data);}
   return true;
 }
 function saveWork(){
@@ -897,6 +923,26 @@ function saveWork(){
     else if(saveBlockedReason==='demo')toast('במצב דוגמה לא שומרים');
     else if(saveBlockedReason==='othertab')toast('העבודה עודכנה בלשונית אחרת. טענו את הגרסה העדכנית');
   }catch(e){toast('שגיאה בשמירה');}
+}
+// Put a saved work (from storage, a psalm's own slot, or a file) into S
+function applyWorkData(d){
+    if(d.customText)TEXTS.custom=d.customText;
+    clearUndo();S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
+    S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
+    S.fs=d.fs||18;S.lh=d.lh||1.5;
+    S.cats=d.cats||JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
+    S.marks=d.marks||{};
+    // Migrate old marks without subId
+    S.cats.forEach(c=>{ensureSubs(c);});
+    Object.keys(S.marks).forEach(k=>{
+      const m=S.marks[k];if(!m.subId){const cat=S.cats.find(c=>c.id===m.catId);if(cat){ensureSubs(cat);m.subId=cat.subs[0].id;}}
+    });
+    S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
+    S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
+    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||S.studentName||'';S.partnerName=d.partnerName||S.partnerName||'';S.chavruta=d.chavruta||S.chavruta||'';
+    S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
+    if(d.darkMode!==undefined)S.darkMode=d.darkMode;
+    S.cvZoom=d.cvZoom||100;S.cvTool='move';S.connMode=null;S.shapeColor=d.shapeColor||0;S.pkgSel=[];S.pkgEdit=null;S.selWords=[];
 }
 function loadWork(){
   try{
@@ -914,23 +960,7 @@ function loadWork(){
       d=JSON.parse(raw);
       fromBackup=true;
     }
-    if(d.customText)TEXTS.custom=d.customText;
-    clearUndo();S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
-    S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
-    S.fs=d.fs||18;S.lh=d.lh||1.5;
-    S.cats=d.cats||JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
-    S.marks=d.marks||{};
-    // Migrate old marks without subId
-    S.cats.forEach(c=>{ensureSubs(c);});
-    Object.keys(S.marks).forEach(k=>{
-      const m=S.marks[k];if(!m.subId){const cat=S.cats.find(c=>c.id===m.catId);if(cat){ensureSubs(cat);m.subId=cat.subs[0].id;}}
-    });
-    S.pkgs=d.pkgs||[];S.nodes=d.nodes||[];S.conns=d.conns||[];S.expandedPkgs=d.expandedPkgs||{};
-    S.stickies=d.stickies||[];S.labels=d.labels||[];S.shapes=d.shapes||[];
-    S.notes=d.notes||{0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc(d.conclusions);S.studentName=d.studentName||'';S.partnerName=d.partnerName||'';S.chavruta=d.chavruta||'';
-    S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
-    if(d.darkMode!==undefined)S.darkMode=d.darkMode;
-    S.cvZoom=d.cvZoom||100;S.cvTool='move';S.connMode=null;S.shapeColor=d.shapeColor||0;S.pkgSel=[];S.pkgEdit=null;S.selWords=[];
+    applyWorkData(d);
     window.__lastOwnWrite=localStorage.getItem('moovanly_save');window.__demoMode=false;window.__otherTab=false;
     S.splash=false;R();toast(fromBackup?'עבודה שוחזרה מגיבוי':'עבודה נטענה');return true;
   }catch(e){toast('שגיאה בטעינה');return false;}
@@ -1008,7 +1038,7 @@ function toggleDictation(){
   const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
   recognition=new SR();
   recognition.lang='he-IL';recognition.continuous=true;recognition.interimResults=true;
-  recognition.onstart=()=>{dictationActive=true;const btn=document.getElementById('micBtn');if(btn){btn.style.background='rgba(139,74,94,.2)';btn.style.borderColor='#8B4A5E';btn.style.color='#8B4A5E';}toast('מקשיב... דברו עכשיו');};
+  recognition.onstart=()=>{dictationActive=true;setTimeout(R,0);const btn=document.getElementById('micBtn');if(btn){btn.style.background='rgba(139,74,94,.2)';btn.style.borderColor='#8B4A5E';btn.style.color='#8B4A5E';}toast('מקשיב... דברו עכשיו');};
   recognition.onresult=(e)=>{
     let final='';
     for(let i=e.resultIndex;i<e.results.length;i++){if(e.results[i].isFinal)final+=e.results[i][0].transcript;}
@@ -1061,7 +1091,7 @@ function toggleDictation(){
   recognition.start();
 }
 function stopDictation(){
-  dictationActive=false;if(recognition){try{recognition.stop()}catch(e){}}recognition=null;
+  dictationActive=false;if(recognition){try{recognition.stop()}catch(e){}}recognition=null;setTimeout(R,0);
   const btn=document.getElementById('micBtn');if(btn){btn.style.background='';btn.style.borderColor='';btn.style.color='';}
   toast('דיקטציה הופסקה');
 }
@@ -1218,6 +1248,7 @@ function getStyleById(id){return STYLES.find(s=>s.id===id)||STYLES[0]}
 function getCatById(id){return S.cats.find(c=>c.id===id)}
 
 let lastRenderStep=-1;
+document.addEventListener('mousedown',e=>{if(S.topMore&&!e.target.closest('.top-more-wrap')){S.topMore=false;R();}});
 function R(){
   if(S.step!==3){S.connEdit=null;if(S.cvTool!=='conn')S.connMode=null;}
   if(S.splash){
@@ -1455,8 +1486,12 @@ function splashScreen(){
   </div>`;
 }
 let autoSaveTimer=null;
+function migrateSingleSave(){
+  try{const cur=JSON.parse(localStorage.getItem('moovanly_save')||'null');const works=readWorks();
+    if(cur&&cur.doc&&!works[cur.doc]&&!workIsEmpty(cur)){works[cur.doc]=cur;localStorage.setItem('moovanly_works',JSON.stringify(works));window.__worksIdx=null;}}catch(e){}
+}
 function startAutoSave(){
-  window.__appStarted=true;
+  window.__appStarted=true;migrateSingleSave();
   if(autoSaveTimer)return;
   // Only the tab in front saves on a timer, so a forgotten background tab can't overwrite newer work
   autoSaveTimer=setInterval(()=>{try{if(document.visibilityState==='visible')persist();}catch(e){}},30000);
@@ -1690,32 +1725,36 @@ function topBar(){
   return `<div class="topbar" role="banner" aria-label="סרגל עליון">
     <div class="logo" onclick="S.splash=true;R()" style="cursor:pointer" title="מסך פתיחה">${appLogo(24)} תנ״ך לעומק</div>
     <div class="top-docs">
-      ${Object.entries(TEXTS).filter(([k])=>!(S.hiddenDocs||[]).includes(k)).map(([k,v])=>`<div class="top-doc ${S.doc===k?'a':''}" onclick="sw('${k}')"><span>${v.title}</span>${k!==S.doc?`<span class="top-doc-x" onclick="event.stopPropagation();${k==='custom'?`deleteCustomText()`:`hideDoc('${k}')`}" title="${k==='custom'?'מחק טקסט':'הסר'}">×</span>`:''}</div>`).join('')}
+      ${Object.entries(TEXTS).filter(([k])=>!(S.hiddenDocs||[]).includes(k)).map(([k,v])=>`<div class="top-doc ${S.doc===k?'a':''}" onclick="sw('${k}')" title="${worksIndex().includes(k)&&S.doc!==k?'יש כאן עבודה שמורה':''}"><span>${v.title}${worksIndex().includes(k)&&S.doc!==k?'<span class="doc-saved-dot"></span>':''}</span>${k!==S.doc?`<span class="top-doc-x" onclick="event.stopPropagation();${k==='custom'?`deleteCustomText()`:`hideDoc('${k}')`}" title="${k==='custom'?'מחק טקסט':'הסר'}">×</span>`:''}</div>`).join('')}
       ${(S.hiddenDocs||[]).length?`<div class="top-doc" onclick="S.hiddenDocs=[];R()" title="החזר טקסטים מוסתרים" style="font-size:11px;opacity:.7">+</div>`:''}
     </div>
-    <select style="font-size:12px;border:1.5px solid ${brd()};border-radius:10px;padding:5px 10px;font-family:'Heebo';color:${tcm()};cursor:pointer;background:${glss()}" onchange="S.font=this.value;R()">
-      ${FONTS.map(f=>`<option value="${f.id}" ${S.font===f.id?'selected':''} style="font-family:${f.css}">${f.name}</option>`).join('')}
-    </select>
-    <div style="display:flex;gap:4px;margin-right:auto;align-items:center">
-      <div class="search-wrap">
-        <div style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${S.searchOpen?'var(--earth-glass-hover)':glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleSearch()" title="חיפוש (Ctrl+F)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        </div>
-        <input type="text" class="search-input ${S.searchOpen?'open':''}" id="searchInput" placeholder="חיפוש..." value="${escH(S.searchQuery).replace(/"/g,'&quot;')}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
+    <div class="top-actions">
+      ${S.searchOpen?`<div class="search-wrap">
+        <input type="text" class="search-input open" id="searchInput" placeholder="חיפוש בטקסט..." value="${escH(S.searchQuery).replace(/"/g,'&quot;')}" oninput="S.searchQuery=this.value;R();requestAnimationFrame(()=>{const el=document.getElementById('searchInput');if(el){el.focus();el.selectionStart=el.selectionEnd=el.value.length}})" onkeydown="if(event.key==='Escape'){S.searchQuery='';S.searchOpen=false;R()}">
         ${S.searchQuery?`<span class="search-count">${countSearchMatches()} תוצאות</span>`:''}
-      </div>
-      <div id="micBtn" style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleDictation()" title="דיקטציה קולית">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
-      </div>
+        <span class="top-btn" onclick="S.searchQuery='';S.searchOpen=false;R()" title="סגירת החיפוש">✕</span>
+      </div>`:''}
+      ${dictationActive?`<div id="micBtn" class="top-btn" onclick="toggleDictation()" title="עצירת ההכתבה"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> מקשיבה...</div>`:''}
       <div class="nb-toggle ${S.showNotebook?'open':''}" onclick="toggleNotebook()" title="מחברת מחשבות">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
         מחברת
       </div>
-      <div style="padding:5px 8px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};display:flex;align-items:center;justify-content:center;transition:all .2s" onclick="toggleDark()" title="${S.darkMode?'מצב בהיר':'מצב כהה'}">${darkIcon}</div>
-      <div class="upload-btn" onclick="S.showUpload=true;R()">העלאה</div>
-      <div style="padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};font-family:'Heebo';transition:all .2s" onclick="saveWork()" title="שמירת עבודה">שמירה</div>
-      <div style="padding:6px 12px;border-radius:10px;font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tc()};font-family:'Heebo';transition:all .2s" onclick="S.showExport=true;R()" title="ייצוא">ייצוא</div>
-      <div style="padding:5px 9px;border-radius:10px;cursor:pointer;border:1.5px solid ${brd()};background:${glss()};color:${tcm()};display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:13px;font-weight:700" onclick="S.showKeys=true;R()" title="קיצורי מקלדת (?)">?</div>
+      <div class="top-btn top-btn-main" onclick="S.showExport=true;S.topMore=false;R()" title="הגשה, גיבוי וייצוא">ייצוא והגשה</div>
+      <div class="top-more-wrap">
+        <div class="top-btn ${S.topMore?'on':''}" onclick="S.topMore=!S.topMore;R()" title="עוד אפשרויות">עוד ▾</div>
+        ${S.topMore?`<div class="top-more" onclick="event.stopPropagation()">
+          <div class="tm-item" onclick="S.topMore=false;toggleSearch()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg> חיפוש בטקסט <span class="tm-key">Ctrl+F</span></div>
+          <div class="tm-item" onclick="S.topMore=false;S.showUpload=true;R()">📄 העלאת טקסט אחר</div>
+          <div class="tm-item" onclick="S.topMore=false;saveWork();R()">💾 שמירה עכשיו <span class="tm-key">נשמר גם לבד</span></div>
+          <div class="tm-item" onclick="S.topMore=false;toggleDark()">${darkIcon} ${S.darkMode?'מצב בהיר':'מצב כהה'}</div>
+          <div class="tm-item" onclick="S.topMore=false;R();toggleDictation()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg> הכתבה קולית <span class="tm-key">בשלב העימוד</span></div>
+          <div class="tm-item tm-font">גופן:
+            <select onchange="S.font=this.value;R()">${FONTS.map(f=>`<option value="${f.id}" ${S.font===f.id?'selected':''} style="font-family:${f.css}">${f.name}</option>`).join('')}</select>
+          </div>
+          <div class="tm-item" onclick="S.topMore=false;S.showKeys=true;R()">⌨️ קיצורי מקלדת <span class="tm-key">?</span></div>
+          <a class="tm-item" href="guide-tanakh-laomek.html" target="_blank">📘 מדריך לכלי</a>
+        </div>`:''}
+      </div>
     </div>
   </div>`;
 }
@@ -1827,22 +1866,17 @@ function sImud(){
       </div>
     </div>
     <div class="sb-hint">
-      <b>הוראות:</b><br>
-      • <b>לחץ על מילה</b> שתתחיל שורה חדשה<br>
-      • <b>Enter ↵</b> — שבירת שורה לפני המילה הנבחרת<br>
-      • <b>Tab →</b> — הזחה ימינה (כמו רווח)<br>
-      • <b>Shift+Tab ←</b> — הזחה חזרה שמאלה<br>
-      • <b>פסקה חדשה</b> — הפרדה לפסקאות לפי נושאים<br>
-      • <b>רווח</b>: שני טורים באותה שורה. לוחצים על המילה שמתחילה את הטור השני ואז על מקש הרווח. לחיצה נוספת מרחיקה, Shift+רווח מקרב<br>
-      • <b>Ctrl+Z</b> — ביטול | <b>Ctrl+Y</b> — שחזור
-    </div>
-    <div class="sb-hint" style="background:${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')};border-color:${cv('rgba(139,74,94,.2)','rgba(196,139,159,.2)')}">
-      <b>פקודות קוליות 🎤</b> (הפעילו מיקרופון בסרגל):<br>
-      • <b>"שורה"</b> — שבירת שורה<br>
-      • <b>"פסקה"</b> — פסקה חדשה<br>
-      • <b>"ימינה"</b> — הזחה | <b>"שמאלה"</b> — חזרה<br>
-      • <b>"בטל"</b> — ביטול | <b>"מחק"</b> — הסרת שבירה<br>
-      • אמרו <b>מילה מהטקסט</b> לבחירתה
+      <b>איך עובדים:</b> לוחצים על מילה, ואז<br>
+      • <b>Enter</b>: שורה חדשה מהמילה הזו<br>
+      • <b>Tab</b>: הזחה. <b>Shift+Tab</b>: החזרה<br>
+      • <b>רווח</b>: טור שני באותה שורה<br>
+      <span class="pkg-link" onclick="S.showImudMore=!S.showImudMore;R()">${S.showImudMore?'פחות ▴':'עוד: פסקאות, ביטול, הכתבה ▾'}</span>
+      ${S.showImudMore?`<div style="margin-top:6px">
+        • <b>פסקה חדשה</b>: Shift+Enter, או הכפתור בסרגל<br>
+        • <b>רווח</b> נוסף מרחיק את הטור, <b>Shift+רווח</b> מקרב<br>
+        • <b>Ctrl+Z</b> ביטול, <b>Ctrl+Y</b> שחזור<br><br>
+        <b>הכתבה קולית</b>, מהתפריט "עוד": אומרים "שורה", "פסקה", "ימינה", "שמאלה", "בטל", "מחק", או מילה מהטקסט כדי לבחור בה
+      </div>`:''}
     </div>
     <div class="sb-sub">גודל טקסט</div>
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
@@ -1866,12 +1900,13 @@ function sDisc(){
   const totalMarks=Object.keys(S.marks).length;
   let html=`<div class="sb-title">גילוי וסימון</div>`;
   html+=`<div style="background:${cv('rgba(139,74,94,.08)','rgba(139,74,94,.12)')};border-radius:10px;padding:10px 12px;margin-bottom:10px;border:1.5px solid ${cv('rgba(139,74,94,.25)','rgba(139,74,94,.2)')};font-size:12px;line-height:1.6">
-    <b>איך מתחילים?</b> בחר צבע למטה → לחץ על מילים בטקסט → זהו!<br>
-    <span style="font-size:11px;opacity:.8;line-height:1.5;display:block;margin-top:6px;border-top:1px solid ${brd()};padding-top:6px">
+    <b>איך מתחילים?</b> בוחרים צבע למטה ולוחצים על מילים בטקסט.<br>
+    <span class="pkg-link" onclick="S.showDiscRules=!S.showDiscRules;R()">${S.showDiscRules?'פחות ▴':'כללי סימון ▾'}</span>
+    ${S.showDiscRules?`<span style="font-size:11px;opacity:.85;line-height:1.5;display:block;margin-top:6px;border-top:1px solid ${brd()};padding-top:6px">
     <b>כללי סימון:</b><br>
     • מילים זהות → סגנון <b>מסגרת מלאה</b> (גוון שונה לכל מילה)<br>
     • שדות סמנטיים → סגנון <b>הדגשה + צבע</b> (בולד)<br>
-    • שם ה׳ → סימון קבוע אחד (תת-קבוצות לשמות שונים)</span>
+    • שם ה׳ → סימון קבוע אחד (תת-קבוצות לשמות שונים)</span>`:''}
   </div>`;
   html+=`<div class="info-box" onclick="S.showDiscInfo=!S.showDiscInfo;R()">
     <b>למה גילוי?</b> ${S.showDiscInfo?'▲':'▼'}
@@ -2033,7 +2068,7 @@ function sPkg(){
       </div>
     </div>
     <div class="pkg-steps">
-      <div class="${n?'done':''}"><b>1.</b> סמנו בטקסט את המילים: גוררים על מילים רצופות, או לוחצים על מספר פסוק.</div>
+      <div class="${n?'done':''}"><b>1.</b> סמנו בטקסט את המילים: גוררים על מילים רצופות, או לוחצים על מספר פסוק. באייפד: נגיעה בוחרת מילה, ולחיצה ארוכה וגרירה בוחרת רצף.</div>
       <div class="${S.pkgNewName.trim()?'done':''}"><b>2.</b> תנו לאריזה כותרת שמתארת את התוכן.</div>
       <div><b>3.</b> לחצו "צור אריזה" או Enter.</div>
     </div>
@@ -2197,8 +2232,8 @@ function wrd(w,vi,wi,mode){
   if(mode==='disc') oc=`onclick="tglMark('${k}')"`;
   if(mode==='pkg'){
     if(S.pkgSel.includes(k)) st+=`box-shadow:0 0 0 2px ${cv('#8B4A5E','#C48B9F')};border-radius:6px;padding:1px 3px;background:${cv('rgba(139,74,94,.08)','rgba(196,139,159,.12)')};`;
-    oc=`data-pk="${k}" onmousedown="pkgWordDown('${k}',event)" onmouseenter="pkgWordEnter('${k}')" ontouchstart="pkgWordDown('${k}',event)"`;
-    st+=`user-select:none;-webkit-user-select:none;cursor:pointer;`;
+    oc=`data-pk="${k}" onmousedown="pkgWordDown('${k}',event)" onmouseenter="pkgWordEnter('${k}')" ontouchstart="pkgTouchStart('${k}',event)"`;
+    st+=`user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;cursor:pointer;`;
   }
   const tip=getWordTip(w);
   const tipHtml=tip?`<span class="w-tip">${tip}</span>`:'';
@@ -2476,7 +2511,7 @@ function mCanv(){
       ${verseNums.length&&!exp?`<div style="font-size:10px;color:${c.c};opacity:.5;margin-top:3px">פס׳ ${verseNums.join(',')}</div>`:''}
       ${childrenHtml}
       <div class="c-conn-dot" onmousedown="event.stopPropagation();startConn('${p.id}')" title="גרור ליצירת קישור"></div>
-      <div class="c-rsz" onmousedown="event.stopPropagation();startResize(event,${i})" title="גררו החוצה להגדלה"></div>
+      <div class="c-rsz" onmousedown="event.stopPropagation();startResize(event,${i})" ontouchstart="event.stopPropagation();touchDrag(event,ev=>startResize(ev,${i}),resizeMove,resizeEnd)" title="גררו החוצה להגדלה"></div>
     </div>`}).join('');
   let svgHtml=buildArrowsSvg();
   let arrowLabelsHtml=buildArrowLabels();
@@ -2588,7 +2623,7 @@ function buildArrowMidpoints(){
     if(ci!==S.connEdit)return '';
     const m=arrowMid(cn);if(!m)return '';
     const mx=m.x,my=m.y;
-    return `<div id="midDot${ci}" style="position:absolute;left:${mx-6}px;top:${my-6}px;width:12px;height:12px;border-radius:50%;background:${cv('#8B4A5E','#C48B9F')};border:2px solid ${bgc()};cursor:move;z-index:15;opacity:.6;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.transform='scale(1.3)'" onmouseout="this.style.opacity=.6;this.style.transform=''" onmousedown="startMidDrag(event,${ci})" title="גרור לשינוי מסלול"></div>`;
+    return `<div id="midDot${ci}" style="position:absolute;left:${mx-6}px;top:${my-6}px;width:12px;height:12px;border-radius:50%;background:${cv('#8B4A5E','#C48B9F')};border:2px solid ${bgc()};cursor:move;z-index:15;opacity:.6;transition:opacity .15s" onmouseover="this.style.opacity=1;this.style.transform='scale(1.3)'" onmouseout="this.style.opacity=.6;this.style.transform=''" onmousedown="startMidDrag(event,${ci})" ontouchstart="event.stopPropagation();touchDrag(event,ev=>startMidDrag(ev,${ci}),midDragMove,midDragEnd)" title="גרור לשינוי מסלול"></div>`;
   }).join('');
 }
 let midDg=null;
@@ -2937,8 +2972,21 @@ function hideDoc(k){
 function sw(k){
   if(k===S.doc)return;
   if(window.__demoMode){if(confirm('זו הדוגמה, ושום דבר בה לא נשמר. לצאת ממנה ולעבוד על מזמור משלך?'))exitDemo();return;}
-  if(!workIsEmpty(buildSaveData())&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית, כולל המחברת ודף המסקנות. כדאי לשמור קודם גיבוי. להמשיך?'))return;
-  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.pkgEdit=null;S.gaps={};window.__dirty=true;pmetaReset();R();toast(D().title)}
+  if(window.__otherTab){toast('קודם טענו את הגרסה העדכנית מהלשונית האחרת');return;}
+  try{window.__dirty=true;persist();}catch(e){}   // the psalm we leave is kept in its own slot
+  const entry=readWorks()[k];
+  clearUndo();
+  if(entry){
+    applyWorkData(entry);S.doc=k;S.step=entry.step||0;
+    if(window.__PMETA){if(entry._pm)Object.assign(window.__PMETA,entry._pm,{_last:Date.now()});else pmetaReset();}
+  }else{
+    S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.step=0;
+    pmetaReset();
+  }
+  S.showExport=false;S.connEdit=null;window.__dirty=true;
+  try{persist();}catch(e){}
+  R();toast(entry?('חזרתם לעבודה על '+D().title):D().title);
+}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
@@ -2966,6 +3014,21 @@ function pkgWordDown(k,e){
   else{S.pkgSel.push(k);sortPkgSel();updateWordVisual(k,true);}
   updatePkgCount();
 }
+let pkgTouch=null;
+function pkgTouchStart(k,e){
+  const t=e.touches[0];
+  pkgTouch={k,x:t.clientX,y:t.clientY,moved:false,long:false};
+  pkgTouch.timer=setTimeout(()=>{if(pkgTouch&&!pkgTouch.moved){pkgTouch.long=true;pkgWordDown(k,{preventDefault(){}});if(navigator.vibrate)navigator.vibrate(15);}},350);
+}
+document.addEventListener('touchmove',function(e){
+  if(!pkgTouch||pkgTouch.long)return;
+  const t=e.touches[0];if(Math.abs(t.clientX-pkgTouch.x)>10||Math.abs(t.clientY-pkgTouch.y)>10){pkgTouch.moved=true;clearTimeout(pkgTouch.timer);}
+},{passive:true});
+document.addEventListener('touchend',function(e){
+  if(!pkgTouch)return;const pt=pkgTouch;pkgTouch=null;clearTimeout(pt.timer);
+  if(pt.long)return;              // the drag selection ends in pkgWordUp
+  if(!pt.moved){if(e.cancelable)e.preventDefault();pkgWordDown(pt.k,{preventDefault(){}});pkgWordUp();}  // a tap toggles one word
+});
 function pkgWordEnter(k){
   if(!pkgDrag)return;
   if(pkgDrag.selecting&&!S.pkgSel.includes(k)){S.pkgSel.push(k);sortPkgSel();updateWordVisual(k,true);updatePkgCount();}
@@ -3069,6 +3132,14 @@ function ds(e,i){if(S.connMode)return;e.preventDefault();dragged=false;dg={i,sx:
 function dts(e,i){if(S.connMode)return;const t=e.touches[0];dragged=false;dg={i,sx:t.clientX,sy:t.clientY,ox:S.nodes[i].x,oy:S.nodes[i].y};document.ontouchmove=e=>{const t=e.touches[0];dmxy(t.clientX,t.clientY)};document.ontouchend=de}
 function dm(e){dmxy(e.clientX,e.clientY)}
 function dmxy(x,y){if(!dg)return;if(!dragged)saveUndo();dragged=true;const z=S.cvZoom/100;const el=document.getElementById('nd'+dg.i);if(el){const nx=Math.max(0,dg.ox+(x-dg.sx)/z),ny=Math.max(0,dg.oy+(y-dg.sy)/z);el.style.left=nx+'px';el.style.top=ny+'px';S.nodes[dg.i].x=nx;S.nodes[dg.i].y=ny;updateArrows()}}
+// Run a mouse-style drag (start/move/end handlers that read clientX/clientY) from a touch
+function touchDrag(e,start,move,end){
+  const t0=e.touches[0];const fake=t=>({clientX:t.clientX,clientY:t.clientY,preventDefault(){},stopPropagation(){}});
+  if(e.cancelable)e.preventDefault();
+  start(fake(t0));document.onmousemove=document.onmouseup=null;
+  document.ontouchmove=ev=>{if(ev.cancelable)ev.preventDefault();move(fake(ev.touches[0]));};
+  document.ontouchend=()=>{document.ontouchmove=document.ontouchend=null;end();};
+}
 function snapToGrid(v,gridSize){return Math.round(v/gridSize)*gridSize}
 function de(){if(!dg)return;const el=document.getElementById('nd'+dg.i);if(el){
   const gx=snapToGrid(Math.max(0,parseInt(el.style.left)),20);
@@ -3344,7 +3415,7 @@ function renderShapes(){
         <textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle}" rows="1">${sh.text||''}</textarea>
       </div>
       <div class="shp-del" onclick="event.stopPropagation();delShape(${i})" title="מחיקה">×</div>
-      <div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+      <div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" ontouchstart="event.stopPropagation();touchDrag(event,ev=>startShapeResize(ev,${i}),shapeResizeMove,shapeResizeEnd)" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
     </div>`;
   });
   // Other shapes
@@ -3357,7 +3428,7 @@ function renderShapes(){
     else if(sh.type==='diamond')shapeEl=`<div class="shp-inner" style="width:${w}px;height:${h}px;transform:rotate(45deg);border:2.5px solid ${col.c};border-radius:4px;background:${col.b}60;display:flex;align-items:center;justify-content:center"><div style="transform:rotate(-45deg)"><textarea onclick="event.stopPropagation()" onmousedown="event.stopPropagation()" ontouchstart="event.stopPropagation()" oninput="updateShapeText(${i},this.value)" style="${txStyle};width:70px">${sh.text||''}</textarea></div></div>`;
     else if(sh.type==='line-h')shapeEl=`<div class="shp-inner" style="width:${w}px;height:3px;background:${col.c};border-radius:2px;margin-top:${h/2}px"></div>`;
     const delBtn=`<div class="shp-del" onclick="event.stopPropagation();delShape(${i})" title="מחיקה">×</div>`;
-    const rszHandle=sh.type!=='line-h'?`<div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>`:'';
+    const rszHandle=sh.type!=='line-h'?`<div class="shp-rsz" onmousedown="event.stopPropagation();startShapeResize(event,${i})" ontouchstart="event.stopPropagation();touchDrag(event,ev=>startShapeResize(ev,${i}),shapeResizeMove,shapeResizeEnd)" title="שינוי גודל"><svg width="10" height="10" viewBox="0 0 10 10"><path d="M8 2L2 8M8 5L5 8M8 8L8 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>`:'';
     html+=`<div class="c-shape-wrap" id="shp${i}" style="left:${sh.x}px;top:${sh.y}px" onmousedown="sds(event,${i},'shape')" ontouchstart="sdts(event,${i},'shape')">
       ${delBtn}${shapeEl}${rszHandle}</div>`;
   });
@@ -3518,7 +3589,9 @@ function loadPaste(){
     let num=hebrewNum(i+1);
     return {n:num,t:replaceDivineName(l.trim())};
   });
-  if(!workIsEmpty(buildSaveData())&&!confirm('טעינת טקסט חדש תמחק את כל העבודה הנוכחית. כדאי לשמור קודם גיבוי. להמשיך?'))return;
+  const customTaken=(S.doc==='custom'&&!workIsEmpty(buildSaveData()))||!!readWorks().custom;
+  if(customTaken&&!confirm('יש כבר עבודה על טקסט שהעליתם. טקסט חדש יחליף אותה. להמשיך?'))return;
+  try{window.__dirty=true;persist();}catch(_e){}  // keep the current psalm in its own slot first
   TEXTS.custom={title:customName,verses};
   pmetaReset();clearUndo();S.notes={0:'',1:'',2:'',3:'',4:''};S.conclusions=normConc();S.stickies=[];S.labels=[];S.shapes=[];S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.pkgEdit=null;S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נטען: '+customName);
@@ -4205,7 +4278,9 @@ function importJSON(){
       try{
         const d=JSON.parse(e.target.result);
         if(!d||typeof d!=='object'||!d.doc||!d.marks){toast('זה לא קובץ עבודה של תנ״ך לעומק');return;}
-        if(!workIsEmpty(buildSaveData())&&!confirm('טעינת הקובץ תחליף את העבודה הנוכחית. להמשיך?'))return;
+        const slotTaken=(S.doc===d.doc&&!workIsEmpty(buildSaveData()))||!!readWorks()[d.doc];
+        if(slotTaken&&!confirm('כבר יש עבודה שמורה על הטקסט הזה, והקובץ יחליף אותה. להמשיך?'))return;
+        try{window.__dirty=true;persist();}catch(_e){}  // keep the current psalm in its own slot first
         if(d.customText)TEXTS.custom=d.customText;
         clearUndo();S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
         S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
