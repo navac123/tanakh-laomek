@@ -430,6 +430,7 @@ html,body{overflow-x:hidden}
 .pkg-ed-btns{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
 .pkg-del{color:var(--earth)}
 .pkg-note{font-size:11px;line-height:1.6;color:var(--text-muted);margin-top:12px;padding:8px 10px;border-radius:10px;border:1px solid var(--border)}
+.col-seg{display:inline-block;vertical-align:top;margin-left:1.2em}
 .busy-ov{position:fixed;inset:0;z-index:9999;background:var(--modal-overlay);display:flex;align-items:center;justify-content:center}
 .busy-box{background:var(--bg);color:var(--text);border-radius:14px;padding:18px 24px;font-size:14px;font-weight:700;display:flex;align-items:center;gap:12px;box-shadow:var(--shadow-lg);font-family:'Heebo'}
 .busy-spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--border);border-top-color:var(--earth);animation:spin 0.9s linear infinite}
@@ -817,7 +818,7 @@ const FONTS=[
 
 let S={doc:'psalms1',step:0,darkMode:false,
   font:'assistant',
-  brks:{},indents:{},paraBreaks:{},
+  brks:{},indents:{},gaps:{},paraBreaks:{},
   fs:18,lh:1.5,
   cats:JSON.parse(JSON.stringify(DEFAULT_CATS)),
   activeCat:0,activeSub:0,
@@ -842,7 +843,7 @@ let S={doc:'psalms1',step:0,darkMode:false,
 // ===== SAVE / LOAD =====
 function saveWork(){
   try{
-    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
@@ -873,7 +874,7 @@ function loadWork(){
     }
     if(d.customText)TEXTS.custom=d.customText;
     clearUndo();S.doc=d.doc||'psalms13';S.step=d.step||0;S.font=d.font||'assistant';
-    S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
+    S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
     S.fs=d.fs||18;S.lh=d.lh||1.5;
     S.cats=d.cats||JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
     S.marks=d.marks||{};
@@ -911,8 +912,8 @@ const undoStack=[];
 const redoStack=[];
 const MAX_UNDO=50;
 
-function undoSnapshot(){return JSON.stringify({brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes,stickies:S.stickies,labels:S.labels,shapes:S.shapes})}
-function restoreSnapshot(s){const p=JSON.parse(s);S.brks=p.brks;S.indents=p.indents;S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
+function undoSnapshot(){return JSON.stringify({brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,marks:S.marks,pkgs:S.pkgs,cats:S.cats,conns:S.conns,nodes:S.nodes,stickies:S.stickies,labels:S.labels,shapes:S.shapes})}
+function restoreSnapshot(s){const p=JSON.parse(s);S.brks=p.brks;S.indents=p.indents;S.gaps=p.gaps||{};S.paraBreaks=p.paraBreaks;S.marks=p.marks;S.pkgs=p.pkgs;S.cats=p.cats;S.conns=p.conns||[];S.nodes=p.nodes||[];S.stickies=p.stickies||[];S.labels=p.labels||[];S.shapes=p.shapes||[];S.selWords=[];}
 function saveUndo(){
   undoStack.push(undoSnapshot());
   if(undoStack.length>MAX_UNDO) undoStack.shift();
@@ -1416,7 +1417,7 @@ function startAutoSave(){
   if(autoSaveTimer)return;
   autoSaveTimer=setInterval(()=>{
     try{
-      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
         fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
         vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
@@ -1432,7 +1433,7 @@ function startAutoSave(){
   // Backup save every 5 minutes
   setInterval(()=>{
     try{
-      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+      const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
         fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
         vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
         cvZoom:S.cvZoom,cvTool:S.cvTool,shapeColor:S.shapeColor,
@@ -1796,6 +1797,7 @@ function sImud(){
       • <b>Tab →</b> — הזחה ימינה (כמו רווח)<br>
       • <b>Shift+Tab ←</b> — הזחה חזרה שמאלה<br>
       • <b>פסקה חדשה</b> — הפרדה לפסקאות לפי נושאים<br>
+      • <b>רווח</b>: שני טורים באותה שורה. לוחצים על המילה שמתחילה את הטור השני ואז על מקש הרווח. לחיצה נוספת מרחיקה, Shift+רווח מקרב<br>
       • <b>Ctrl+Z</b> — ביטול | <b>Ctrl+Y</b> — שחזור
     </div>
     <div class="sb-hint" style="background:${cv('rgba(139,74,94,.06)','rgba(196,139,159,.1)')};border-color:${cv('rgba(139,74,94,.2)','rgba(196,139,159,.2)')}">
@@ -1815,7 +1817,7 @@ function sImud(){
     <div class="sb-sub">רווח שורות</div>
     <input type="range" min="1.2" max="2.4" step=".1" value="${S.lh}" oninput="S.lh=+this.value;R()" style="width:100%;accent-color:${cv('#8B4A5E','#8B4A5E')};margin-bottom:8px">
     <div style="display:flex;gap:6px;margin:8px 0">
-      <div class="sb-btn sb-btn-out sb-btn-sm" style="flex:1" onclick="S.brks={};S.indents={};S.paraBreaks={};R();toast('עימוד נוקה')">נקה הכל</div>
+      <div class="sb-btn sb-btn-out sb-btn-sm" style="flex:1" onclick="S.brks={};S.indents={};S.gaps={};S.paraBreaks={};R();toast('עימוד נוקה')">נקה הכל</div>
     </div>
     <div class="sb-btn sb-btn-blue" onclick="S.step=1;R()">המשך לגילוי →</div>`;
 }
@@ -2169,6 +2171,21 @@ function wrd(w,vi,wi,mode){
 }
 
 // ===== RENDER WITH LAYOUT — verse numbers as absolute, outside text flow =====
+// A gap inside a line (S.gaps["vi-wi"]=level) splits it into columns: every segment before a gap
+// becomes an inline block with a minimum width, so the next part starts further along, like a second column.
+const GAP_EM=6;
+function lineWordsHtml(line,fn){
+  const gaps=S.gaps||{};
+  if(!line.words.some((it,i)=>i>0&&gaps[it.k]))return line.words.map(fn).join(' ')+' ';
+  const segs=[[]];
+  line.words.forEach((it,i)=>{if(i>0&&gaps[it.k])segs.push([]);segs[segs.length-1].push(it);});
+  return segs.map((seg,si)=>{
+    const inner=seg.map(fn).join(' ');
+    if(si===segs.length-1)return inner+' ';
+    const lvl=gaps[segs[si+1][0].k]||1;
+    return `<span class="col-seg" style="min-width:${lvl*GAP_EM}em">${inner}</span>`;
+  }).join('');
+}
 function renderWithLayout(contentFn){
   const lines=buildLines();
   let html=`<div class="text-area" style="position:relative;padding-right:48px">`;
@@ -2184,7 +2201,7 @@ function renderWithLayout(contentFn){
     }
     html+=`<div class="imud-line" style="padding-right:${indentPx}px;font-size:${S.fs}px;line-height:${S.lh};position:relative">`;
     html+=verseNum;
-    line.words.forEach(item=>{html+=contentFn(item.w,item.vi,item.wi)+' ';});
+    html+=lineWordsHtml(line,item=>contentFn(item.w,item.vi,item.wi));
     html+=`</div>`;
   });
   html+=`</div>`;
@@ -2202,6 +2219,9 @@ function mImud(){
     <div class="tb-btn" onclick="imudAction('outdent')" title="הזחה שמאלה (Shift+Tab)">← החזרה</div>
     <div class="tb-sep"></div>
     <div class="tb-btn" onclick="imudAction('removeBrk')" title="הסרת שבירה">✕ הסר שבירה</div>
+    <div class="tb-sep"></div>
+    <div class="tb-btn" onclick="imudAction('gap')" title="רווח בתוך השורה: מפצל לשני טורים. בחרי את המילה שמתחילה את הטור השני (רווח)">⇤ רווח לטור</div>
+    <div class="tb-btn" onclick="imudAction('ungap')" title="הקטנת הרווח או הסרתו (Shift+רווח)">הסר רווח</div>
     <div class="tb-sep"></div>
     <div class="tb-btn" onclick="doUndo()" title="ביטול (Ctrl+Z)" style="${undoStack.length?'':'opacity:.4;pointer-events:none'}">↩️ ביטול</div>
     <div class="tb-btn" onclick="doRedo()" title="שחזור (Ctrl+Y)" style="${redoStack.length?'':'opacity:.4;pointer-events:none'}">↪️ שחזור</div>
@@ -2222,9 +2242,9 @@ function mImud(){
     }
     html+=`<div class="imud-line" style="padding-right:${indentPx}px;font-size:${S.fs}px;line-height:${S.lh};position:relative" data-linekey="${line.lineKey}">`;
     html+=verseNum;
-    line.words.forEach((item)=>{
+    html+=lineWordsHtml(line,item=>{
       const isSel=S.selWords.includes(item.k);
-      html+=`<span class="imud-word ${isSel?'selected':''}" style="font-family:${fontCSS()};font-size:${S.fs}px;line-height:${S.lh}" onclick="selectWord('${item.k}')" data-k="${item.k}">${item.w}</span> `;
+      return `<span class="imud-word ${isSel?'selected':''}" style="font-family:${fontCSS()};font-size:${S.fs}px;line-height:${S.lh}" onclick="selectWord('${item.k}')" data-k="${item.k}">${item.w}</span>`;
     });
     html+=`</div>`;
   });
@@ -2316,7 +2336,7 @@ function mPkg(){
     }
     html+=`<div class="imud-line" style="padding-right:${indentPx}px;font-size:${S.fs}px;line-height:${S.lh};position:relative">`;
     html+=verseNum;
-    line.words.forEach(item=>{html+=wrd(item.w,item.vi,item.wi,'pkg')+' ';});
+    html+=lineWordsHtml(line,item=>wrd(item.w,item.vi,item.wi,'pkg'));
     html+=`</div>`;
     for(let i=openPkgs.length-1;i>=0;i--){
       const r=pkgRanges.find(r=>r.pkg.id===openPkgs[i]);
@@ -2371,13 +2391,7 @@ function mCanv(){
         }
         html+=`<div style="padding-right:${indentPx}px;line-height:${S.lh};position:relative;min-height:1em;margin-right:26px">`;
         html+=verseNum;
-        line.words.forEach(item=>{
-          if(wordSet.has(item.k)){
-            html+=wrd(item.w,item.vi,item.wi,'canv')+' ';
-          }else{
-            html+=`<span style="opacity:.25;font-family:${fontCSS()};font-size:14px">${item.w}</span> `;
-          }
-        });
+        html+=lineWordsHtml(line,item=>wordSet.has(item.k)?wrd(item.w,item.vi,item.wi,'canv'):`<span style="opacity:.25;font-family:${fontCSS()};font-size:14px">${item.w}</span>`);
         html+=`</div>`;
       });
       txt=html;
@@ -2744,6 +2758,16 @@ function imudAction(action){
     const prevVi=parseInt(prevK.split('-')[0]);
     S.paraBreaks[prevVi]=1;S.selWords=[];R();toast('פסקה חדשה');
   }
+  else if(action==='gap'||action==='ungap'){
+    if(!S.selWords.length){toast('בחרי את המילה שמתחילה את הטור השני');return;}
+    const k=S.selWords[0];const line=buildLines().find(l=>!l.isPara&&l.words.some(w=>w.k===k));
+    if(!line)return;
+    if(line.words[0].k===k){toast('זו תחילת השורה. להזחה של כל השורה לוחצים Tab');return;}
+    if(!S.gaps)S.gaps={};const cur=S.gaps[k]||0;
+    if(action==='gap'){saveUndo();S.gaps[k]=Math.min(cur+1,6);toast(cur?'הטור הורחק':'השורה פוצלה לשני טורים');}
+    else{if(!cur){toast('אין כאן רווח');return;}saveUndo();if(cur>1)S.gaps[k]=cur-1;else delete S.gaps[k];toast(cur>1?'הרווח קטן':'הרווח הוסר');}
+    R();
+  }
   else if(action==='indent'||action==='outdent'){
     if(!S.selWords.length){toast('בחרי מילה קודם');return;}
     saveUndo();
@@ -2774,6 +2798,7 @@ document.addEventListener('keydown',function(e){
   if(S.step!==0)return;
   if(e.key==='Enter'){e.preventDefault();if(e.shiftKey)imudAction('para');else imudAction('break');}
   else if(e.key==='Tab'){e.preventDefault();if(e.shiftKey)imudAction('outdent');else imudAction('indent');}
+  else if(e.key===' '&&S.selWords.length){e.preventDefault();imudAction(e.shiftKey?'ungap':'gap');}
   else if(e.key==='Delete'||e.key==='Backspace'){if(S.selWords.length){e.preventDefault();imudAction('removeBrk');}}
 });
 
@@ -2870,14 +2895,14 @@ function sw(k){
   if(k===S.doc)return;
   const hasWork=Object.keys(S.marks).length||Object.keys(S.brks).length||S.pkgs.length;
   if(hasWork&&!confirm('מעבר לטקסט אחר ימחק את כל העבודה הנוכחית. להמשיך?'))return;
-  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
+  clearUndo();S.doc=k;S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.pkgEdit=null;S.pkgNewName='';S.pkgNewEmoji='';S.pkgNewStyle='fill';S.pkgNewCi=0;S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.cvZoom=100;S.cvTool='move';S.selWords=[];S.showExport=false;S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;S.notes={0:'',1:'',2:'',3:'',4:''};R();toast(D().title)}
 function deleteCustomText(){
   if(!TEXTS.custom)return;
   if(!confirm('למחוק את "'+TEXTS.custom.title+'"?'))return;
   delete TEXTS.custom;
   const remaining=Object.keys(TEXTS).filter(x=>!(S.hiddenDocs||[]).includes(x));
   clearUndo();S.doc=remaining[0]||'psalms1';
-  S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.selWords=[];
+  S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.stickies=[];S.labels=[];S.shapes=[];S.selWords=[];
   S.cats=JSON.parse(JSON.stringify(DEFAULT_CATS));S.activeCat=0;S.activeSub=0;S.vf='all';S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נמחק');
 }
@@ -3451,7 +3476,7 @@ function loadPaste(){
     return {n:num,t:replaceDivineName(l.trim())};
   });
   TEXTS.custom={title:customName,verses};
-  clearUndo();S.doc='custom';S.marks={};S.brks={};S.indents={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
+  clearUndo();S.doc='custom';S.marks={};S.brks={};S.indents={};S.gaps={};S.paraBreaks={};S.pkgs=[];S.pkgSel=[];S.nodes=[];S.conns=[];S.connMode=null;S.expandedPkgs={};S.selWords=[];S.showUpload=false;S.autoDetect=false;S.detectedGroups=[];S.detectedPairs=[];S.showAutoDetect=false;
   R();toast('הטקסט נטען: '+customName);
 }
 function handleFile(input){
@@ -3927,7 +3952,7 @@ function doImageExport(){
 function exportJSON(){
   S.showExport=false;R();
   try{
-    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
@@ -3950,7 +3975,7 @@ function exportSubmissionJSON(){
   if(!concGate())return;
   S.showExport=false;R();
   try{
-    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+    const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
@@ -3989,7 +4014,7 @@ function exportSubmission(){
   exportFullPDF('download');
 }
 function buildWorkData(){
-  const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+  const data={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
     fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
     vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
     pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
@@ -4134,7 +4159,7 @@ function importJSON(){
         const d=JSON.parse(e.target.result);
         if(d.customText)TEXTS.custom=d.customText;
         clearUndo();S.doc=d.doc||'psalms1';S.step=d.step||0;S.font=d.font||'assistant';
-        S.brks=d.brks||{};S.indents=d.indents||{};S.paraBreaks=d.paraBreaks||{};
+        S.brks=d.brks||{};S.indents=d.indents||{};S.gaps=d.gaps||{};S.paraBreaks=d.paraBreaks||{};
         S.fs=d.fs||18;S.lh=d.lh||1.5;
         S.cats=d.cats||[];S.activeCat=d.activeCat||0;S.activeSub=d.activeSub||0;
         S.marks=d.marks||{};S.vf=d.vf||'all';S.hiddenDocs=d.hiddenDocs||[];
@@ -4158,7 +4183,7 @@ function exportHTML(){
   S.showExport=false;R();
   try{
     // Inject state into HTML so it loads with all work
-    const stateData={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,paraBreaks:S.paraBreaks,
+    const stateData={doc:S.doc,step:S.step,font:S.font,brks:S.brks,indents:S.indents,gaps:S.gaps||{},paraBreaks:S.paraBreaks,
       fs:S.fs,lh:S.lh,cats:S.cats,activeCat:S.activeCat,activeSub:S.activeSub,marks:S.marks,
       vf:S.vf||'all',hiddenDocs:S.hiddenDocs||[],darkMode:S.darkMode,
       pkgs:S.pkgs,nodes:S.nodes,conns:S.conns,expandedPkgs:S.expandedPkgs,
@@ -4170,7 +4195,7 @@ function exportHTML(){
     const safeState=JSON.stringify(stateData).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
     html=html.replace('<body','<body data-saved-state="'+safeState.replace(/"/g,'&quot;')+'"');
     // Inject loader before R() call — uses a comment marker approach
-    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},conclusions:normConc(d.conclusions),cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
+    const loader='try{const ss=document.body.getAttribute("data-saved-state");if(ss){const d=JSON.parse(ss);if(d.customText)TEXTS.custom=d.customText;Object.assign(S,{doc:d.doc,step:d.step||0,font:d.font,brks:d.brks||{},indents:d.indents||{},gaps:d.gaps||{},paraBreaks:d.paraBreaks||{},fs:d.fs||18,lh:d.lh||1.5,cats:d.cats||[],activeCat:d.activeCat||0,activeSub:d.activeSub||0,marks:d.marks||{},vf:d.vf||"all",hiddenDocs:d.hiddenDocs||[],darkMode:!!d.darkMode,pkgs:d.pkgs||[],nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],shapes:d.shapes||[],notes:d.notes||{},conclusions:normConc(d.conclusions),cvZoom:d.cvZoom||100,splash:false});document.documentElement.classList.toggle("dark",S.darkMode);}}catch(e){}';
     html=html.replace('R();',loader+'\nR();');
     const blob=new Blob([html],{type:'text/html;charset=utf-8'});
     const a=document.createElement('a');
@@ -4654,7 +4679,7 @@ function galPick(){
 // --- rendering one work with the app's own renderers ---
 function withWork(d,fn){
   const saved=S,savedCustom=TEXTS.custom;
-  S=Object.assign({},saved,{doc:d.doc,brks:d.brks||{},indents:d.indents||{},paraBreaks:d.paraBreaks||{},
+  S=Object.assign({},saved,{doc:d.doc,brks:d.brks||{},indents:d.indents||{},gaps:d.gaps||{},paraBreaks:d.paraBreaks||{},
     fs:d.fs||18,lh:d.lh||1.5,font:d.font||'assistant',cats:d.cats||[],marks:d.marks||{},vf:'all',pkgs:d.pkgs||[],pkgSel:[],
     nodes:d.nodes||[],conns:d.conns||[],expandedPkgs:d.expandedPkgs||{},stickies:d.stickies||[],labels:d.labels||[],
     shapes:d.shapes||[],conclusions:normConc(d.conclusions),cvZoom:100,connMode:null,connEdit:null,cvTool:'move',searchQuery:''});
