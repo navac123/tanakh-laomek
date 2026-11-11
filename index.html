@@ -4200,9 +4200,23 @@ function relayoutStaticArrows(inner){
   svgs[0].innerHTML=arrowDefs('arrowheadS')+paths;
   if(svgs[1])svgs[1].innerHTML=arrowDefs('arrowheadS2')+pathsTop.replace(/arrowheadS\)/g,'arrowheadS2)');
 }
+// html2canvas draws a textarea as one clipped line, so labels and stickies lost text in the PDF.
+// In the report copy only, replace each one with plain text that shows every line.
+function textareasToText(root){
+  root.querySelectorAll('textarea').forEach(ta=>{
+    const cs=getComputedStyle(ta);const d=root.ownerDocument.createElement('div');
+    d.textContent=ta.value;d.className='pdf-ta-text';
+    ['fontFamily','fontSize','fontWeight','color','lineHeight','textAlign','padding'].forEach(k=>{d.style[k]=cs[k];});
+    d.style.direction='rtl';d.style.whiteSpace='pre-wrap';d.style.overflowWrap='anywhere';
+    if(ta.closest('.c-label')){d.style.width='max-content';d.style.maxWidth='340px';}
+    else{d.style.width=cs.width;d.style.minHeight=cs.height;}
+    ta.replaceWith(d);
+  });
+}
 function fitReportCanvases(doc,maxH){
   doc.querySelectorAll('.canvas').forEach(cvEl=>{
     const inner=cvEl.querySelector('#cvInner')||cvEl.firstElementChild;if(!inner)return;
+    textareasToText(inner);
     inner.style.setProperty('transform','none','important');  // measure unscaled (this can run twice)
     relayoutStaticArrows(inner);
     const ir=inner.getBoundingClientRect();let maxR=0,maxB=0;
