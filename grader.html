@@ -171,7 +171,7 @@ function concPanel(d){
 const CRITERIA=[
   {id:'c1',label:'עימוד ועיצוב (שלב 1)',max:15,icon:'📐',desc:'פירוק לשורות, כניסות, פסקאות — הבנת מבנה הטקסט'},
   {id:'c2',label:'גילוי וסימון (שלב 2)',max:25,icon:'🔍',desc:'קטגוריות, סימונים, שימוש בסגנונות — עומק הניתוח'},
-  {id:'c3',label:'אריזה ומיפוי (שלב 3)',max:20,icon:'📦',desc:'חבילות נושאיות, שמות, קישורים'},
+  {id:'c3',label:'אריזה ומיפוי (שלב 3)',max:20,icon:'📦',desc:'אריזות נושאיות, שמות, קישורים'},
   {id:'c4',label:'ארגון ויזואלי (שלב 4)',max:15,icon:'🗺️',desc:'קנבס — פריסה, חצים, הערות'},
   {id:'c5',label:'דף מסקנות (שלב 5)',max:15,icon:'📝',desc:'טענה ברורה על המזמור · מסקנה שנשענת על הניתוח (עימוד, סימונים, לפחות שתי אריזות או קשרים) · שאלה או משמעות שהלימוד פתח'},
   {id:'c6',label:'שלמות הגשה',max:10,icon:'✅',auto:true}
@@ -399,7 +399,7 @@ function renderGrade(){
       }
       contentH=`
         <div class="stats-grid">
-          <div class="stat-box"><div class="sv">${numPkgs}</div><div class="sl">חבילות</div></div>
+          <div class="stat-box"><div class="sv">${numPkgs}</div><div class="sl">אריזות</div></div>
         </div>${pkgsH}`;
     } else if(cr.id==='c4'){
       let connsH='';

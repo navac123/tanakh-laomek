@@ -1118,6 +1118,22 @@ function brd(){return S.darkMode?'#3A2A35':'#D4C4CC'}
 function hov(){return S.darkMode?'#2A1E28':'#EDE5DB'}
 function glss(){return S.darkMode?'rgba(30,21,32,.75)':'rgba(245,237,227,.7)'}
 
+// A package's words with the layout of step 1 and the markings of step 2: each step builds on the one before.
+// Lines of the layout that hold none of the package's words are skipped; words from outside it in a shared line are faint.
+function pkgLayoutHtml(p){
+  const vv=D().verses;const wordSet=new Set(p.words||[]);let html='';
+  buildLines().forEach(line=>{
+    if(line.isPara||!line.words.some(it=>wordSet.has(it.k)))return;
+    const indentPx=(S.indents[line.lineKey]||0)*20;const fw=line.words[0];
+    const vn=fw.wi===0&&vv[fw.vi]?`<span style="color:#9A8A92;font-family:'Heebo';font-size:10px;position:absolute;right:-22px;top:3px;width:18px;text-align:center">${vv[fw.vi].n}</span>`:'';
+    html+=`<div style="padding-right:${indentPx}px;line-height:1.9;position:relative;margin-right:22px">${vn}`;
+    // Columns at half width, so a two-column line still fits in a card
+    html+=lineWordsHtml(line,it=>wordSet.has(it.k)?wrd(it.w,it.vi,it.wi,'canv'):`<span style="opacity:.25;font-family:${fontCSS()};font-size:14px">${it.w}</span>`)
+      .replace(/class="col-seg" style="min-width:([\d.]+)em"/g,(m,n)=>`class="col-seg" style="min-width:${n/2}em;margin-left:.8em"`);
+    html+='</div>';
+  });
+  return html;
+}
 function buildLines(){
   const lines=[];
   D().verses.forEach((v,vi)=>{
@@ -1806,7 +1822,7 @@ const NB_PLACEHOLDERS=[
   'מה הבחנת בעימוד? איך החלוקה לשורות משנה את הקריאה?',
   'אילו דפוסים גילית? מה בולט בסימונים?',
   'אילו קבוצות נוצרו? מה המשותף בין המילים שאריזת?',
-  'מה היחסים שגילית בין החבילות? הקבלות, ניגודים?',
+  'מה היחסים שגילית בין האריזות? הקבלות, ניגודים?',
   'מה התובנה המרכזית שלך מהניתוח? מה למדת?'
 ];
 function toggleNotebook(){S.showNotebook=!S.showNotebook;if(S.showNotebook)S.nbTab=S.step;R();}
@@ -2144,7 +2160,7 @@ function sCanv(){
       </div>
     </div>
     <div class="sb-hint">גררו את הקופסאות כדי לסדר אותן. כדי לחבר: לחצו על <b>חץ</b>, ואז על שתי קופסאות. לחיצה על חץ קיים פותחת את התווית שלו.</div>
-    <div class="sb-sub">חבילות</div>
+    <div class="sb-sub">אריזות</div>
     ${S.pkgs.map((p,i)=>{const c=C[p.ci];const sel=cm&&cm.from===p.id;
       return `<div style="display:flex;align-items:center;gap:6px;padding:8px 10px;margin-bottom:4px;border-radius:10px;background:${c.b};border:1.5px solid ${sel?cv('#8B4A5E','#8B4A5E'):c.c+'44'};cursor:pointer" onclick="focusNode(${i})">
         <div style="width:10px;height:10px;border-radius:4px;background:${c.c}"></div>
@@ -2186,7 +2202,7 @@ function sRead(){
     <div style="background:${cv('rgba(90,58,74,.05)','rgba(122,157,196,.08)')};border-radius:10px;padding:10px;font-size:12px">
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span>פסוקים</span><b>${D().verses.length}</b></div>
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span>סימונים</span><b>${Object.keys(S.marks).length}</b></div>
-      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>חבילות</span><b>${S.pkgs.length}</b></div>
+      <div style="display:flex;justify-content:space-between;padding:4px 0"><span>אריזות</span><b>${S.pkgs.length}</b></div>
       <div style="display:flex;justify-content:space-between;padding:4px 0"><span>הערות</span><b>${Object.values(S.notes||{}).filter(v=>v&&v.trim()).length}/5</b></div>
     </div>
     <div class="sb-btn" style="margin-top:10px" onclick="toggleNotebook()">
@@ -2426,7 +2442,7 @@ function mPkg(){
 }
 
 function mCanv(){
-  if(!S.pkgs.length)return `<div class="canvas" style="display:flex;align-items:center;justify-content:center;min-height:400px"><div style="text-align:center;color:${cv('#8A96AA','#6A7590')}">${decoCircle(48,cv('#D9DFF2','#2A3060'))}<div style="font-size:14px;margin-top:8px">אין חבילות עדיין — חזור לשלב האריזה</div></div></div>`;
+  if(!S.pkgs.length)return `<div class="canvas" style="display:flex;align-items:center;justify-content:center;min-height:400px"><div style="text-align:center;color:${cv('#8A96AA','#6A7590')}">${decoCircle(48,cv('#D9DFF2','#2A3060'))}<div style="font-size:14px;margin-top:8px">אין אריזות עדיין. חזרו לשלב האריזה</div></div></div>`;
   if(!S.nodes.length){
     S.nodes=S.pkgs.map((_,i)=>({x:60+(i%3)*240,y:50+Math.floor(i/3)*180,w:220,h:0}));
   }else if(S.nodes.length!==S.pkgs.length){  // keep existing positions; add spots for new boxes or drop extras
@@ -2719,14 +2735,14 @@ function mRead(){
     ${renderWithLayout((w,vi,wi)=>wrd(w,vi,wi,'read')).replace('text-area','text-area" style="box-shadow:none;padding:0;padding-right:48px')}
   </div>
   ${S.pkgs.length?`<div class="read-card">
-    <div class="read-title">סיכום חבילות</div>
-    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">
+    <div class="read-title">סיכום אריזות</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px">
       ${S.pkgs.map(p=>{const c=C[p.ci];const vv=D().verses;
         const pkgWords=p.words.map(k=>{const[vi,wi]=k.split('-').map(Number);const wds=vv[vi]?.t.split(/\s+/);return wds?wds[wi]:'';}).filter(Boolean);
         return `<div style="background:${c.b};border:2px solid ${c.c};border-radius:14px;padding:14px">
         <div style="font-weight:800;color:${c.c};margin-bottom:6px">${p.emoji||''} ${escH(p.name)}</div>
         <div style="font-size:11px;color:${c.c};opacity:.7;margin-bottom:4px">${p.words.length} מילים</div>
-        <div style="display:flex;flex-wrap:wrap;gap:3px">${pkgWords.slice(0,8).map(w=>`<span style="background:${bgc()};padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid ${c.c}">${w}</span>`).join('')}</div>
+        <div style="color:${tc()}">${pkgLayoutHtml(p)}</div>
       </div>`}).join('')}
     </div>
   </div>`:''}
@@ -2747,7 +2763,7 @@ function mRead(){
     </div>
   </div>
   <div class="read-card">
-    <div class="read-title">קשרים בין חבילות</div>
+    <div class="read-title">קשרים בין אריזות</div>
     <div style="display:flex;flex-direction:column;gap:8px">
       ${S.conns.filter(cn=>cn.label).map(cn=>{
         const fp=S.pkgs.find(p=>p.id===cn.from),tp=S.pkgs.find(p=>p.id===cn.to);
@@ -3666,7 +3682,7 @@ function keysModal(){
       <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin:10px 0 6px">שלב גילוי</div>
       ${row(['לחיצה'],'סמן/הסר סימון ממילה')}
       <div style="font-size:12px;font-weight:700;color:${cv('#8B4A5E','#8B4A5E')};margin:10px 0 6px">שלב ארגון</div>
-      ${row(['גרירה'],'הזזת חבילות על הלוח')}
+      ${row(['גרירה'],'הזזת אריזות על הלוח')}
       <div style="margin-top:14px"><div class="sb-btn sb-btn-out" onclick="S.showKeys=false;R()">סגור</div></div>
     </div>
   </div>`;
@@ -3846,14 +3862,14 @@ function exportFullPDF(mode){
       S.step=2;
       let pkgsListHTML='';
       if(S.pkgs.length){
-        pkgsListHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px">';
+        pkgsListHTML='<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:10px">';
         S.pkgs.forEach(p=>{
           const c=C[p.ci];
           const pkgWords=p.words.map(k=>{const[vi,wi]=k.split('-').map(Number);const wds=vv[vi]?.t.split(/\s+/);return wds?wds[wi]:'';}).filter(Boolean);
           pkgsListHTML+='<div style="background:'+c.b+';border:2px solid '+c.c+';border-radius:14px;padding:14px">';
           pkgsListHTML+='<div style="font-weight:800;color:'+c.c+';margin-bottom:6px">'+(p.emoji||'')+' '+escH(p.name)+'</div>';
           pkgsListHTML+='<div style="font-size:11px;color:'+c.c+';opacity:.7;margin-bottom:4px">'+p.words.length+' מילים</div>';
-          pkgsListHTML+='<div style="display:flex;flex-wrap:wrap;gap:3px">'+pkgWords.slice(0,12).map(w=>'<span style="background:#F5EDE3;padding:2px 6px;border-radius:6px;font-size:14px;border:1px solid '+c.c+'">'+w+'</span>').join('')+'</div>';
+          pkgsListHTML+='<div style="color:#5A3A4A">'+pkgLayoutHtml(p)+'</div>';
           pkgsListHTML+='</div>';
         });
         pkgsListHTML+='</div>';
@@ -3987,10 +4003,10 @@ body{background:#fff!important;margin:0;padding:20px 30px;font-family:'Heebo',sa
 
 <!-- Step 2: Packages -->
 ${S.pkgs.length?`<div class="pdf-section">
-  <div class="pdf-section-header"><span class="step-num">3</span> ${stepNames[2]} - חבילות</div>
-  <div class="pdf-sub-header">רשימת חבילות</div>
+  <div class="pdf-section-header"><span class="step-num">3</span> ${stepNames[2]} - קיבוץ ליחידות</div>
+  <div class="pdf-sub-header">רשימת אריזות</div>
   ${pkgsListHTML}
-  <div class="pdf-sub-header" style="margin-top:24px">טקסט עם חבילות</div>
+  <div class="pdf-sub-header" style="margin-top:24px">טקסט עם אריזות</div>
   ${pkgTextHTML}
 </div>`:''}
 
@@ -4000,7 +4016,7 @@ ${canvasHTML?`<div class="pdf-section">
   <div style="overflow:visible;border:1px solid #D4C4CC;border-radius:12px;background:rgba(245,237,227,.5);padding:10px">
     ${canvasHTML}
   </div>
-  ${connsListHTML?'<div class="pdf-sub-header">קשרים בין חבילות</div>'+connsListHTML:''}
+  ${connsListHTML?'<div class="pdf-sub-header">קשרים בין אריזות</div>'+connsListHTML:''}
 </div>`:''}
 
 <!-- Notes -->
